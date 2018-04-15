@@ -4,7 +4,7 @@
    },
    "content_scripts": [ {
       "js": [ "js/basics.js", "js/common.js", "js/overlays.js", "js/main.js", "js/init.js" ],
-      "matches": [ "http://*.ogame.gameforge.com/game/index.php*" ],
+      "matches": [ "https://*.ogame.gameforge.com/game/index.php*" ],
       "run_at": "document_start"
    }, {
       "js": [ "js/basics.js", "js/common.js", "js/init.js" ],
@@ -13,7 +13,7 @@
    }, {
       "css": [ "skin/board.css" ],
       "include_globs": [ "http://board.??.ogame.gameforge.com/*" ],
-      "matches": [ "http://*.ogame.gameforge.com/*" ],
+      "matches": [ "https://*.ogame.gameforge.com/*" ],
       "run_at": "document_start"
    } ],
    "default_locale": "en",
@@ -28,7 +28,7 @@
    "manifest_version": 2,
    "minimum_chrome_version": "32",
    "name": "AntiGameOrigin",
-   "permissions": [ "unlimitedStorage", "storage", "tabs", "http://*/*" ],
+   "permissions": [ "unlimitedStorage", "storage", "tabs", "https://*/*" ],
    "short_name": "AGO",
    "update_url": "https://clients2.google.com/service/update2/crx",
    "version": "5.9.13",
