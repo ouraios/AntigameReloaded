@@ -252,21 +252,22 @@ AGO.Styles = {
         window.setTimeout(AGO.Styles.preload, 5)));
   },
   Init: function() {
-    var a;
-    a = document.createDocumentFragment();
-    AGO.Styles.Sheet = DOM.append(a, "style", {
-      type: "text/css",
-      media: "screen"
-    });
-    AGO.App.Ogame &&
-      OBJ.is(AGO.Styles.Data) &&
-      (OBJ.get(AGO.Styles.Data.Page, "improve") &&
-        (("overview" === AGO.App.page && 1 !== AGO.Acc.type) ||
-          DOM.extendClass(document.body, null, "ago_improve")),
-      AGO.Styles.set(AGO.Styles.Data.Styles));
-    document.head.appendChild(a);
   },
   Load: function(a) {
+      var a;
+      a = document.createDocumentFragment();
+      AGO.Styles.Sheet = DOM.append(a, "style", {
+          type: "text/css",
+          media: "screen"
+      });
+      AGO.App.Ogame &&
+      OBJ.is(AGO.Styles.Data) &&
+      (OBJ.get(AGO.Styles.Data.Page, "improve") &&
+      (("overview" === AGO.App.page && 1 !== AGO.Acc.type) ||
+          DOM.extendClass(document.body, null, "ago_improve")),
+          AGO.Styles.set(AGO.Styles.Data.Styles));
+      document.head.appendChild(a);
+
     AGO.App.Ogame &&
       (1 !== AGO.Styles.status || AGO.App.reload || a) &&
       (AGB.Log("Update   - Styles   :", !0),
