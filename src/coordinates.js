@@ -52,7 +52,6 @@ var AGO = {
     return 1 <= a && 50 >= a && 1 <= c && 499 >= c && 1 <= b && 17 >= b;
   },
   Memory: function(a) {
-    console.log("Memory " + a);
     "chrome" in window
       ? chrome.runtime.sendMessage("", {
           page: "Background",

@@ -1,5 +1,4 @@
 if (!AGB) var AGB = {};
-console.log("AGB INIT");
 AGB.App = {
   Data: {},
   Player: {},

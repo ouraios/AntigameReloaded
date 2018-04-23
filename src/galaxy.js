@@ -80,15 +80,12 @@ AGO.Galaxy = {
   Content: function() {
     var a, b, d, h;
     a = document.getElementById("galaxytable");
-    console.log(AGO.Galaxy.status);
-    // console.log(DOM.updateAttribute(a, null, "ago-status", 1, 8));
       AGO.Galaxy.status = 5;
     if (
       AGO.Galaxy.status &&
       a &&
       DOM.updateAttribute(a, null, "ago-status", 1, 8)
     ) {
-      console.log("in if content");
       b = DOM.getAttribute(a, null, "data-galaxy", 2);
       d = DOM.getAttribute(a, null, "data-system", 2);
       AGO.Galaxy.sameSystem =
@@ -196,17 +193,10 @@ AGO.Galaxy = {
                     ? (p = a)
                     : HTML.hasClass(c, "planetname") && (m = a);
       });
-      console.log(b);
-      console.log(d);
-      console.log(h);
-      console.log(e);
-      console.log(g);
-      console.log(p);
-      console.log(m);
       b &&
         ((f = b.querySelector(".allytagwrapper")),
         (q = DOM.getAttribute(f, null, "rel")),
-        (c.allianceId = STR.check(NMR.parseIntFormat(q))),console.log(c.allianceId),
+        (c.allianceId = STR.check(NMR.parseIntFormat(q))),
         f &&
           c.allianceId &&
           ((c.allianceTag = DOM.getTextChild(f, null, 7)),

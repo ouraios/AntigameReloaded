@@ -320,7 +320,7 @@ AGO.Building = {
             }),
             DOM.prependChild(c, e),
             h &&
-              (DOM.setAttribute(h, null, "id", "ago_items_energy"),console.log(h),
+              (DOM.setAttribute(h, null, "id", "ago_items_energy"),
               DOM.appendSPAN(h, "undermark"),
               (c = document.createDocumentFragment()),
               d(c, AGO.Label.get("B17"), "ago_items_production"),

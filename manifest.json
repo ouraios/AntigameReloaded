@@ -12,25 +12,22 @@
       "run_at": "document_start"
    }, {
       "css": [ "skin/board.css" ],
-      "include_globs": [ "http://board.??.ogame.gameforge.com/*" ],
+      "include_globs": [ "https://board.??.ogame.gameforge.com/*" ],
       "matches": [ "https://*.ogame.gameforge.com/*" ],
       "run_at": "document_start"
    } ],
    "default_locale": "en",
    "description": "__MSG_appDesc__",
-   "homepage_url": "http://antigame.de",
    "icons": {
       "128": "Icon-128.png",
       "16": "Icon-16.png",
       "48": "Icon-48.png"
    },
-   "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCZR/stTWraFnYwh6IZ0pTEUDD7Ma1PVx75OmLAdxgO5fU2DWGjy1VtqV7rz4zBWBNejheAxeYKVz4IxmnOw4VsVxGStXRd8upVgy8ZV7lF6p4rEFNPeP4kH7IY67IehKO/TvaP5jA5Thg9/vcgqUpEACtU2OWqGCXpNg5elQmVsQIDAQAB",
    "manifest_version": 2,
    "minimum_chrome_version": "32",
-   "name": "AntiGameOrigin",
+   "name": "AntiGameReloaded",
    "permissions": [ "unlimitedStorage", "storage", "tabs", "https://*/*" ],
-   "short_name": "AGO",
-   "update_url": "https://clients2.google.com/service/update2/crx",
-   "version": "5.9.13",
+   "short_name": "AGR",
+   "version": "0.9.0",
    "web_accessible_resources": [ "js/*.js", "skin/*", "loca/*.json" ]
 }

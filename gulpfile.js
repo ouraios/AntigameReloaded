@@ -18,3 +18,8 @@ gulp.task('callback', function () {
             .pipe(uglify()).pipe(gulp.dest(DEST));
     });
 });
+
+gulp.task('uglify-js', function () {
+    // Callback mode, useful if any plugin in the pipeline depends on the `end`/`flush` event
+    return gulp.src(SRC).pipe(uglify()).pipe(gulp.dest(DEST));
+});

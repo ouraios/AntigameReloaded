@@ -392,10 +392,6 @@ var AGO = {
       var c = window.updateVariables;
       window.updateVariables = function(a, b, d) {
         c();
-        console.log(c);
-        console.log(a);
-        console.log(b);
-        console.log(d);
         window.updateTimesFleet2();
       };
       a = window.clearInput;

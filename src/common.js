@@ -1942,7 +1942,6 @@ AGO.Fleet = {
   Next: {},
   Init: function(a) {
     AGO.Fleet.Data = a || {};
-    console.log(AGO.App.keyPlayer)
     AGO.Fleet.Data.Current = AGO.Data.getStorage(
       AGO.App.keyPlayer + "_Fleet_Current",
       "JSON"
