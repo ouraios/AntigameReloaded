@@ -1,1 +1,1989 @@
-AGO.Fleet1={filterContinue:"routine holdingtime expeditiontime union retreatAfterDefenderRetreat metal crystal deuterium preferResource arrivalUnion nameUnion coordsMarked arrivalMarked".split(" "),Messages:function(e,t){"Action"===e?PAGE.Action(t):"Continue"===e?PAGE.Continue():PAGE.lockedDisplay||"Display"===e&&PAGE.Display()},Read:function(){var a,o,e,t,n,s;o=AGO.Fleet1.Para={},(a=AGO.Units.Data).ships=a.shipsCivil=a.shipsCombat=a.capacity=0,OBJ.iterate(AGO.Item.Ship,function(e){a[e]=0}),PAGE.layout=AGO.Option.is("F01"),(e=document.getElementById("inhalt"))&&(a.page=AGO.App.page,DOM.iterate(e.querySelectorAll('#buttonz li[id^="button"]'),function(e){var t;t=STR.check(NMR.parseIntAbs(e.id)),e=DOM.getTextChild(".level",e,3),t in AGO.Item.Ship&&(a[t]=e,a.ships+=e,a.capacity+=e*AGO.Item[t].capacity)}),(t=e.querySelector(".fleetStatus #slots"))&&(2===(t=t.querySelectorAll("span.tooltip")).length&&(s=(DOM.getText(t[0]).split(":")[1]||"").trim().split("/"),AGO.Fleet.Set("Current",{fleets:+s[0]||0,fleetsSlots:+s[1]||0}),s=(DOM.getText(t[1]).split(":")[1]||"").trim().split("/"),AGO.Fleet.Set("Current",{expos:+s[0]||0,exposSlots:+s[1]||0})))),e&&AGO.Option.is("F00")&&(PAGE.enabled=!0,DOM.iterate(document.querySelectorAll('#buttonz .content > form input[type="hidden"]'),function(e){var t,a;(t=STR.trim(e.name))&&(a=NMR.parseIntAbs(t),o[200<a?a:t]=+e.value||0)}),3<=(t=e.querySelectorAll("#fleetStatusBar li")).length&&(e=STR.trim(DOM.getText(t[1],null).split("]")[1]),o.planetName=1===o.type?e:"",o.moonName=3===o.type?e:"",o.playerHonor=AGO.Ogame.getPlayerHonor(DOM.getAttribute("span.honorRank",t[2],"class")),o.playerStatus=AGO.Token.getPlayerStatus('span[class^="status_abbr"]',t[2])||21,o.playerName=STR.trim(DOM.getText(t[2],null).split(":")[1])),-1<(e=STR.check(document.location.search)).indexOf("mission=")||-1<e.indexOf("routine=")?(n=STR.splitParameter(e),OBJ.iterate(n,function(e){var t=NMR.parseIntAbs(e);o[200<t?t:e]=+n[e]||0})):(e=AGO.Background.Get("Fleet_Task",6)||AGO.Fleet.Get("Current","Task1",6))&&OBJ.copy(OBJ.parse(e),o),AGO.Task.updateResources(o),AGO.Task.updateShips(o),a[210]&&(PAGE.Mission[6]=1),a[208]&&(PAGE.Mission[7]=1),a[209]&&(PAGE.Mission[8]=PAGE.Type[2]=1),a[214]&&(PAGE.Mission[9]=1),o.action=0,o.type=PAGE.Type.check(o.type)||AGO.Acc.type,AGO.Task.updateCoords(o,2),4===o.owncoords&&(o.type=0),o.mission=PAGE.Mission.check(o.mission),PAGE.Next=OBJ.create(o),PAGE.Next.mission=0,PAGE.Mini=AGO.Task.splitActive(AGO.Option.get("F31",-1),2,0),PAGE[1]={status:o.mission&&!o.routine?1:0},PAGE.Init(2),PAGE.Init(3),PAGE.Init(4),PAGE.Init(5),PAGE.Init(6),PAGE.Init(7),PAGE.Init(10),o.calculator=AGO.Fleet.Get("Current","Calculator"),o.calculator=PAGE.getRoutine(o.routine)?o.routine:1===o.mission?3:8===o.mission?4:o.mission||o.resources?2:PAGE.getRoutine(o.calculator)?o.calculator:2,AGO.Background.Set("Fleet_Task",""),AGO.Fleet.Set("Current","Task1","")),a=o=n=e=t=t=e=e=s=null},Init:function(e,t,a){function o(e){return AGO.Item.Ship[e]?(AGO.Item[e].metal+AGO.Item[e].crystal)/200:0}var n,s,i,r,c,p;switch(n=AGO.Units.Data,e){case 2:(s=PAGE[2]={group:1,label:AGO.Label.get("F60")}).mode=3,s.freight=0,OBJ.iterate(AGO.Item.Resource,function(e){s.freight+=Math.max(n[e]-PAGE.Mini[e],1)}),s.mission=AGO.Option.is("F54")?4:3,s.thirdShip=AGO.Item.check(AGO.Option.get("F63",6),AGO.Item.Ship),s.thirdShip=VAL.check(s.thirdShip,"202","203")?0:s.thirdShip,s.preferShip=["202","203"][AGO.Option.get("F62",2)]||s.thirdShip||"203",s.preferCargo="202"===s.preferShip?"202":"203",s.secondCargo="203"===s.preferCargo?"202":"203",s.need_smallCargo=Math.ceil(s.freight/5e3),s.need_largeCargo=Math.ceil(s.freight/25e3),s.need_thirdShip=Math.ceil(s.freight/AGO.Item[s.thirdShip||"209"].capacity),e="203"===s.preferCargo?s.need_largeCargo:s.need_smallCargo,s.status=e<=n[s.preferCargo]?3:s.need_smallCargo<=n[202]+5*n[203]?2:n.ships?1:0;break;case 3:(e=PAGE[3]={group:1,mode:AGO.Option.get("FA0"),label:AGO.Label.get("FA0"),status:n.ships?3:0}).preferShip=AGO.Option.is("FA2")?"202":"203";break;case 4:e=PAGE[4]={group:1,mode:AGO.Option.get("FH0"),label:AGO.Label.get("FH0"),status:n[209]?3:0};break;case 5:i=PAGE[5]=AGO.Task.splitActive(AGO.Option.get("F81",-1),1),t&&AGO.Fleet.Set("Routine",{Collect:1===t?"::::3:10::::1":2===t?a+"::::::2":""}),(p=AGO.Task.split(AGO.Fleet.Get("Routine","Collect",6),0,1)).routine&&(i.last=p.routine,p.routine=0,OBJ.iterate(p,function(e){p[e]&&(i[e]=p[e])})),1===i.last?AGO.Task.updateCoordsType(i,AGO.Acc.coords+":3"):(i.type=PAGE.Type.check(i.type)||1,AGO.Task.updateCoords(i,2)),i.group=2,i.mode=AGO.Option.get("F80"),i.label=AGO.Label.get("F80"),i.mission=4===i.mission?4:3,i.preferCargo="202"===i.preferCargo?"202":"203",i.secondCargo="203"===i.preferCargo?"202":"203",i.freight=0,OBJ.iterate(AGO.Item.Resource,function(e){i.freight+=Math.max(n[e]-i[e],1)}),i.need_smallCargo=Math.ceil(i.freight/5e3),i.need_largeCargo=Math.ceil(i.freight/25e3),e="203"===i.preferCargo?i.need_largeCargo:i.need_smallCargo,i.status=n.ships?i.owncoords<2||4<=i.owncoords?1:e<=n[i.preferCargo]?3:i.need_smallCargo<=n[202]+5*n[203]?2:1:0,i[i.preferCargo]=Math.min(e,n[i.preferCargo]),i[i.secondCargo]=n[i.preferCargo]<e?Math.ceil((e-n[i.preferCargo])*AGO.Item[i.preferCargo].capacity/AGO.Item[i.secondCargo].capacity):0;break;case 6:(r=PAGE[6]=AGO.Task.splitActive(AGO.Option.get("F91",-1),2,3,!0)).group=2,r.mode=AGO.Option.get("F90"),r.label=AGO.Label.get("F90"),t&&(t=1===t?"::::2:1::::1":"",AGO.Fleet.Set("Routine",{Save:t})),(p=AGO.Task.split(AGO.Fleet.Get("Routine","Save",6),0)).routine&&(r.last=p.routine,r.speed=p.speed||1),1===r.last&&(AGO.Task.updateCoordsType(r,AGO.Acc.coords+":2"),r.mission=8),e=r.mission,r.type=PAGE.Type.check(r.type)||1,r.mission=PAGE.Mission.check(r.mission),r.freight=0,OBJ.iterate(AGO.Item.Resource,function(e){r.freight+=Math.max(n[e]-r[e],1)}),r.status=n.capacity>r.freight&&(r.mission||!e)?3:n.ships?1:0,OBJ.iterate(AGO.Item.Ship,function(e){r[e]=0<r[e]?Math.max(n[e]-r[e],0):n[e]}),(e={6:"210",7:"208",8:"209",9:"214"}[r.mission])&&!r[e]&&(r[e]=1);break;case 7:(c=PAGE[7]=AGO.Task.splitActive(AGO.Option.get("F71",-1),0,3)).group=2,c.mode=AGO.Option.get("F70"),c.label=AGO.Label.get("F70"),c.position=16,c.rangeCoords=c.detail2,c.points=AGO.Ogame.chooseTopscore(2500,6e3,9e3,12e3,15e3,18e3,21e3,25e3),c.preferCargo="202"===c.preferCargo?"202":"203",c.secondCargo="203"===c.preferCargo?"202":"203",c.preferShip=AGO.Item.Ship[c.preferShip]?c.preferShip:"",t=c.points,1<=c.rangeCoords&&(c.next=AGO.Fleet.Get("Expo",AGO.Task.cutSystem(AGO.Acc.coords)),(c.next>c.system+c.rangeCoords||c.next>AGO.Uni.systems||c.next<c.system-c.rangeCoords||c.next<1)&&(c.next=NMR.minMax(c.system-c.rangeCoords,1,AGO.Uni.systems),AGO.Fleet.Set("Expo",AGO.Task.cutSystem(AGO.Acc.coords),c.next)),c.system=c.next),AGO.Option.is("F73")&&n[210]&&(c[210]=1,t-=5),c.preferShip&&(e="204 205 206 207 215 211 213".split(" "),207<=+c.preferShip&&e.reverse(),e.unshift(c.preferShip),OBJ.iterateArray(e,function(e){!c.combatShip&&n[e]&&(c.combatShip=e)}),c.combatShip&&(c[c.combatShip]=1,t-=Math.ceil(o(c.combatShip)))),c[c.preferCargo]=Math.min(Math.ceil(t/o(c.preferCargo)),n[c.preferCargo]),(t-=Math.ceil(c[c.preferCargo]*o(c.preferCargo)))<=0?c.status=c.preferShip&&c.preferShip!==c.combatShip?2:3:(c.status=n.ships?1:0,c[c.secondCargo]=Math.min(Math.ceil(t/o(c.secondCargo)),n[c.secondCargo]));break;case 10:for(t=0;t<6;t++)(e=PAGE[10+t]=AGO.Task.split(AGO.Fleet.Get("Last",t,6),2,1)).status=e.coords&&n.ships?3:0;PAGE[10].group=3,PAGE[10].mode=AGO.Option.get("FL0"),PAGE[10].label=AGO.Label.get("FL0")}n=e=s=i=r=c=e=e=p=e=t=e=t=null},Run:function(){PAGE.enabled&&PAGE.Show()},Ready:function(){var e,t;e=PAGE.Para,PAGE.enabled&&(e.sendingEnabled=+AGO.Global.message({role:"getProperty",property:"sendingEnabled"})||0,2<=PAGE.getRoutine(e.calculator)?3<=PAGE.getRoutine(e.calculator,"mode")&&((t=AGO.Task.create(PAGE[e.calculator],0)).routine=0):1===PAGE.getRoutine(e.routine)?t=AGO.Task.create(e,2):AGO.Option.is("I83")&&AGO.Acc.coords===e.coords&&AGO.Panel.GetActive("Target","id",6)&&(t={arrival:AGO.Panel.GetActive("Target","time")},AGO.Task.updateCoordsType(t,AGO.Panel.GetActive("Target","coords",6))),PAGE.Action(t))},Timer:function(){DOM.updateText("ago_info_resources","id",AGO.Units.Data.resources,3)},Show:function(){function e(e,t,a){var o,n;(o={action:10})[t]=a,n=s[t]?a<=s[t]?"ago_color_lightgreen":1<=i.status?"ago_color_orange":"ago_color_darkorange":"ago_color_palered",e=DOM.appendLI(e,{"ago-data":JSON.stringify(o)},t,12),DOM.appendSPAN(e,n,a,2)}var s,i,t,a,o,n;(t=document.getElementById("inhalt"))&&(s=AGO.Units.Data,i=PAGE[2],DOM.extendClass(t,null,"ago ago_improve"),PAGE.showSummary(),(o=t.querySelector(".fleetStatus #slots"))&&AGO.Option.is("F03")&&DOM.setStyleDisplay(o.parentNode),o=t.querySelector("#buttonz .header"),DOM.appendSPAN(o,{id:"ago_info_combat"}),DOM.appendSPAN(o,{id:"ago_info_civil"}),n=AGO.Option.get("F02",2),DOM.iterate(t.querySelectorAll('#buttonz li[id^="button"]'),function(e){var t,a;a=STR.check(NMR.parseIntAbs(e.id)),e=e.querySelector(".level"),n&&a in AGO.Item.Ship&&e&&(t=document.createDocumentFragment(),VAL.check(n,1,3)&&DOM.appendSPAN(t,"ago_items_textName ago_items_text ago_text_background",a,11),VAL.check(n,2,3)&&DOM.appendSPAN(t,"ago_items_textInfo ago_items_text ago_text_background",AGO.Ogame.getShipSpeed(a),2),DOM.appendSPAN(t,{class:"ago_items_textCount ago_items_text ago_text_background",id:"anti_ship_"+a}),e.parentNode.parentNode.appendChild(t))}),(a=t.querySelector("#allornone .allornonewrap"))?(DOM.addEvents(a,null,{click:PAGE.onBriefing}),(o=a.querySelector(".send_all"))&&(DOM.setData(o,null,{action:11}),DOM.setData(".send_none",a,{action:13}),t=DOM.append(null,"span","send_most",null,null,null,{action:12}),DOM.appendA(t,{id:"sendmost",class:"tooltip js_hideTipOnMobile",title:AGO.Label.get("F37")}),DOM.after(o,t)),(o=a.querySelector("#continue"))&&(DOM.setData(o,null,{action:"continue"}),e(a=DOM.create("ul","ago_cargos"),"202",i.need_smallCargo),e(a,"203",i.need_largeCargo),DOM.after(o,a),o=o.firstElementChild,t=DOM.appendTABLE(null,"ago_continue",{width:"100%"}),a=DOM.appendTR(t),DOM.appendTD(a).id="ago_continue_coords",DOM.appendIMG(DOM.appendTD(a),"/cdn/img/layout/pixel.gif","14px").id="ago_continue_type",DOM.appendIMG(DOM.appendTD(a),"/cdn/img/layout/pixel.gif","17px").id="ago_continue_mission",o.style.lineHeight="18px",o.appendChild(t))):(a=DOM.append(null,"ul","ago_cargos"),DOM.appendSPAN(DOM.appendLI(a,null,"202",11),"ago_color_palered",i.need_smallCargo,2),DOM.appendSPAN(DOM.appendLI(a,null,"203",11),"ago_color_palered",i.need_largeCargo,2),DOM.appendSPAN(DOM.appendLI(a,null,i.thirdShip||"209",11),"ago_color_palered",i.need_thirdShip,2),DOM.appendChild(t.querySelector("#warning"),a))),PAGE.showShortcuts(),s=i=t=a=o=t=a=t=n=null},showSummary:function(){function e(e,t,a){(e=DOM.appendDIV(e)).textContent=AGO.Label.get(a),DOM.appendSPAN(e,{id:"ago_info_"+t})}function t(e,t){DOM.append(e,"input",{id:"ago_"+t,type:"text",class:"ago_keys_arrows",value:PAGE.Next[t]||"0"},null,{focus:PAGE.onCalculator,blur:PAGE.onCalculator},null,{id:t})}function a(e,t){return 0===e?"ago_color_blue":e===t?"ago_color_palered":e===t-1?"ago_color_orange":"ago_color_lightgreen"}var o,n,s,i,r,c,p,l,u;(o=document.getElementById("planet"))&&(AGO.Task.updateResources(PAGE.Para),n=document.createDocumentFragment(),i=a(s=AGO.Fleet.Get("Current","fleets"),r=AGO.Fleet.Get("Current","fleetsSlots")),(c=DOM.appendA(n,{href:AGO.Uni.path+"movement",title:AGO.Label.get("E10"),class:"ago_movement tooltip "+i})).textContent=AGO.Label.get("F21")+": "+s+"/"+r,i=a(s=AGO.Fleet.Get("Current","expos"),r=AGO.Fleet.Get("Current","exposSlots")),DOM.appendSPAN(c,i,AGO.Label.get("F22")+": "+s+"/"+r),PAGE.layout&&(o.appendChild(n),o.style.height="23px",n=document.createDocumentFragment()),s=DOM.appendDIV(n,{id:"ago_summary",class:"ago_routine_"+PAGE.Para.calculator,ago_display_status:AGO.Option.is("F13")?1:2}),DOM.addEvents(s,null,{click:PAGE.onCalculator,dblclick:PAGE.onCalculator,keyup:PAGE.onCalculator,mousedown:PAGE.onCalculator}),i=DOM.appendTABLE(s,null,null,PAGE.layout?[200,407,30]:[200,417,30]),r=DOM.appendTR(i),e(c=DOM.appendTD(r,"ago_info"),"resources","I27"),e(c,"capacity","F23"),e(c,"freight","F24"),e(c,"expo","F26"),(c=DOM.appendTD(r,{id:"ago_routine"})).colSpan=2,l=u=0,p=AGO.Label.get("F05")+": ",OBJ.iterateArray([2,3,4,5,6,7,10],function(e){var t;t="",u++,(2<=PAGE[e].mode||PAGE.Para.calculator===e)&&((3<u&&!l||7===u)&&(l=t="ago_routine_space"),t=DOM.appendDIV(c,t),t=DOM.appendA(t,{id:"ago_routine_"+e,class:"tooltip",title:p+PAGE[e].label},null,{routine:e}),DOM.appendSPAN(t,"ago_routine_check"),5!==e&&6!==e||(DOM.appendIMG(t,"","18px").className="ago_routine_last"))}),r=DOM.appendTR(i),t(c=DOM.appendTD(r,"ago_coords"),"galaxy"),t(c,"system"),t(c,"position"),i=DOM.appendA(c,{id:"ago_type"}),DOM.append(i,"span",AGO.Item.Type[1],null,null,null,{type:1,action:42}),DOM.append(i,"span",AGO.Item.Type[3],null,null,null,{type:3,action:42}),DOM.appendTD(r).id="ago_details",c=DOM.appendTD(r),DOM.appendA(c,"ago_display_arrow"),PAGE.showCalculator(s),PAGE.layout?DOM.appendChild(document.querySelector("#buttonz .allornonewrap"),n):o.appendChild(n)),o=n=s=i=r=c=s=r=p=i=l=u=null},showCalculator:function(a){function e(e){DOM.appendTD(e,"ago_calc_info").colSpan=3}function t(e,t,a,o,n,s){t&&t.coords&&(o=AGO.Token.getClassHover(t.type)+(o?" "+AGO.Token.getClassSelected(t.type):""),e=DOM.appendA(e,"ago_target "+o,null,a),o=DOM.appendSPAN(e,"ago_target_coords",t.coords),2===n&&(a.target=1,DOM.setData(o,null,a)),DOM.appendIMG(DOM.appendSPAN(e,"ago_target_icon"),HTML.urlTypeIcon(t.type),"14px"),DOM.appendIMG(DOM.appendSPAN(e,"ago_target_icon"),HTML.urlMissionIcon(t.mission),"14px"),DOM.appendSPAN(e,"ago_target_speed",10*t.speed+"%"),n&&(a=t.routine?"R":"",DOM.appendSPAN(e,"ago_target_name",a),DOM.appendSPAN(e,"ago_target_ships",t.ships,2),DOM.appendSPAN(e,"ago_target_res",t.resources,2)),2<=s&&DOM.appendSPAN(e,"ago_routine_check ago_routine_check_"+s))}function o(e,t){var a;a=DOM.appendTD(e,"ago_calc_available"),a=DOM.appendA(a,null,null,{action:28,id:t}),DOM.appendSPAN(a,"ago_calc_available_icon "+t," "),DOM.appendSPAN(a,{id:"ago_calc_available_"+t})}function n(e,t){DOM.append(DOM.appendTD(e),"input",{id:"ago_calc_resource_"+t,type:"text",class:"ago_keys_arrows",value:PAGE.Next[t]||"0"},null,{focus:PAGE.onCalculator,blur:PAGE.onCalculator},null,{id:t})}function s(e,t,a,o){e=DOM.appendTD(e,"ago_calc_ships"),e=DOM.appendA(e,null,null,{action:19,id:a}),DOM.appendSPAN(e,"btn_blue",a,12),DOM.appendSPAN(e,{id:"ago_calc_ships_"+t})}function i(e,t,a){DOM.appendSPAN(DOM.appendTD(e,"",a,10),{id:t})}function r(t){return t.status&&(OBJ.iterate(AGO.Item.Resource,function(e){t[e]&&t[e]>AGO.Units.Data[e]&&(t.status=2)}),OBJ.iterate(AGO.Item.Ship,function(e){t[e]&&t[e]>AGO.Units.Data[e]&&(t.status=1)})),t.status}var c,p,l,u,d,A,O,g,G,_,m,h,M;for(A=2===(d=PAGE.Para.calculator),O=4===d,g=3===d,3<=PAGE[d].mode&&AGO.Fleet.Set("Current",{Calculator:d}),a||(c=document.getElementById("ago_calc"),(a=c.parentNode).removeChild(c),DOM.updateClass("ago_summary","id","ago_routine_"+d)),r(PAGE[10]),OBJ.iterateArray([2,4,3,5,6,7,10],function(e){var t;(t=a.querySelector("#ago_routine_"+e))&&(DOM.setClassGroup(t.parentNode,null,"selected",e===d?"selected":""),DOM.setClassGroup(t,null,"on",PAGE[e].status?"on":"off"),3!==e&&4!==e&&DOM.updateClass(".ago_routine_check",t,"ago_routine_check ago_routine_check_"+PAGE[e].status),(5===e||6===e)&&(e=1===PAGE[e].last?HTML.urlTypeIcon(PAGE[e].type||2,"b"):2===PAGE[e].last?HTML.urlMissionIcon(PAGE[e].mission):HTML.urlTypeIcon(0),DOM.updateAttribute(".ago_routine_last",t,"src",e)))}),DOM.setStyleDisplay(".ago_info div:nth-child(3)",a,g||7===d?"":"block"),DOM.setStyleDisplay(".ago_info div:nth-child(4)",a,7===d?"block":""),p=a.querySelector("#ago_details"),DOM.replaceChildren(p),c=DOM.appendTABLE(null,{id:"ago_calc"},null,PAGE.layout?[200,146,146,146]:[200,149,149,149]),_=DOM.appendTR(c),g||O?DOM.appendTD(_):i(_,"ago_calc_available_total","I23"),m=DOM.appendTR(c),l=DOM.appendTD(m),A&&(DOM.appendA(l,"ago_calc_resource_all",null,{action:21}),DOM.appendA(l,"ago_calc_resource_most",null,{action:22})),DOM.appendA(l,"ago_calc_resource_none",null,{action:23}),g&&(u=DOM.appendA(l,{id:"ago_calc_plunder"}),OBJ.iterateArray([50,75,100],function(e){DOM.appendSPAN(u,"ago_calc_plunder",e+"%").setAttribute("ago-data",'{"plunder":'+e+"}")})),l=DOM.appendTR(c),DOM.appendTD(l,"ago_calc_spacer"),DOM.appendTD(l,"ago_calc_spacer").colSpan=3,h=DOM.appendTR(c),l=DOM.appendTD(h,"ago_calc_speed"),u=DOM.appendA(l,{id:"speedLinks"}),G=1;G<=10;G++)(l=u.appendChild(document.createElement("span"))).textContent=10*G,l.setAttribute("data-value",G),l.setAttribute("ago-data",'{"speed":'+G+"}");if(i(G=DOM.appendTR(c,"ago_calc_consumption"),"ago_calc_consumption_total","F67"),i(M=DOM.appendTR(c,"ago_calc_duration"),"ago_calc_duration_total","F65"),10===d)for(t(p,PAGE[10],{routine:10,last:0},0===PAGE[10].last,2,PAGE[10].status),(l=DOM.appendTD(_,"ago_last")).colSpan=3,l.rowSpan=6,G=1;G<6;G++)(p=r(PAGE[10+G]))&&t(l,PAGE[10+G],{routine:10,last:G},PAGE[10].last===G,2,p);else 7===d?(e(_),e(m),e(h),e(G),e(M)):((A||g||O)&&(o(_,"metal"),o(_,"crystal"),O?DOM.appendTD(_):o(_,"deuterium"),n(m,"metal"),n(m,"crystal"),O?DOM.appendTD(m):n(m,"deuterium")),O?(s(h,"shipC","209"),DOM.appendTD(h,"ago_calc_ships"),DOM.appendTD(h,"ago_calc_ships"),i(G,"ago_calc_consumption_shipC"),DOM.appendTD(G),DOM.appendTD(G),i(M,"ago_calc_duration_shipC"),DOM.appendTD(M),DOM.appendTD(M)):5===d?(p&&(PAGE[5].last?(1===PAGE[5].last?t(p,{mission:PAGE[5].mission,speed:PAGE[5].speed,type:3,coords:" "},null,!0):t(p,PAGE[5],null,!0),DOM.appendA(p,"ago_target_reset btn_blue",null,{routine:5,last:-1}).textContent=AGO.Label.get("F39")):t(p,{mission:3,speed:10,type:3,coords:" "},{routine:5,last:1})),DOM.appendTD(_).colSpan=3,DOM.appendTD(m).colSpan=3,(l=DOM.appendTD(h)).colSpan=3,(l=DOM.appendTD(G)).colSpan=3,(l=DOM.appendTD(M)).colSpan=3):6===d?(p&&(PAGE[6].last?(t(p,{mission:8,speed:PAGE[6].speed,type:2,coords:" "}),DOM.appendA(p,"ago_target_reset btn_blue",null,{routine:6,last:-1}).textContent=AGO.Label.get("F39")):t(p,{mission:8,speed:1,type:2,coords:" "},{routine:6,last:1})),DOM.appendTD(_).colSpan=3,DOM.appendTD(m).colSpan=3,(l=DOM.appendTD(h)).colSpan=3,(l=DOM.appendTD(G)).colSpan=3,(l=DOM.appendTD(M)).colSpan=3):(s(h,"shipA","202"),s(h,"shipB","203"),A&&PAGE[2].thirdShip?s(h,"shipC",PAGE[2].thirdShip):DOM.appendTD(h,"ago_calc_ships"),i(G,"ago_calc_consumption_shipA"),i(G,"ago_calc_consumption_shipB"),A?i(G,"ago_calc_consumption_shipC"):DOM.appendTD(G),i(M,"ago_calc_duration_shipA"),i(M,"ago_calc_duration_shipB"),A?i(M,"ago_calc_duration_shipC"):DOM.appendTD(M)));DOM.appendChild(a,c),c=l=l=l=u=A=O=G=null},showShortcuts:function(){function e(e,t){var a,o;t&&((o=(a=DOM.appendA(e,{class:AGO.Token.getClassHover(t.type,t.owncoords),rel:AGO.Task.join(t,0)},{click:PAGE.onShortcuts,dblclick:PAGE.onShortcuts})).appendChild(document.createElement("span"))).className="ago_shortcuts_coords",o.textContent=t.galaxy||t.system||t.position?(t.galaxy||"- ")+":"+(t.system||" - ")+":"+(t.position||" -"):"",(o=a.appendChild(document.createElement("span"))).className="ago_shortcuts_icon",DOM.appendIMG(o,HTML.urlTypeIcon(t.type),"14px"),(o=a.appendChild(document.createElement("span"))).className="ago_shortcuts_icon",DOM.appendIMG(o,HTML.urlMissionIcon(t.mission),"14px"),(o=a.appendChild(document.createElement("span"))).className="ago_shortcuts_speed",o.textContent=0<t.speed&&t.speed<10?10*t.speed+"%":"")}var t,a,o,n,s,i,r;if(t=document.getElementById("inhalt")){if(a=DOM.appendDIV(null,{id:"ago_shortcuts",ago_display_status:AGO.Option.is("F14")?1:2}),(o=DOM.appendDIV(a,"ago_shortcuts_header")).addEventListener("click",PAGE.onShortcuts,!1),DOM.appendA(o,"ago_display_arrow"),o=DOM.appendTABLE(a,"ago_shortcuts_content",{width:"637",margin:"0px auto"},[256,18,365]),o=DOM.appendTR(o),n=DOM.appendTD(o,"ago_shortcuts_target"),DOM.appendSPAN(n,"ago_shortcuts_description","F40",10),s=NMR.minMax(AGO.Option.get("FL2",2),0,6)){for(r=0;r<s;r++)PAGE.getRoutine(10+r,"galaxy")&&e(n,PAGE[10+r]);DOM.appendSPAN(n,"ago_shortcuts_space")}for(s="F41 F42 F43 F44 F45 F46 F47 F48 F49".split(" "),r=0;r<s.length;r++)(i=AGO.Option.get(s[r],-1))&&e(n,AGO.Task.splitActive(i,0,4));n=DOM.appendTD(o,"ago_shortcuts_spacer"),n=DOM.appendTD(o,"ago_shortcuts_own"),DOM.set(n,null,null,null,{mouseover:PAGE.onShortcuts,mouseout:PAGE.onShortcuts}),DOM.appendSPAN(n,"ago_shortcuts_description"),AGO.Planets.iterate(1,function(e){var t,a;t=DOM.appendA(n,{rel:e.coords},{click:PAGE.onShortcuts,dblclick:PAGE.onShortcuts}),DOM.appendSPAN(t,"ago_shortcuts_coords",e.coords),DOM.appendSPAN(t,"ago_shortcuts_name",e.name),a=DOM.appendSPAN(t,"ago_shortcuts_moon"),(e=AGO.Planets.Data[e.moon])&&(DOM.appendIMG(a,e.img||HTML.urlTypeIcon(3),"18px"),DOM.appendTEXT(a,e.name)),a=DOM.appendSPAN(t,"ago_shortcuts_debris"),DOM.appendIMG(a,HTML.urlTypeIcon(2),"18px")}),DOM.before(t.querySelector("#buttonz .content .footer"),a)}t=a=o=o=n=s=null},Display:function(){function e(e,t){var a=!e||t<0?"":t<=e?"ago_color_green":"ago_color_palered";DOM.updateText("ago_info_capacity","id",e,3),DOM.updateClass("ago_info_capacity","id",a)}function t(e){return PAGE.Mission[e]&&(2===s.type?8===e&&s[209]:8!==e&&(15===e?16===s.position:s.owncoords&&(s.owncoords<3||n.stopActiveSelection)?VAL.check(e,3,4):6===e?s[210]:7===e?s[208]:9===e?s[214]&&(3<=s.owncoords||3===s.type):4!==e||s.owncoords))?e:0}function a(e,t){return AGO.Planets.ByCoords[e]?2===t?1:e!==AGO.Acc.coords?2:t===AGO.Acc.type?4:3:0}var o,n,s,i,r,c,p;if(o=AGO.Units.Data,n=PAGE.Next,(i=document.getElementById("inhalt"))&&7<=AGO.Init.status){if(n.routine=r=PAGE.Para.calculator,DOM.iterate(i.querySelectorAll(".fleetValues"),function(e){var t;t=STR.check(NMR.parseIntAbs(e.id)),e=+e.value||0,t in AGO.Item.Ship&&(e!==n[t]&&AGO.Option.is("F02")&&(DOM.updateText("anti_ship_"+t,"id",e?o[t]-e:0,2),DOM.setStyleColor("anti_ship_"+t,"id","#00B000")),n[t]=e)}),n.distance=AGO.Ogame.getFleetDistance(AGO.Acc,n),AGO.Task.updateShips(n,n.distance),c=2!==r||n.resources||AGO.Option.is("F51"),(s=OBJ.create(n)).type=s.type||(3===r?PAGE.Type.check(AGO.Option.get("FA1",2)):0)||AGO.Acc.type,s.owncoords=a(s.coords,s.type),s.ships){switch(s.status=PAGE.getRoutine(r,"status"),16===s.position?c&&(s.mission=15,s.type=1,s.owncoords&&(s.owncoords=1)):s.ships===s[210]?s.owncoords&&(s.owncoords<3||n.stopActiveSelection)?s.mission=4:!s.mission&&AGO.Option.is("F53")&&(s.mission=1===s.ships?1:6):s.ships!==s[209]||n.stopAutoHarvest||n.resources||!AGO.Option.is("F52")||1!==PAGE.getRoutine(r)||(s.mission=8,s.type=2,s.owncoords&&(s.owncoords=a(s.coords,s.type))),r){case 2:n.resources?(s.mission=(s.owncoords?0:3)||VAL.select(s.mission,3,4)||VAL.select(PAGE.Para.mission,3,4),s.status=n.capacity>=n.consumption+n.resources?3:1):(s.mission=t(s.mission)||t(PAGE.Para.mission),s.status=0);break;case 3:s.mission=t(s.mission)||t(1),s.status=1!==s.mission&&2!==s.mission?0:s.status;break;case 4:s.type=s[209]?2:s.type,s.owncoords&&(s.owncoords=a(s.coords,s.type)),s.mission=t(s.mission)||t(8),s.status=8!==s.mission?0:s[209]*AGO.Item[209].capacity>=n.metal+n.crystal?3:1;break;case 5:s.mission=t(s.mission)||t(PAGE[5].mission),s.status=s.owncoords<2||!VAL.check(s.mission,3,4)?0:s.status;break;case 6:s.mission=t(s.mission)||t(PAGE[6].mission);break;case 7:s.type=1,s.owncoords&&(s.owncoords=a(s.coords,s.type)),s.mission=t(15),s.status=15!==s.mission?0:s.status;break;case 10:p=10+(+PAGE[10].last||0),s.status=PAGE.getRoutine(p,"status"),s.status&&(s.mission=t(s.mission)||t(PAGE[p].mission),n.routine=PAGE[p].routine||1)}s.mission||(s.mission=16===s.position?15:2===s.type&&s[209]?8:t(PAGE[2].mission)||3)}else s.status=s.mission=0;switch(s.typeActive=s.type,c&&s.owncoords&&(s.typeActive=2===s.type?s.type:AGO.Planets.GetByCoords(s.coords,"moon",6)?s.owncoords<3?s.type:1===AGO.Acc.type?3:1:1),DOM.updateValue('input[name="mission"]',i,s.mission,8),DOM.updateValue('input[name="type"]',i,s.type,8),DOM.iterateChildren(document.getElementById("ago_type"),function(e){var t,a;a=DOM.getAttribute(e,null,"ago-data",-2).type,(t=AGO.Item.Type[a])&&(a===s.type&&(t+=" selected"),3===r&&a===AGO.Option.get("FA1",2)&&(t+=" ago_calc_selected"),DOM.updateClass(e,null,t))}),r){case 2:n.resources?e(n.capacity,n.resources):n.ships?e(n.capacity,o.resources):e(o.capacity,o.resources),DOM.updateText("ago_info_freight","id",n.resources,3);break;case 4:e(s[209]*AGO.Item[209].capacity,n.resources),DOM.updateText("ago_info_freight","id",n.metal+n.crystal,3);break;case 5:p=PAGE[5].freight,n.ships?e(n.capacity-n.consumption,p):e(o.capacity,p),DOM.updateText("ago_info_freight","id",p,3);break;case 6:p=PAGE[6].freight,n.ships?e(n.capacity-n.consumption,p):e(o.capacity,p),DOM.updateText("ago_info_freight","id",p,3);break;case 7:n.ships?e(n.capacity-n.consumption,-1):e(n.capacity,-1),DOM.updateText("ago_info_expo","id",n.expoints,3),i=n.expoints>=PAGE[7].points?"ago_color_green":"ago_color_palered",DOM.updateClass("ago_info_expo","id",i);break;case 3:case 10:n.ships?e(n.capacity-n.consumption,o.resources):e(o.capacity,o.resources),DOM.updateText("ago_info_freight","id",0,3)}n.routine=s.status?n.routine:0,DOM.updateClass("ago_routine","id","ago_routine_status_"+s.status),DOM.updateText("ago_info_resources","id",o.resources,3),DOM.updateText("ago_info_civil","id",n.shipsCivil,3),DOM.updateText("ago_info_combat","id",n.shipsCombat,3),DOM.updateText("ago_continue_coords","id",s.coords),DOM.updateAttribute("ago_continue_type","id","src",HTML.urlTypeIcon(s.typeActive,"b")),DOM.updateAttribute("ago_continue_mission","id","src",HTML.urlMissionIcon(s.mission)),p=PAGE.Para.sendingEnabled?2!==r||n.resources?2<=s.status?2:1:2:0,DOM.updateAttribute("continue","id","ago-status",p,8),n.ships||DOM.updateClass("continue","id","off"),PAGE.displayShortcuts(s),PAGE.displayCalculator(),AGO.Init.Messages("Planets","Action",{mode:"select",coords:s.coords,type:s.typeActive})}PAGE.lockedDisplay=!1,o=n=s=i=r=c=p=i=null},displayCalculator:function(){function e(e,t){DOM.updateText("ago_calc_available_"+e,"id",t,3),DOM.updateClass("ago_calc_available_"+e,"id",t<0?"ago_color_palered":"")}function t(e,t){var a,o,n,s,i;t&&(o=AGO.Ogame.getFleetDuration(t,c.distance,c.speed),n=AGO.Ogame.getShipConsumption(t,c.distance,o),s=Math.max(0,Math.ceil(c.resources/(AGO.Item[t].capacity-Math.round(n)-1))),(a=document.getElementById("ago_calc_ships_"+e))&&(DOM.updateText(a,null,s,3)&&(i=s?r[t]>=s?"ago_color_lightgreen":"ago_color_palered":"ago_color_blue",DOM.updateClass(a,null,i)),a.parentNode.className=t===PAGE[PAGE.Para.calculator].preferShip?"ago_calc_selected":""),n=s?Math.round(n*s)+1:0,DOM.updateText("ago_calc_consumption_"+e,"id",n,3)&&(i=r.deuterium>n?"":"ago_color_palered",DOM.updateClass("ago_calc_consumption_"+e,"id",i)),DOM.updateText("ago_calc_duration_"+e,"id",o,18))}var r,c,a,o,n;r=AGO.Units.Data,c=PAGE.Next,document.getElementById("planet")&&2===DOM.getAttribute("ago_summary","id","ago_display_status",2)&&(n=0,(a=document.getElementById("speedLinks"))&&!DOM.hasClass(DOM.getChildren(a,c.speed-1),null,"selected")&&DOM.iterateChildren(a,function(e){e.className=++n===c.speed?"selected":""}),DOM.updateText("ago_calc_consumption_total","id",c.consumption,3),DOM.updateText("ago_calc_duration_total","id",c.duration,18),3===PAGE.Para.calculator?(o={50:n=0,75:1,100:2}[c.plunder]||0,(a=document.getElementById("ago_calc_plunder"))&&!DOM.hasClass(DOM.getChildren(a,o),null,"selected")&&DOM.iterateChildren(a,function(e){e.className=o===n++?"selected":""}),t("shipA","202"),t("shipB","203")):4===PAGE.Para.calculator?t("shipC","209"):(e("total",r.resources-c.resources),e("metal",r.metal-c.metal),e("crystal",r.crystal-c.crystal),e("deuterium",r.deuterium-c.deuterium-c.consumption),2===PAGE.Para.calculator&&(t("shipA","202"),t("shipB","203"),t("shipC",PAGE[2].thirdShip)),5===PAGE.Para.calculator&&DOM.updateText("ago_collect_coords","id",AGO.Fleet.Get("Routine","Collect",6))))},displayShortcuts:function(o){var e;(e=document.getElementById("ago_shortcuts"))&&DOM.iterateChildren(e.querySelector(".ago_shortcuts_own"),function(e){var t,a;"A"===e.nodeName&&(t=(a=e.getAttribute("rel"))===AGO.Acc.coords?AGO.Token.getClassHighlight(AGO.Acc.type):"",DOM.setClassGroup(e,null,"ago_highlight",t),t=a===o.coords?" "+AGO.Token.getClassSelected(o.typeActive,!0):"",DOM.setClassGroup(e,null,"ago_selected",t))}),e=null},Action:function(o){function e(t){var e;28===t.action?(e=t.id)in AGO.Item.Resource&&(i[e]=2!==a.calculator?0:i[e]?PAGE.lastActive==="ago_calc_resource_"+e?Math.max(s[e]-i[e],0):0:s[e],DOM.setValue("ago_calc_resource_"+e,"id",i[e],8)):t.action&&OBJ.iterate(AGO.Item.Resource,function(e){i[e]=21===t.action?AGO.Units.Data[e]:22===t.action?Math.max(AGO.Units.Data[e]-PAGE.Mini[e],0):23===t.action?0:+t[e]||0,DOM.setValue("ago_calc_resource_"+e,"id",i[e],8)})}function n(a){i.ships=0,OBJ.iterate(AGO.Item.Ship,function(e){var t;"212"!==e&&(t=12===a.action?Math.max(s[e]-PAGE.Mini[e],0):+a[e]||0,i[e]=Math.min(t,s[e]),i.ships+=i[e],t=t?s[e]-t:0,s[e]&&DOM.updateValue("ship_"+e,"id",i[e],0,"change"),DOM.updateText("anti_ship_"+e,"id",t,2),DOM.setStyleColor("anti_ship_"+e,"id",t<0?"#E41615":"#00B000"))})}var s,a,i,t,r,c,p,l,u;if(s=AGO.Units.Data,a=PAGE.Para,i=PAGE.Next,(t=document.getElementById("inhalt"))&&AGO.Init.status&&OBJ.hasProperties(o)){switch(PAGE.lockedDisplay=!0,(r=PAGE.getRoutine(o.routine)?o.routine:0)?(i.routine=i.mission=i.stopActiveSelection=0,1===PAGE.getRoutine(r)?(r!==a.calculator&&(i.stopAutoHarvest=2!==r,i.resources&&e({action:23}),2===i.type&&(i.type=0)),2<=PAGE.getRoutine(a.calculator)&&(n({action:o.speed=10}),AGO.Task.updateCoordsType(o,a.coordstype),4<=o.owncoords&&(i.type=o.type=0))):2<=PAGE.getRoutine(r)&&(i.resources&&e({action:23}),10===r?PAGE.getRoutine(r+(+o.last||0),"status")&&(PAGE[10].last=+o.last||0,c=o.target?0:2,o=AGO.Task.create(PAGE[r+PAGE[10].last],c),AGO.Task.updateResources(o),o.resources&&(o.action=20,e(o)),o.action=2===c?10:0):(PAGE.Init(r,o.last),(o=AGO.Task.create(PAGE[r],2)).action=10),o.speed=o.speed||10,10===o.action&&n(o)),a.calculator=r,PAGE.showCalculator()):(VAL.check(o.action,12,10)&&n(o),o.mission=PAGE.Mission.check(o.mission),VAL.check(o.action,41,42)&&((o.type||o.mission)&&(i.stopAutoHarvest=1),o.type&&(i.stopActiveSelection=1)),3<=o.owncoords&&(i.type=0,i.owncoords<3&&(o.type=0)),4===a.calculator&&(o.type=0)),o.type=PAGE.Type.check(o.type),AGO.Task.updateCoords(o,4),OBJ.iterate(AGO.Item.CoordinatesType,function(e){o[e]&&(i[e]=o[e],"type"!==e&&(DOM.setValue('input[name="'+e+'"]',t,o[e],8),DOM.setValue("ago_"+e,"id",o[e])))}),AGO.Task.updateCoords(i,3),i.owncoords&&(i.owncoords=AGO.Planets.owncoords(i.coords,i.type||AGO.Acc.type)),i.owncoords<3&&(i.stopActiveSelection=0),o.arrival&&(i.coordsMarked=o.coords||"",i.arrivalMarked=+o.arrival||0),OBJ.iterateArray(["holdingtime","expeditiontime","union","retreatAfterDefenderRetreat","preferResource"],function(e){i[e]=+o[e]||0}),VAL.check(o.plunder,50,75,100)&&(i.plunder=o.plunder),NMR.isMinMax(o.speed,1,10)&&(i.speed=o.speed,DOM.setValue('input[name="speed"]',t,i.speed,8)),VAL.check(o.action,20,21,22,23,28)&&e(o),AGO.Task.updateResources(i),o.recalculate=i.coords+":"+i.speed!==i.previousTarget&&i.resources||i.metal+":"+i.crystal+":"+i.deuterium!==i.previousResources&&("0:0:0"!==i.previousResources||i.resources),a.calculator){case 2:!function(){function e(e){var t=AGO.Ogame.getShipCapacity(e,o.distance,i.speed);s[e]&&0<t&&(o[e]=Math.min(Math.ceil(a/t),s[e]),a-=o[e]*t)}var t,a;t=PAGE[2].preferShip,19===o.action&&o.id in AGO.Item.Ship&&(t=o.id),i.mission=o.mission||i.mission,a=i.resources,(o.recalculate||19===o.action)&&(o.speed=i.speed,o.distance=AGO.Ogame.getFleetDistance(AGO.Acc,i),e(t),0<a&&"203"!==t&&e("203"),0<a&&"202"!==t&&e("202"),0<a&&t!==PAGE[2].thirdShip&&PAGE[2].thirdShip&&e(PAGE[2].thirdShip),0<a&&(o[t]+=Math.ceil(a/AGO.Ogame.getShipCapacity(t,o.distance,o.speed))),(VAL.check(o.action,21,22)||28===o.action&&"deuterium"===o.id)&&i.deuterium&&(AGO.Task.updateShips(o,o.distance),i.deuterium-=o.consumption,DOM.setValue("ago_calc_resource_deuterium","id",i.deuterium,8)),o.action=10,n(o)),t=a=null}();break;case 3:o.stop=o.owncoords&&41===o.action,AGO.Task.updateShips(o),o.ships&&(o.action=10,o[202]?0<(u=o[202]-s[202])&&(PAGE[3].status=2,o[202]=s[202],o[203]=Math.ceil(u/5),o[203]>s[203]&&(PAGE[3].status=1)):0<(u=o[203]-s[203])&&(PAGE[3].status=2,o[203]=s[203],o[202]=5*u,o[202]>s[202]&&(PAGE[3].status=1)),n(o));break;case 4:o.stop=2!==o.type&&42===o.action,l=i.metal+i.crystal,o.recalculate&&(p=AGO.Ogame.getFleetDistance(AGO.Acc,i),p=AGO.Ogame.getShipCapacity("209",p,i.speed),o[209]=Math.ceil(l/p),o.action=10,n(o));break;case 5:o.stop=!i.owncoords||2===i.type,i.mission=VAL.select(o.mission,3,4)||i.mission,2<=o.owncoords&&41===o.action&&(PAGE.Init(5,2,o.coordstype),PAGE.showCalculator());break;case 7:o.stop=VAL.check(o.action,11,12);break;case 6:i.mission=o.mission||i.mission;break;case 10:i.mission=o.mission||i.mission}if(o.stop)return void PAGE.Action({routine:2,action:13})}i.previousTarget=i.coords+":"+i.speed,i.previousResources=i.metal+":"+i.crystal+":"+i.deuterium,PAGE.Display(),s=a=i=t=r=c=null},Continue:function(){var t;DOM.hasClass("continue","id","on")&&(t={},DOM.addClass("continue","id","ago_selected_button"),DOM.addClass("ago_routine","id","ago_selected"),PAGE.Next.routine=PAGE.Next.routine||PAGE.getRoutine(1,"status"),OBJ.iterateFilter(PAGE.Next,function(e){t[e]=PAGE.Next[e]},PAGE.filterContinue),AGO.Fleet.Set("Current",{Task2:JSON.stringify(t)}),window.setTimeout(function(){AGO.Init.status&&(DOM.removeClass("continue","id","ago_selected_button"),DOM.removeClass("ago_routine","id","ago_selected"))},1500))},getRoutine:function(e,t){return e&&PAGE[e]&&+PAGE[e][t||"group"]||0},Mission:{1:1,2:1,3:1,4:1,5:1,15:1,check:function(e){return this[e]?e:0}},Type:{1:1,3:1,check:function(e){return this[e]?e:0}},onKeydown:function(e){if(13===e.keyCode)return DOM.hasClass("continue","id","on")?DOM.click("#continue.on"):(DOM.click("#ago_routine_"+PAGE.Para.calculator),2<=PAGE.getRoutine(PAGE.Para.calculator)&&2<=PAGE.getRoutine(PAGE.Para.calculator,"status")&&DOM.click("#continue.on")),!1;if(12!==e.inputType){if(65===e.keyCode)return DOM.click("#sendall"),!1;if(77===e.keyCode)return DOM.click("span.send_most a"),!1;if(81===e.keyCode)return DOM.click("span.send_none a"),!1;if(84===e.keyCode)return DOM.click("#ago_routine_2"),!1;if(82===e.keyCode)return DOM.click("#ago_routine_4"),!1;if(83===e.keyCode)return DOM.click("#ago_routine_5"),!1;if(70===e.keyCode)return DOM.click("#ago_routine_6"),!1;if(69===e.keyCode)return DOM.click("#ago_routine_7"),!1;if(76===e.keyCode)return DOM.click("#ago_routine_10"),!1}return 11!==e.inputType||38!==e.keyCode&&40!==e.keyCode||!AGO.Item.Ship[STR.check(NMR.parseIntAbs(e.target.id))]&&!HTML.hasClass(e.target.className,"ago_keys_arrows")||DOM.changeInput(e,e.target)},onSwipe:function(e){"diagUp"===e&&DOM.click("span.send_none a"),"diagDown"===e&&DOM.click("span.send_most a"),"left"===e&&DOM.click('#menuTable .menubutton[href*="page=fleet1"]'),"right"===e&&PAGE.onKeydown({keyCode:13})},onBriefing:function(e){7<=AGO.Init.status&&("continue"===(e=DOM.getData(e.target,null,5)).action?DOM.hasClass("continue","id","on")||PAGE.Action({action:12}):e.action&&PAGE.Action(e))},onCalculator:function(e){var t,a,o,n;if(t=e&&e.target?e.type:"",a=DOM.getData(e.target,null,2),"click"===t&&(e.stopPropagation(),"ago_display_arrow"===e.target.className&&(o=1<DOM.getAttribute("ago_summary","id","ago_display_status",2)?1:2,DOM.setAttribute("ago_summary","id","ago_display_status",o,8),AGO.Option.set("F13",2!==o,1),PAGE.displayCalculator())),7<=AGO.Init.status&&t&&OBJ.hasProperties(a)){if(n=a.id,o=a.type||19===a.action,PAGE.timeoutCalculator)window.clearTimeout(PAGE.timeoutCalculator);else if("click"===t&&o)return!0;if("mousedown"===t){if(o){var s=JSON.stringify(a);PAGE.timeoutCalculator=window.setTimeout(function(){var e,t;PAGE.timeoutCalculator=null,t=(e=OBJ.parse(s)).id,19===e.action&&t in AGO.Item.Ship?(2===PAGE.Para.calculator&&(AGO.Option.set("F62","202"===t?0:"203"===t?1:2,2),PAGE.Init(2),PAGE.Action(e)),3===PAGE.Para.calculator&&(AGO.Option.set("FA2","202"===t,1),PAGE.Init(3),PAGE.Action(e))):VAL.check(e.type,1,3)&&3===PAGE.Para.calculator&&(t=AGO.Option.get("FA1",2)===e.type?0:e.type,AGO.Option.set("FA1",t,2),PAGE.Action(e))},1e3)}}else n in AGO.Item.Coordinates?(a[n]=o=NMR.parseIntAbs(e.target.value),"focus"===t&&o?(e.target.setAttribute("ago_value",o),o=0):"blur"!==t||o?o&&(o=AGO.Task.checkCoordsPart(o,n)):o=NMR.parseIntAbs(e.target.getAttribute("ago_value")),a[n]!==o&&(a[n]=o,e.target.value=STR.check(o)),PAGE.Action(a)):n in AGO.Item.Resource?("INPUT"===e.target.nodeName?("blur"===t&&PAGE.onActive(e.target.id),o=NMR.parseIntShortcut(e.target.value),t="click"!==t||o?"dblclick"===t?"":"blur"!==t||o?STR.check(o):"0":"",PAGE.Next[n]=+t||0,t!==e.target.value&&(e.target.value=t)):PAGE.Next[n]=DOM.getValue("ago_calc_resource_"+n,"id",3),PAGE.Action(a)):"click"===t&&(PAGE.Para.calculator!==a.routine||!PAGE.Next.ships||void 0!==a.last&&a.last!==PAGE[a.routine].last?(PAGE.Para.calculator===a.routine&&1===PAGE.getRoutine(a.routine)&&(1===DOM.getAttribute("ago_summary","id","ago_display_status",2)?(DOM.setAttribute("ago_summary","id","ago_display_status",2,8),PAGE.displayCalculator()):2!==a.routine||PAGE.Next.ships||PAGE.Next.resources||(a.action=22)),PAGE.Action(a)):DOM.click("#continue.on"))}t=a=o=t=o=n=null},onShortcuts:function(e){var t,a,o;!(a=e&&e.target?e.type:"")||AGO.Init.status<7||("click"===a&&e.currentTarget?"ago_shortcuts_header"===e.currentTarget.className?(t=1<DOM.getAttribute("ago_shortcuts","id","ago_display_status",2)?1:2,DOM.setAttribute("ago_shortcuts","id","ago_display_status",t,8),AGO.Option.set("F14",2!==t,1)):(t=e.currentTarget.rel||"",DOM.hasClass(e.currentTarget.parentNode,null,"ago_shortcuts_own")&&(t+=":"+("ago_shortcuts_moon"===(o="SPAN"===e.target.nodeName?e.target.className:e.target.parentNode.className)?3:"ago_shortcuts_debris"===o?2:1)),(e=AGO.Task.split(t,2,4)).routine=0,e.action=41,PAGE.Action(e)):"dblclick"===a?AGO.Option.is("U34")&&DOM.click("#continue"):("A"===e.target.nodeName?t=e.target:"SPAN"===e.target.nodeName?(o=e.target.className,t=e.target.parentNode):"SPAN"===e.target.parentNode.nodeName&&(o=e.target.parentNode.className,t=e.target.parentNode.parentNode),t&&"A"===t.nodeName&&DOM.setClassGroup(t,null,"ago_hover",AGO.Token.getClassHover("ago_shortcuts_moon"===o?3:"ago_shortcuts_debris"===o?2:1,"own"))))},onActive:function(e){PAGE.lastActive=e,window.setTimeout(function(){PAGE.lastActive=""},150)}},AGO.Task.updateShips=function(a,t){var o;OBJ.is(a)&&(a.consumption=1,a[212]=0,a.ships=a.shipsCivil=a.shipsCombat=a.capacity=a.expoints=a.minspeed=0,OBJ.iterate(AGO.Item.Ship,function(e){var t;(t=a[e])&&(e in AGO.Item.ShipCivil?a.shipsCivil+=t:a.shipsCombat+=t,a.ships+=t,a.capacity+=t*AGO.Item[e].capacity,a.expoints+=(AGO.Item[e].metal+AGO.Item[e].crystal)/200*t,t=AGO.Ogame.getShipSpeed(e),(!a.minspeed||t<a.minspeed)&&(a.minspeed=t,o=e))}),t&&(a.duration=AGO.Ogame.getFleetDuration(o,t,a.speed),OBJ.iterate(AGO.Item.Ship,function(e){a[e]&&(a.consumption+=a[e]*AGO.Ogame.getShipConsumption(e,t,a.duration))}),a.consumption=Math.round(a.consumption)))};
+AGO.Fleet1 = {
+  filterContinue: "routine holdingtime expeditiontime union retreatAfterDefenderRetreat metal crystal deuterium preferResource arrivalUnion nameUnion coordsMarked arrivalMarked".split(
+    " "
+  ),
+  Messages: function(a, e) {
+    "Action" === a
+      ? PAGE.Action(e)
+      : "Continue" === a
+        ? PAGE.Continue()
+        : PAGE.lockedDisplay || ("Display" === a && PAGE.Display());
+  },
+  Read: function() {
+    var a, e, h, f, c, b;
+    e = AGO.Fleet1.Para = {};
+    a = AGO.Units.Data;
+    a.ships = a.shipsCivil = a.shipsCombat = a.capacity = 0;
+    OBJ.iterate(AGO.Item.Ship, function(b) {
+      a[b] = 0;
+    });
+    PAGE.layout = AGO.Option.is("F01");
+    if ((h = document.getElementById("inhalt")))
+      if (
+        ((a.page = AGO.App.page),
+        DOM.iterate(h.querySelectorAll('#buttonz li[id^="button"]'), function(
+          b
+        ) {
+          var c;
+          c = STR.check(NMR.parseIntAbs(b.id));
+          b = DOM.getTextChild(".level", b, 3);
+          c in AGO.Item.Ship &&
+            ((a[c] = b),
+            (a.ships += b),
+            (a.capacity += b * AGO.Item[c].capacity));
+        }),
+        (f = h.querySelector(".fleetStatus #slots")))
+      )
+        (f = f.querySelectorAll("span.tooltip")),
+          2 === f.length &&
+            ((b = (DOM.getText(f[0]).split(":")[1] || "").trim().split("/")),
+            AGO.Fleet.Set("Current", {
+              fleets: +b[0] || 0,
+              fleetsSlots: +b[1] || 0
+            }),
+            (b = (DOM.getText(f[1]).split(":")[1] || "").trim().split("/")),
+            AGO.Fleet.Set("Current", {
+              expos: +b[0] || 0,
+              exposSlots: +b[1] || 0
+            }));
+    h &&
+      AGO.Option.is("F00") &&
+      ((PAGE.enabled = !0),
+      DOM.iterate(
+        document.querySelectorAll(
+          '#buttonz .content > form input[type="hidden"]'
+        ),
+        function(a) {
+          var b, d;
+          if ((b = STR.trim(a.name)))
+            (d = NMR.parseIntAbs(b)), (e[200 < d ? d : b] = +a.value || 0);
+        }
+      ),
+      (f = h.querySelectorAll("#fleetStatusBar li")),
+      3 <= f.length &&
+        ((h = STR.trim(DOM.getText(f[1], null).split("]")[1])),
+        (e.planetName = 1 === e.type ? h : ""),
+        (e.moonName = 3 === e.type ? h : ""),
+        (e.playerHonor = AGO.Ogame.getPlayerHonor(
+          DOM.getAttribute("span.honorRank", f[2], "class")
+        )),
+        (e.playerStatus =
+          AGO.Token.getPlayerStatus('span[class^="status_abbr"]', f[2]) || 21),
+        (e.playerName = STR.trim(DOM.getText(f[2], null).split(":")[1]))),
+      (h = STR.check(document.location.search)),
+      -1 < h.indexOf("mission=") || -1 < h.indexOf("routine=")
+        ? ((c = STR.splitParameter(h)),
+          OBJ.iterate(c, function(a) {
+            var b = NMR.parseIntAbs(a);
+            e[200 < b ? b : a] = +c[a] || 0;
+          }))
+        : (h =
+            AGO.Background.Get("Fleet_Task", 6) ||
+            AGO.Fleet.Get("Current", "Task1", 6)) && OBJ.copy(OBJ.parse(h), e),
+      AGO.Task.updateResources(e),
+      AGO.Task.updateShips(e),
+      a["210"] && (PAGE.Mission[6] = 1),
+      a["208"] && (PAGE.Mission[7] = 1),
+      a["209"] && (PAGE.Mission[8] = PAGE.Type[2] = 1),
+      a["214"] && (PAGE.Mission[9] = 1),
+      (e.action = 0),
+      (e.type = PAGE.Type.check(e.type) || AGO.Acc.type),
+      AGO.Task.updateCoords(e, 2),
+      4 === e.owncoords && (e.type = 0),
+      (e.mission = PAGE.Mission.check(e.mission)),
+      (PAGE.Next = OBJ.create(e)),
+      (PAGE.Next.mission = 0),
+      (PAGE.Mini = AGO.Task.splitActive(AGO.Option.get("F31", -1), 2, 0)),
+      (PAGE[1] = {
+        status: e.mission && !e.routine ? 1 : 0
+      }),
+      PAGE.Init(2),
+      PAGE.Init(3),
+      PAGE.Init(4),
+      PAGE.Init(5),
+      PAGE.Init(6),
+      PAGE.Init(7),
+      PAGE.Init(10),
+      (e.calculator = AGO.Fleet.Get("Current", "Calculator")),
+      (e.calculator = PAGE.getRoutine(e.routine)
+        ? e.routine
+        : 1 === e.mission
+          ? 3
+          : 8 === e.mission
+            ? 4
+            : e.mission || e.resources
+              ? 2
+              : PAGE.getRoutine(e.calculator)
+                ? e.calculator
+                : 2),
+      AGO.Background.Set("Fleet_Task", ""),
+      AGO.Fleet.Set("Current", "Task1", ""));
+    a = e = c = h = f = f = h = h = b = null;
+  },
+  Init: function(a, e, h) {
+    function f(a) {
+      return AGO.Item.Ship[a]
+        ? (AGO.Item[a].metal + AGO.Item[a].crystal) / 200
+        : 0;
+    }
+
+    var c, b, g, k, d, l;
+    c = AGO.Units.Data;
+    switch (a) {
+      case 2:
+        b = PAGE[2] = {
+          group: 1,
+          label: AGO.Label.get("F60")
+        };
+        b.mode = 3;
+        b.freight = 0;
+        OBJ.iterate(AGO.Item.Resource, function(a) {
+          b.freight += Math.max(c[a] - PAGE.Mini[a], 1);
+        });
+        b.mission = AGO.Option.is("F54") ? 4 : 3;
+        b.thirdShip = AGO.Item.check(AGO.Option.get("F63", 6), AGO.Item.Ship);
+        b.thirdShip = VAL.check(b.thirdShip, "202", "203") ? 0 : b.thirdShip;
+        b.preferShip =
+          ["202", "203"][AGO.Option.get("F62", 2)] || b.thirdShip || "203";
+        b.preferCargo = "202" === b.preferShip ? "202" : "203";
+        b.secondCargo = "203" === b.preferCargo ? "202" : "203";
+        b.need_smallCargo = Math.ceil(b.freight / 5e3);
+        b.need_largeCargo = Math.ceil(b.freight / 25e3);
+        b.need_thirdShip = Math.ceil(
+          b.freight / AGO.Item[b.thirdShip || "209"].capacity
+        );
+        a = "203" === b.preferCargo ? b.need_largeCargo : b.need_smallCargo;
+        b.status =
+          a <= c[b.preferCargo]
+            ? 3
+            : b.need_smallCargo <= c["202"] + 5 * c["203"]
+              ? 2
+              : c.ships
+                ? 1
+                : 0;
+        break;
+      case 3:
+        a = PAGE[3] = {
+          group: 1,
+          mode: AGO.Option.get("FA0"),
+          label: AGO.Label.get("FA0"),
+          status: c.ships ? 3 : 0
+        };
+        a.preferShip = AGO.Option.is("FA2") ? "202" : "203";
+        break;
+      case 4:
+        a = PAGE[4] = {
+          group: 1,
+          mode: AGO.Option.get("FH0"),
+          label: AGO.Label.get("FH0"),
+          status: c["209"] ? 3 : 0
+        };
+        break;
+      case 5:
+        g = PAGE[5] = AGO.Task.splitActive(AGO.Option.get("F81", -1), 1);
+        e &&
+          AGO.Fleet.Set("Routine", {
+            Collect: 1 === e ? "::::3:10::::1" : 2 === e ? h + "::::::2" : ""
+          });
+        l = AGO.Task.split(AGO.Fleet.Get("Routine", "Collect", 6), 0, 1);
+        l.routine &&
+          ((g.last = l.routine),
+          (l.routine = 0),
+          OBJ.iterate(l, function(a) {
+            l[a] && (g[a] = l[a]);
+          }));
+        1 === g.last
+          ? AGO.Task.updateCoordsType(g, AGO.Acc.coords + ":3")
+          : ((g.type = PAGE.Type.check(g.type) || 1),
+            AGO.Task.updateCoords(g, 2));
+        g.group = 2;
+        g.mode = AGO.Option.get("F80");
+        g.label = AGO.Label.get("F80");
+        g.mission = 4 === g.mission ? 4 : 3;
+        g.preferCargo = "202" === g.preferCargo ? "202" : "203";
+        g.secondCargo = "203" === g.preferCargo ? "202" : "203";
+        g.freight = 0;
+        OBJ.iterate(AGO.Item.Resource, function(a) {
+          g.freight += Math.max(c[a] - g[a], 1);
+        });
+        g.need_smallCargo = Math.ceil(g.freight / 5e3);
+        g.need_largeCargo = Math.ceil(g.freight / 25e3);
+        a = "203" === g.preferCargo ? g.need_largeCargo : g.need_smallCargo;
+        g.status = c.ships
+          ? 2 > g.owncoords || 4 <= g.owncoords
+            ? 1
+            : a <= c[g.preferCargo]
+              ? 3
+              : g.need_smallCargo <= c["202"] + 5 * c["203"]
+                ? 2
+                : 1
+          : 0;
+        g[g.preferCargo] = Math.min(a, c[g.preferCargo]);
+        g[g.secondCargo] =
+          c[g.preferCargo] < a
+            ? Math.ceil(
+                (a - c[g.preferCargo]) *
+                  AGO.Item[g.preferCargo].capacity /
+                  AGO.Item[g.secondCargo].capacity
+              )
+            : 0;
+        break;
+      case 6:
+        k = PAGE[6] = AGO.Task.splitActive(AGO.Option.get("F91", -1), 2, 3, !0);
+        k.group = 2;
+        k.mode = AGO.Option.get("F90");
+        k.label = AGO.Label.get("F90");
+        e &&
+          ((e = 1 === e ? "::::2:1::::1" : ""),
+          AGO.Fleet.Set("Routine", {
+            Save: e
+          }));
+        l = AGO.Task.split(AGO.Fleet.Get("Routine", "Save", 6), 0);
+        l.routine && ((k.last = l.routine), (k.speed = l.speed || 1));
+        1 === k.last &&
+          (AGO.Task.updateCoordsType(k, AGO.Acc.coords + ":2"),
+          (k.mission = 8));
+        a = k.mission;
+        k.type = PAGE.Type.check(k.type) || 1;
+        k.mission = PAGE.Mission.check(k.mission);
+        k.freight = 0;
+        OBJ.iterate(AGO.Item.Resource, function(a) {
+          k.freight += Math.max(c[a] - k[a], 1);
+        });
+        k.status =
+          c.capacity > k.freight && (k.mission || !a) ? 3 : c.ships ? 1 : 0;
+        OBJ.iterate(AGO.Item.Ship, function(a) {
+          k[a] = 0 < k[a] ? Math.max(c[a] - k[a], 0) : c[a];
+        });
+        (a = {
+          6: "210",
+          7: "208",
+          8: "209",
+          9: "214"
+        }[k.mission]) &&
+          !k[a] &&
+          (k[a] = 1);
+        break;
+      case 7:
+        d = PAGE[7] = AGO.Task.splitActive(AGO.Option.get("F71", -1), 0, 3);
+        d.group = 2;
+        d.mode = AGO.Option.get("F70");
+        d.label = AGO.Label.get("F70");
+        d.position = 16;
+        d.rangeCoords = d.detail2;
+        d.points = AGO.Ogame.chooseTopscore(
+          2500,
+          6e3,
+          9e3,
+          12e3,
+          15e3,
+          18e3,
+          21e3,
+          25e3
+        );
+        d.preferCargo = "202" === d.preferCargo ? "202" : "203";
+        d.secondCargo = "203" === d.preferCargo ? "202" : "203";
+        d.preferShip = AGO.Item.Ship[d.preferShip] ? d.preferShip : "";
+        e = d.points;
+        if (1 <= d.rangeCoords) {
+          d.next = AGO.Fleet.Get("Expo", AGO.Task.cutSystem(AGO.Acc.coords));
+          if (
+            d.next > d.system + d.rangeCoords ||
+            d.next > AGO.Uni.systems ||
+            d.next < d.system - d.rangeCoords ||
+            1 > d.next
+          )
+            (d.next = NMR.minMax(d.system - d.rangeCoords, 1, AGO.Uni.systems)),
+              AGO.Fleet.Set("Expo", AGO.Task.cutSystem(AGO.Acc.coords), d.next);
+          d.system = d.next;
+        }
+        AGO.Option.is("F73") && c["210"] && ((d["210"] = 1), (e -= 5));
+        d.preferShip &&
+          ((a = "204 205 206 207 215 211 213".split(" ")),
+          207 <= +d.preferShip && a.reverse(),
+          a.unshift(d.preferShip),
+          OBJ.iterateArray(a, function(a) {
+            !d.combatShip && c[a] && (d.combatShip = a);
+          }),
+          d.combatShip &&
+            ((d[d.combatShip] = 1), (e -= Math.ceil(f(d.combatShip)))));
+        d[d.preferCargo] = Math.min(
+          Math.ceil(e / f(d.preferCargo)),
+          c[d.preferCargo]
+        );
+        e -= Math.ceil(d[d.preferCargo] * f(d.preferCargo));
+        0 >= e
+          ? (d.status = d.preferShip && d.preferShip !== d.combatShip ? 2 : 3)
+          : ((d.status = c.ships ? 1 : 0),
+            (d[d.secondCargo] = Math.min(
+              Math.ceil(e / f(d.secondCargo)),
+              c[d.secondCargo]
+            )));
+        break;
+      case 10:
+        for (e = 0; 6 > e; e++)
+          (a = PAGE[10 + e] = AGO.Task.split(
+            AGO.Fleet.Get("Last", e, 6),
+            2,
+            1
+          )),
+            (a.status = a.coords && c.ships ? 3 : 0);
+        PAGE[10].group = 3;
+        PAGE[10].mode = AGO.Option.get("FL0");
+        PAGE[10].label = AGO.Label.get("FL0");
+    }
+    c = a = b = g = k = d = a = a = l = a = e = a = e = null;
+  },
+  Run: function() {
+    PAGE.enabled && PAGE.Show();
+  },
+  Ready: function() {
+    var a, e;
+    a = PAGE.Para;
+    PAGE.enabled &&
+      ((a.sendingEnabled =
+        +AGO.Global.message({
+          role: "getProperty",
+          property: "sendingEnabled"
+        }) || 0),
+      2 <= PAGE.getRoutine(a.calculator)
+        ? 3 <= PAGE.getRoutine(a.calculator, "mode") &&
+          ((e = AGO.Task.create(PAGE[a.calculator], 0)), (e.routine = 0))
+        : 1 === PAGE.getRoutine(a.routine)
+          ? (e = AGO.Task.create(a, 2))
+          : AGO.Option.is("I83") &&
+            AGO.Acc.coords === a.coords &&
+            AGO.Panel.GetActive("Target", "id", 6) &&
+            ((e = {
+              arrival: AGO.Panel.GetActive("Target", "time")
+            }),
+            AGO.Task.updateCoordsType(
+              e,
+              AGO.Panel.GetActive("Target", "coords", 6)
+            )),
+      PAGE.Action(e));
+  },
+  Timer: function() {
+    DOM.updateText("ago_info_resources", "id", AGO.Units.Data.resources, 3);
+  },
+  Show: function() {
+    function a(a, b, c) {
+      var f, g;
+      f = {
+        action: 10
+      };
+      f[b] = c;
+      g = e[b]
+        ? c <= e[b]
+          ? "ago_color_lightgreen"
+          : 1 <= h.status
+            ? "ago_color_orange"
+            : "ago_color_darkorange"
+        : "ago_color_palered";
+      a = DOM.appendLI(
+        a,
+        {
+          "ago-data": JSON.stringify(f)
+        },
+        b,
+        12
+      );
+      DOM.appendSPAN(a, g, c, 2);
+    }
+
+    var e, h, f, c, b, g;
+    if ((f = document.getElementById("inhalt")))
+      if (
+        ((e = AGO.Units.Data),
+        (h = PAGE[2]),
+        DOM.extendClass(f, null, "ago ago_improve"),
+        PAGE.showSummary(),
+        (b = f.querySelector(".fleetStatus #slots")) &&
+          AGO.Option.is("F03") &&
+          DOM.setStyleDisplay(b.parentNode),
+        (b = f.querySelector("#buttonz .header")),
+        DOM.appendSPAN(b, {
+          id: "ago_info_combat"
+        }),
+        DOM.appendSPAN(b, {
+          id: "ago_info_civil"
+        }),
+        (g = AGO.Option.get("F02", 2)),
+        DOM.iterate(f.querySelectorAll('#buttonz li[id^="button"]'), function(
+          a
+        ) {
+          var b, c;
+          c = STR.check(NMR.parseIntAbs(a.id));
+          a = a.querySelector(".level");
+          g &&
+            c in AGO.Item.Ship &&
+            a &&
+            ((b = document.createDocumentFragment()),
+            VAL.check(g, 1, 3) &&
+              DOM.appendSPAN(
+                b,
+                "ago_items_textName ago_items_text ago_text_background",
+                c,
+                11
+              ),
+            VAL.check(g, 2, 3) &&
+              DOM.appendSPAN(
+                b,
+                "ago_items_textInfo ago_items_text ago_text_background",
+                AGO.Ogame.getShipSpeed(c),
+                2
+              ),
+            DOM.appendSPAN(b, {
+              class: "ago_items_textCount ago_items_text ago_text_background",
+              id: "anti_ship_" + c
+            }),
+            a.parentNode.parentNode.appendChild(b));
+        }),
+        (c = f.querySelector("#allornone .allornonewrap")))
+      ) {
+        DOM.addEvents(c, null, {
+          click: PAGE.onBriefing
+        });
+        if ((b = c.querySelector(".send_all")))
+          DOM.setData(b, null, {
+            action: 11
+          }),
+            DOM.setData(".send_none", c, {
+              action: 13
+            }),
+            (f = DOM.append(null, "span", "send_most", null, null, null, {
+              action: 12
+            })),
+            DOM.appendA(f, {
+              id: "sendmost",
+              class: "tooltip js_hideTipOnMobile",
+              title: AGO.Label.get("F37")
+            }),
+            DOM.after(b, f);
+        if ((b = c.querySelector("#continue")))
+          DOM.setData(b, null, {
+            action: "continue"
+          }),
+            (c = DOM.create("ul", "ago_cargos")),
+            a(c, "202", h.need_smallCargo),
+            a(c, "203", h.need_largeCargo),
+            DOM.after(b, c),
+            (b = b.firstElementChild),
+            (f = DOM.appendTABLE(null, "ago_continue", {
+              width: "100%"
+            })),
+            (c = DOM.appendTR(f)),
+            (DOM.appendTD(c).id = "ago_continue_coords"),
+            (DOM.appendIMG(
+              DOM.appendTD(c),
+              "/cdn/img/layout/pixel.gif",
+              "14px"
+            ).id =
+              "ago_continue_type"),
+            (DOM.appendIMG(
+              DOM.appendTD(c),
+              "/cdn/img/layout/pixel.gif",
+              "17px"
+            ).id =
+              "ago_continue_mission"),
+            (b.style.lineHeight = "18px"),
+            b.appendChild(f);
+      } else
+        (c = DOM.append(null, "ul", "ago_cargos")),
+          DOM.appendSPAN(
+            DOM.appendLI(c, null, "202", 11),
+            "ago_color_palered",
+            h.need_smallCargo,
+            2
+          ),
+          DOM.appendSPAN(
+            DOM.appendLI(c, null, "203", 11),
+            "ago_color_palered",
+            h.need_largeCargo,
+            2
+          ),
+          DOM.appendSPAN(
+            DOM.appendLI(c, null, h.thirdShip || "209", 11),
+            "ago_color_palered",
+            h.need_thirdShip,
+            2
+          ),
+          DOM.appendChild(f.querySelector("#warning"), c);
+    PAGE.showShortcuts();
+    e = h = f = c = b = f = c = f = g = null;
+  },
+  showSummary: function() {
+    function a(a, b, d) {
+      a = DOM.appendDIV(a);
+      a.textContent = AGO.Label.get(d);
+      DOM.appendSPAN(a, {
+        id: "ago_info_" + b
+      });
+    }
+
+    function e(a, b) {
+      DOM.append(
+        a,
+        "input",
+        {
+          id: "ago_" + b,
+          type: "text",
+          class: "ago_keys_arrows",
+          value: PAGE.Next[b] || "0"
+        },
+        null,
+        {
+          focus: PAGE.onCalculator,
+          blur: PAGE.onCalculator
+        },
+        null,
+        {
+          id: b
+        }
+      );
+    }
+
+    function h(a, b) {
+      return 0 === a
+        ? "ago_color_blue"
+        : a === b
+          ? "ago_color_palered"
+          : a === b - 1
+            ? "ago_color_orange"
+            : "ago_color_lightgreen";
+    }
+
+    var f, c, b, g, k, d, l, m, q;
+    if ((f = document.getElementById("planet")))
+      AGO.Task.updateResources(PAGE.Para),
+        (c = document.createDocumentFragment()),
+        (b = AGO.Fleet.Get("Current", "fleets")),
+        (k = AGO.Fleet.Get("Current", "fleetsSlots")),
+        (g = h(b, k)),
+        (d = DOM.appendA(c, {
+          href: AGO.Uni.path + "movement",
+          title: AGO.Label.get("E10"),
+          class: "ago_movement tooltip " + g
+        })),
+        (d.textContent = AGO.Label.get("F21") + ": " + b + "/" + k),
+        (b = AGO.Fleet.Get("Current", "expos")),
+        (k = AGO.Fleet.Get("Current", "exposSlots")),
+        (g = h(b, k)),
+        DOM.appendSPAN(d, g, AGO.Label.get("F22") + ": " + b + "/" + k),
+        PAGE.layout &&
+          (f.appendChild(c),
+          (f.style.height = "23px"),
+          (c = document.createDocumentFragment())),
+        (b = DOM.appendDIV(c, {
+          id: "ago_summary",
+          class: "ago_routine_" + PAGE.Para.calculator,
+          ago_display_status: AGO.Option.is("F13") ? 1 : 2
+        })),
+        DOM.addEvents(b, null, {
+          click: PAGE.onCalculator,
+          dblclick: PAGE.onCalculator,
+          keyup: PAGE.onCalculator,
+          mousedown: PAGE.onCalculator
+        }),
+        (g = DOM.appendTABLE(
+          b,
+          null,
+          null,
+          PAGE.layout ? [200, 407, 30] : [200, 417, 30]
+        )),
+        (k = DOM.appendTR(g)),
+        (d = DOM.appendTD(k, "ago_info")),
+        a(d, "resources", "I27"),
+        a(d, "capacity", "F23"),
+        a(d, "freight", "F24"),
+        a(d, "expo", "F26"),
+        (d = DOM.appendTD(k, {
+          id: "ago_routine"
+        })),
+        (d.colSpan = 2),
+        (m = q = 0),
+        (l = AGO.Label.get("F05") + ": "),
+        OBJ.iterateArray([2, 3, 4, 5, 6, 7, 10], function(a) {
+          var b;
+          b = "";
+          q++;
+          if (2 <= PAGE[a].mode || PAGE.Para.calculator === a) {
+            if ((3 < q && !m) || 7 === q) m = b = "ago_routine_space";
+            b = DOM.appendDIV(d, b);
+            b = DOM.appendA(
+              b,
+              {
+                id: "ago_routine_" + a,
+                class: "tooltip",
+                title: l + PAGE[a].label
+              },
+              null,
+              {
+                routine: a
+              }
+            );
+            DOM.appendSPAN(b, "ago_routine_check");
+            if (5 === a || 6 === a)
+              DOM.appendIMG(b, "", "18px").className = "ago_routine_last";
+          }
+        }),
+        (k = DOM.appendTR(g)),
+        (d = DOM.appendTD(k, "ago_coords")),
+        e(d, "galaxy"),
+        e(d, "system"),
+        e(d, "position"),
+        (g = DOM.appendA(d, {
+          id: "ago_type"
+        })),
+        DOM.append(g, "span", AGO.Item.Type[1], null, null, null, {
+          type: 1,
+          action: 42
+        }),
+        DOM.append(g, "span", AGO.Item.Type[3], null, null, null, {
+          type: 3,
+          action: 42
+        }),
+        (DOM.appendTD(k).id = "ago_details"),
+        (d = DOM.appendTD(k)),
+        DOM.appendA(d, "ago_display_arrow"),
+        PAGE.showCalculator(b),
+        PAGE.layout
+          ? DOM.appendChild(
+              document.querySelector("#buttonz .allornonewrap"),
+              c
+            )
+          : f.appendChild(c);
+    f = c = b = g = k = d = b = k = l = g = m = q = null;
+  },
+  showCalculator: function(a) {
+    function e(a) {
+      DOM.appendTD(a, "ago_calc_info").colSpan = 3;
+    }
+
+    function h(a, b, d, c, e, f) {
+      b &&
+        b.coords &&
+        ((c =
+          AGO.Token.getClassHover(b.type) +
+          (c ? " " + AGO.Token.getClassSelected(b.type) : "")),
+        (a = DOM.appendA(a, "ago_target " + c, null, d)),
+        (c = DOM.appendSPAN(a, "ago_target_coords", b.coords)),
+        2 === e && ((d.target = 1), DOM.setData(c, null, d)),
+        DOM.appendIMG(
+          DOM.appendSPAN(a, "ago_target_icon"),
+          HTML.urlTypeIcon(b.type),
+          "14px"
+        ),
+        DOM.appendIMG(
+          DOM.appendSPAN(a, "ago_target_icon"),
+          HTML.urlMissionIcon(b.mission),
+          "14px"
+        ),
+        DOM.appendSPAN(a, "ago_target_speed", 10 * b.speed + "%"),
+        e &&
+          ((d = b.routine ? "R" : ""),
+          DOM.appendSPAN(a, "ago_target_name", d),
+          DOM.appendSPAN(a, "ago_target_ships", b.ships, 2),
+          DOM.appendSPAN(a, "ago_target_res", b.resources, 2)),
+        2 <= f &&
+          DOM.appendSPAN(a, "ago_routine_check ago_routine_check_" + f));
+    }
+
+    function f(a, b) {
+      var d;
+      d = DOM.appendTD(a, "ago_calc_available");
+      d = DOM.appendA(d, null, null, {
+        action: 28,
+        id: b
+      });
+      DOM.appendSPAN(d, "ago_calc_available_icon " + b, "\u2009");
+      DOM.appendSPAN(d, {
+        id: "ago_calc_available_" + b
+      });
+    }
+
+    function c(a, b) {
+      DOM.append(
+        DOM.appendTD(a),
+        "input",
+        {
+          id: "ago_calc_resource_" + b,
+          type: "text",
+          class: "ago_keys_arrows",
+          value: PAGE.Next[b] || "0"
+        },
+        null,
+        {
+          focus: PAGE.onCalculator,
+          blur: PAGE.onCalculator
+        },
+        null,
+        {
+          id: b
+        }
+      );
+    }
+
+    function b(a, b, d, c) {
+      a = DOM.appendTD(a, "ago_calc_ships");
+      a = DOM.appendA(a, null, null, {
+        action: 19,
+        id: d
+      });
+      DOM.appendSPAN(a, "btn_blue", d, 12);
+      DOM.appendSPAN(a, {
+        id: "ago_calc_ships_" + b
+      });
+    }
+
+    function g(a, b, d) {
+      DOM.appendSPAN(DOM.appendTD(a, "", d, 10), {
+        id: b
+      });
+    }
+
+    function k(a) {
+      a.status &&
+        (OBJ.iterate(AGO.Item.Resource, function(b) {
+          a[b] && a[b] > AGO.Units.Data[b] && (a.status = 2);
+        }),
+        OBJ.iterate(AGO.Item.Ship, function(b) {
+          a[b] && a[b] > AGO.Units.Data[b] && (a.status = 1);
+        }));
+      return a.status;
+    }
+
+    var d, l, m, q, p, r, w, x, n, u, v, s, t;
+    p = PAGE.Para.calculator;
+    r = 2 === p;
+    w = 4 === p;
+    x = 3 === p;
+    3 <= PAGE[p].mode &&
+      AGO.Fleet.Set("Current", {
+        Calculator: p
+      });
+    a ||
+      ((d = document.getElementById("ago_calc")),
+      (a = d.parentNode),
+      a.removeChild(d),
+      DOM.updateClass("ago_summary", "id", "ago_routine_" + p));
+    k(PAGE[10]);
+    OBJ.iterateArray([2, 4, 3, 5, 6, 7, 10], function(b) {
+      var d;
+      if ((d = a.querySelector("#ago_routine_" + b)))
+        if (
+          (DOM.setClassGroup(
+            d.parentNode,
+            null,
+            "selected",
+            b === p ? "selected" : ""
+          ),
+          DOM.setClassGroup(d, null, "on", PAGE[b].status ? "on" : "off"),
+          3 !== b &&
+            4 !== b &&
+            DOM.updateClass(
+              ".ago_routine_check",
+              d,
+              "ago_routine_check ago_routine_check_" + PAGE[b].status
+            ),
+          5 === b || 6 === b)
+        )
+          (b =
+            1 === PAGE[b].last
+              ? HTML.urlTypeIcon(PAGE[b].type || 2, "b")
+              : 2 === PAGE[b].last
+                ? HTML.urlMissionIcon(PAGE[b].mission)
+                : HTML.urlTypeIcon(0)),
+            DOM.updateAttribute(".ago_routine_last", d, "src", b);
+    });
+    DOM.setStyleDisplay(
+      ".ago_info div:nth-child(3)",
+      a,
+      x || 7 === p ? "" : "block"
+    );
+    DOM.setStyleDisplay(
+      ".ago_info div:nth-child(4)",
+      a,
+      7 === p ? "block" : ""
+    );
+    l = a.querySelector("#ago_details");
+    DOM.replaceChildren(l);
+    d = DOM.appendTABLE(
+      null,
+      {
+        id: "ago_calc"
+      },
+      null,
+      PAGE.layout ? [200, 146, 146, 146] : [200, 149, 149, 149]
+    );
+    u = DOM.appendTR(d);
+    x || w ? DOM.appendTD(u) : g(u, "ago_calc_available_total", "I23");
+    v = DOM.appendTR(d);
+    m = DOM.appendTD(v);
+    r &&
+      (DOM.appendA(m, "ago_calc_resource_all", null, {
+        action: 21
+      }),
+      DOM.appendA(m, "ago_calc_resource_most", null, {
+        action: 22
+      }));
+    DOM.appendA(m, "ago_calc_resource_none", null, {
+      action: 23
+    });
+    x &&
+      ((q = DOM.appendA(m, {
+        id: "ago_calc_plunder"
+      })),
+      OBJ.iterateArray([50, 75, 100], function(a) {
+        DOM.appendSPAN(q, "ago_calc_plunder", a + "%").setAttribute(
+          "ago-data",
+          '{"plunder":' + a + "}"
+        );
+      }));
+    m = DOM.appendTR(d);
+    DOM.appendTD(m, "ago_calc_spacer");
+    DOM.appendTD(m, "ago_calc_spacer").colSpan = 3;
+    s = DOM.appendTR(d);
+    m = DOM.appendTD(s, "ago_calc_speed");
+    q = DOM.appendA(m, {
+      id: "speedLinks"
+    });
+    for (n = 1; 10 >= n; n++)
+      (m = q.appendChild(document.createElement("span"))),
+        (m.textContent = 10 * n),
+        m.setAttribute("data-value", n),
+        m.setAttribute("ago-data", '{"speed":' + n + "}");
+    n = DOM.appendTR(d, "ago_calc_consumption");
+    g(n, "ago_calc_consumption_total", "F67");
+    t = DOM.appendTR(d, "ago_calc_duration");
+    g(t, "ago_calc_duration_total", "F65");
+    if (10 === p)
+      for (
+        h(
+          l,
+          PAGE[10],
+          {
+            routine: 10,
+            last: 0
+          },
+          0 === PAGE[10].last,
+          2,
+          PAGE[10].status
+        ),
+          m = DOM.appendTD(u, "ago_last"),
+          m.colSpan = 3,
+          m.rowSpan = 6,
+          n = 1;
+        6 > n;
+        n++
+      )
+        (l = k(PAGE[10 + n])) &&
+          h(
+            m,
+            PAGE[10 + n],
+            {
+              routine: 10,
+              last: n
+            },
+            PAGE[10].last === n,
+            2,
+            l
+          );
+    else if (7 === p) e(u), e(v), e(s), e(n), e(t);
+    else {
+      if (r || x || w)
+        f(u, "metal"),
+          f(u, "crystal"),
+          w ? DOM.appendTD(u) : f(u, "deuterium"),
+          c(v, "metal"),
+          c(v, "crystal"),
+          w ? DOM.appendTD(v) : c(v, "deuterium");
+      w
+        ? (b(s, "shipC", "209", !1),
+          DOM.appendTD(s, "ago_calc_ships"),
+          DOM.appendTD(s, "ago_calc_ships"),
+          g(n, "ago_calc_consumption_shipC"),
+          DOM.appendTD(n),
+          DOM.appendTD(n),
+          g(t, "ago_calc_duration_shipC"),
+          DOM.appendTD(t),
+          DOM.appendTD(t))
+        : 5 === p
+          ? (l &&
+              (PAGE[5].last
+                ? (1 === PAGE[5].last
+                    ? h(
+                        l,
+                        {
+                          mission: PAGE[5].mission,
+                          speed: PAGE[5].speed,
+                          type: 3,
+                          coords: " "
+                        },
+                        null,
+                        !0
+                      )
+                    : h(l, PAGE[5], null, !0),
+                  (DOM.appendA(l, "ago_target_reset btn_blue", null, {
+                    routine: 5,
+                    last: -1
+                  }).textContent = AGO.Label.get("F39")))
+                : h(
+                    l,
+                    {
+                      mission: 3,
+                      speed: 10,
+                      type: 3,
+                      coords: " "
+                    },
+                    {
+                      routine: 5,
+                      last: 1
+                    }
+                  )),
+            (DOM.appendTD(u).colSpan = 3),
+            (DOM.appendTD(v).colSpan = 3),
+            (m = DOM.appendTD(s)),
+            (m.colSpan = 3),
+            (m = DOM.appendTD(n)),
+            (m.colSpan = 3),
+            (m = DOM.appendTD(t)),
+            (m.colSpan = 3))
+          : 6 === p
+            ? (l &&
+                (PAGE[6].last
+                  ? (h(l, {
+                      mission: 8,
+                      speed: PAGE[6].speed,
+                      type: 2,
+                      coords: " "
+                    }),
+                    (DOM.appendA(l, "ago_target_reset btn_blue", null, {
+                      routine: 6,
+                      last: -1
+                    }).textContent = AGO.Label.get("F39")))
+                  : h(
+                      l,
+                      {
+                        mission: 8,
+                        speed: 1,
+                        type: 2,
+                        coords: " "
+                      },
+                      {
+                        routine: 6,
+                        last: 1
+                      }
+                    )),
+              (DOM.appendTD(u).colSpan = 3),
+              (DOM.appendTD(v).colSpan = 3),
+              (m = DOM.appendTD(s)),
+              (m.colSpan = 3),
+              (m = DOM.appendTD(n)),
+              (m.colSpan = 3),
+              (m = DOM.appendTD(t)),
+              (m.colSpan = 3))
+            : (b(s, "shipA", "202"),
+              b(s, "shipB", "203"),
+              r && PAGE[2].thirdShip
+                ? b(s, "shipC", PAGE[2].thirdShip, !1)
+                : DOM.appendTD(s, "ago_calc_ships"),
+              g(n, "ago_calc_consumption_shipA"),
+              g(n, "ago_calc_consumption_shipB"),
+              r ? g(n, "ago_calc_consumption_shipC") : DOM.appendTD(n),
+              g(t, "ago_calc_duration_shipA"),
+              g(t, "ago_calc_duration_shipB"),
+              r ? g(t, "ago_calc_duration_shipC") : DOM.appendTD(t));
+    }
+    DOM.appendChild(a, d);
+    d = m = m = m = q = r = w = n = null;
+  },
+  showShortcuts: function() {
+    function a(a, b) {
+      var c, e;
+      b &&
+        ((c = DOM.appendA(
+          a,
+          {
+            class: AGO.Token.getClassHover(b.type, b.owncoords),
+            rel: AGO.Task.join(b, 0)
+          },
+          {
+            click: PAGE.onShortcuts,
+            dblclick: PAGE.onShortcuts
+          }
+        )),
+        (e = c.appendChild(document.createElement("span"))),
+        (e.className = "ago_shortcuts_coords"),
+        (e.textContent =
+          b.galaxy || b.system || b.position
+            ? (b.galaxy || "- ") +
+              ":" +
+              (b.system || " - ") +
+              ":" +
+              (b.position || " -")
+            : ""),
+        (e = c.appendChild(document.createElement("span"))),
+        (e.className = "ago_shortcuts_icon"),
+        DOM.appendIMG(e, HTML.urlTypeIcon(b.type), "14px"),
+        (e = c.appendChild(document.createElement("span"))),
+        (e.className = "ago_shortcuts_icon"),
+        DOM.appendIMG(e, HTML.urlMissionIcon(b.mission), "14px"),
+        (e = c.appendChild(document.createElement("span"))),
+        (e.className = "ago_shortcuts_speed"),
+        (e.textContent =
+          0 < b.speed && 10 > b.speed ? 10 * b.speed + "%" : ""));
+    }
+
+    var e, h, f, c, b, g, k;
+    if ((e = document.getElementById("inhalt"))) {
+      h = DOM.appendDIV(null, {
+        id: "ago_shortcuts",
+        ago_display_status: AGO.Option.is("F14") ? 1 : 2
+      });
+      f = DOM.appendDIV(h, "ago_shortcuts_header");
+      f.addEventListener("click", PAGE.onShortcuts, !1);
+      DOM.appendA(f, "ago_display_arrow");
+      f = DOM.appendTABLE(
+        h,
+        "ago_shortcuts_content",
+        {
+          width: "637",
+          margin: "0px auto"
+        },
+        [256, 18, 365]
+      );
+      f = DOM.appendTR(f);
+      c = DOM.appendTD(f, "ago_shortcuts_target");
+      DOM.appendSPAN(c, "ago_shortcuts_description", "F40", 10);
+      if ((b = NMR.minMax(AGO.Option.get("FL2", 2), 0, 6))) {
+        for (k = 0; k < b; k++)
+          PAGE.getRoutine(10 + k, "galaxy") && a(c, PAGE[10 + k]);
+        DOM.appendSPAN(c, "ago_shortcuts_space");
+      }
+      b = "F41 F42 F43 F44 F45 F46 F47 F48 F49".split(" ");
+      for (k = 0; k < b.length; k++)
+        (g = AGO.Option.get(b[k], -1)) && a(c, AGO.Task.splitActive(g, 0, 4));
+      c = DOM.appendTD(f, "ago_shortcuts_spacer");
+      c = DOM.appendTD(f, "ago_shortcuts_own");
+      DOM.set(c, null, null, null, {
+        mouseover: PAGE.onShortcuts,
+        mouseout: PAGE.onShortcuts
+      });
+      DOM.appendSPAN(c, "ago_shortcuts_description");
+      AGO.Planets.iterate(1, function(a) {
+        var b, e;
+        b = DOM.appendA(
+          c,
+          {
+            rel: a.coords
+          },
+          {
+            click: PAGE.onShortcuts,
+            dblclick: PAGE.onShortcuts
+          }
+        );
+        DOM.appendSPAN(b, "ago_shortcuts_coords", a.coords);
+        DOM.appendSPAN(b, "ago_shortcuts_name", a.name);
+        e = DOM.appendSPAN(b, "ago_shortcuts_moon");
+        if ((a = AGO.Planets.Data[a.moon]))
+          DOM.appendIMG(e, a.img || HTML.urlTypeIcon(3), "18px"),
+            DOM.appendTEXT(e, a.name);
+        e = DOM.appendSPAN(b, "ago_shortcuts_debris");
+        DOM.appendIMG(e, HTML.urlTypeIcon(2), "18px");
+      });
+      DOM.before(e.querySelector("#buttonz .content .footer"), h);
+    }
+    e = h = f = f = c = b = null;
+  },
+  Display: function() {
+    function a(a, b) {
+      var d =
+        !a || 0 > b ? "" : a >= b ? "ago_color_green" : "ago_color_palered";
+      DOM.updateText("ago_info_capacity", "id", a, 3);
+      DOM.updateClass("ago_info_capacity", "id", d);
+    }
+
+    function e(a) {
+      var d;
+      return PAGE.Mission[a]
+        ? (d =
+            2 === b.type
+              ? 8 === a && b["209"]
+              : 8 === a
+                ? !1
+                : 15 === a
+                  ? 16 === b.position
+                  : b.owncoords && (3 > b.owncoords || c.stopActiveSelection)
+                    ? VAL.check(a, 3, 4)
+                    : 6 === a
+                      ? b["210"]
+                      : 7 === a
+                        ? b["208"]
+                        : 9 === a
+                          ? b["214"] && (3 <= b.owncoords || 3 === b.type)
+                          : 4 === a
+                            ? b.owncoords
+                            : !0)
+          ? a
+          : 0
+        : 0;
+    }
+
+    function h(a, b) {
+      return AGO.Planets.ByCoords[a]
+        ? 2 === b
+          ? 1
+          : a !== AGO.Acc.coords
+            ? 2
+            : b === AGO.Acc.type
+              ? 4
+              : 3
+        : 0;
+    }
+
+    var f, c, b, g, k, d, l;
+    f = AGO.Units.Data;
+    c = PAGE.Next;
+    if ((g = document.getElementById("inhalt")) && 7 <= AGO.Init.status) {
+      c.routine = k = PAGE.Para.calculator;
+      DOM.iterate(g.querySelectorAll(".fleetValues"), function(a) {
+        var b;
+        b = STR.check(NMR.parseIntAbs(a.id));
+        a = +a.value || 0;
+        b in AGO.Item.Ship &&
+          (a !== c[b] &&
+            AGO.Option.is("F02") &&
+            (DOM.updateText("anti_ship_" + b, "id", a ? f[b] - a : 0, 2),
+            DOM.setStyleColor("anti_ship_" + b, "id", "#00B000")),
+          (c[b] = a));
+      });
+      c.distance = AGO.Ogame.getFleetDistance(AGO.Acc, c);
+      AGO.Task.updateShips(c, c.distance);
+      d = 2 !== k || c.resources || AGO.Option.is("F51");
+      b = OBJ.create(c);
+      b.type =
+        b.type ||
+        (3 === k ? PAGE.Type.check(AGO.Option.get("FA1", 2)) : 0) ||
+        AGO.Acc.type;
+      b.owncoords = h(b.coords, b.type);
+      if (b.ships) {
+        b.status = PAGE.getRoutine(k, "status");
+        16 === b.position
+          ? d &&
+            ((b.mission = 15), (b.type = 1), b.owncoords && (b.owncoords = 1))
+          : b.ships === b["210"]
+            ? b.owncoords && (3 > b.owncoords || c.stopActiveSelection)
+              ? (b.mission = 4)
+              : !b.mission &&
+                AGO.Option.is("F53") &&
+                (b.mission = 1 === b.ships ? 1 : 6)
+            : b.ships !== b["209"] ||
+              c.stopAutoHarvest ||
+              c.resources ||
+              !AGO.Option.is("F52") ||
+              1 !== PAGE.getRoutine(k) ||
+              ((b.mission = 8),
+              (b.type = 2),
+              b.owncoords && (b.owncoords = h(b.coords, b.type)));
+        switch (k) {
+          case 2:
+            c.resources
+              ? ((b.mission =
+                  (b.owncoords ? 0 : 3) ||
+                  VAL.select(b.mission, 3, 4) ||
+                  VAL.select(PAGE.Para.mission, 3, 4)),
+                (b.status = c.capacity >= c.consumption + c.resources ? 3 : 1))
+              : ((b.mission = e(b.mission) || e(PAGE.Para.mission)),
+                (b.status = 0));
+            break;
+          case 3:
+            b.mission = e(b.mission) || e(1);
+            b.status = 1 !== b.mission && 2 !== b.mission ? 0 : b.status;
+            break;
+          case 4:
+            b.type = b["209"] ? 2 : b.type;
+            b.owncoords && (b.owncoords = h(b.coords, b.type));
+            b.mission = e(b.mission) || e(8);
+            b.status =
+              8 !== b.mission
+                ? 0
+                : b["209"] * AGO.Item["209"].capacity >= c.metal + c.crystal
+                  ? 3
+                  : 1;
+            break;
+          case 5:
+            b.mission = e(b.mission) || e(PAGE[5].mission);
+            b.status =
+              2 > b.owncoords || !VAL.check(b.mission, 3, 4) ? 0 : b.status;
+            break;
+          case 6:
+            b.mission = e(b.mission) || e(PAGE[6].mission);
+            break;
+          case 7:
+            b.type = 1;
+            b.owncoords && (b.owncoords = h(b.coords, b.type));
+            b.mission = e(15);
+            b.status = 15 !== b.mission ? 0 : b.status;
+            break;
+          case 10:
+            (l = 10 + (+PAGE[10].last || 0)),
+              (b.status = PAGE.getRoutine(l, "status")),
+              b.status &&
+                ((b.mission = e(b.mission) || e(PAGE[l].mission)),
+                (c.routine = PAGE[l].routine || 1));
+        }
+        b.mission ||
+          (b.mission =
+            16 === b.position
+              ? 15
+              : 2 === b.type && b["209"]
+                ? 8
+                : e(PAGE[2].mission) || 3);
+      } else b.status = b.mission = 0;
+      b.typeActive = b.type;
+      d &&
+        b.owncoords &&
+        (b.typeActive =
+          2 === b.type
+            ? b.type
+            : AGO.Planets.GetByCoords(b.coords, "moon", 6)
+              ? 3 > b.owncoords
+                ? b.type
+                : 1 === AGO.Acc.type
+                  ? 3
+                  : 1
+              : 1);
+      DOM.updateValue('input[name="mission"]', g, b.mission, 8);
+      DOM.updateValue('input[name="type"]', g, b.type, 8);
+      DOM.iterateChildren(document.getElementById("ago_type"), function(a) {
+        var d, c;
+        c = DOM.getAttribute(a, null, "ago-data", -2).type;
+        if ((d = AGO.Item.Type[c]))
+          c === b.type && (d += " selected"),
+            3 === k &&
+              c === AGO.Option.get("FA1", 2) &&
+              (d += " ago_calc_selected"),
+            DOM.updateClass(a, null, d);
+      });
+      switch (k) {
+        case 2:
+          c.resources
+            ? a(c.capacity, c.resources)
+            : c.ships
+              ? a(c.capacity, f.resources)
+              : a(f.capacity, f.resources);
+          DOM.updateText("ago_info_freight", "id", c.resources, 3);
+          break;
+        case 4:
+          a(b["209"] * AGO.Item["209"].capacity, c.resources);
+          DOM.updateText("ago_info_freight", "id", c.metal + c.crystal, 3);
+          break;
+        case 5:
+          l = PAGE[5].freight;
+          c.ships ? a(c.capacity - c.consumption, l) : a(f.capacity, l);
+          DOM.updateText("ago_info_freight", "id", l, 3);
+          break;
+        case 6:
+          l = PAGE[6].freight;
+          c.ships ? a(c.capacity - c.consumption, l) : a(f.capacity, l);
+          DOM.updateText("ago_info_freight", "id", l, 3);
+          break;
+        case 7:
+          c.ships ? a(c.capacity - c.consumption, -1) : a(c.capacity, -1);
+          DOM.updateText("ago_info_expo", "id", c.expoints, 3);
+          g =
+            c.expoints >= PAGE[7].points
+              ? "ago_color_green"
+              : "ago_color_palered";
+          DOM.updateClass("ago_info_expo", "id", g);
+          break;
+        case 3:
+        case 10:
+          c.ships
+            ? a(c.capacity - c.consumption, f.resources)
+            : a(f.capacity, f.resources),
+            DOM.updateText("ago_info_freight", "id", 0, 3);
+      }
+      c.routine = b.status ? c.routine : 0;
+      DOM.updateClass("ago_routine", "id", "ago_routine_status_" + b.status);
+      DOM.updateText("ago_info_resources", "id", f.resources, 3);
+      DOM.updateText("ago_info_civil", "id", c.shipsCivil, 3);
+      DOM.updateText("ago_info_combat", "id", c.shipsCombat, 3);
+      DOM.updateText("ago_continue_coords", "id", b.coords);
+      DOM.updateAttribute(
+        "ago_continue_type",
+        "id",
+        "src",
+        HTML.urlTypeIcon(b.typeActive, "b")
+      );
+      DOM.updateAttribute(
+        "ago_continue_mission",
+        "id",
+        "src",
+        HTML.urlMissionIcon(b.mission)
+      );
+      l = PAGE.Para.sendingEnabled
+        ? 2 !== k || c.resources
+          ? 2 <= b.status
+            ? 2
+            : 1
+          : 2
+        : 0;
+      DOM.updateAttribute("continue", "id", "ago-status", l, 8);
+      c.ships || DOM.updateClass("continue", "id", "off");
+      PAGE.displayShortcuts(b);
+      PAGE.displayCalculator();
+      AGO.Init.Messages("Planets", "Action", {
+        mode: "select",
+        coords: b.coords,
+        type: b.typeActive
+      });
+    }
+    PAGE.lockedDisplay = !1;
+    f = c = b = g = k = d = l = g = null;
+  },
+  displayCalculator: function() {
+    function a(a, b) {
+      DOM.updateText("ago_calc_available_" + a, "id", b, 3);
+      DOM.updateClass(
+        "ago_calc_available_" + a,
+        "id",
+        0 > b ? "ago_color_palered" : ""
+      );
+    }
+
+    function e(a, b) {
+      var c, e, g, p, r;
+      if (b) {
+        e = AGO.Ogame.getFleetDuration(b, f.distance, f.speed);
+        g = AGO.Ogame.getShipConsumption(b, f.distance, e);
+        p = Math.max(
+          0,
+          Math.ceil(f.resources / (AGO.Item[b].capacity - Math.round(g) - 1))
+        );
+        if ((c = document.getElementById("ago_calc_ships_" + a)))
+          DOM.updateText(c, null, p, 3) &&
+            ((r = p
+              ? h[b] >= p
+                ? "ago_color_lightgreen"
+                : "ago_color_palered"
+              : "ago_color_blue"),
+            DOM.updateClass(c, null, r)),
+            (c.parentNode.className =
+              b === PAGE[PAGE.Para.calculator].preferShip
+                ? "ago_calc_selected"
+                : "");
+        g = p ? Math.round(g * p) + 1 : 0;
+        DOM.updateText("ago_calc_consumption_" + a, "id", g, 3) &&
+          ((r = h.deuterium > g ? "" : "ago_color_palered"),
+          DOM.updateClass("ago_calc_consumption_" + a, "id", r));
+        DOM.updateText("ago_calc_duration_" + a, "id", e, 18);
+      }
+    }
+
+    var h, f, c, b, g;
+    h = AGO.Units.Data;
+    f = PAGE.Next;
+    document.getElementById("planet") &&
+      2 === DOM.getAttribute("ago_summary", "id", "ago_display_status", 2) &&
+      ((g = 0),
+      (c = document.getElementById("speedLinks")) &&
+        !DOM.hasClass(DOM.getChildren(c, f.speed - 1), null, "selected") &&
+        DOM.iterateChildren(c, function(a) {
+          a.className = ++g === f.speed ? "selected" : "";
+        }),
+      DOM.updateText("ago_calc_consumption_total", "id", f.consumption, 3),
+      DOM.updateText("ago_calc_duration_total", "id", f.duration, 18),
+      3 === PAGE.Para.calculator
+        ? ((g = 0),
+          (b =
+            {
+              50: 0,
+              75: 1,
+              100: 2
+            }[f.plunder] || 0),
+          (c = document.getElementById("ago_calc_plunder")) &&
+            !DOM.hasClass(DOM.getChildren(c, b), null, "selected") &&
+            DOM.iterateChildren(c, function(a) {
+              a.className = b === g++ ? "selected" : "";
+            }),
+          e("shipA", "202"),
+          e("shipB", "203"))
+        : 4 === PAGE.Para.calculator
+          ? e("shipC", "209")
+          : (a("total", h.resources - f.resources),
+            a("metal", h.metal - f.metal),
+            a("crystal", h.crystal - f.crystal),
+            a("deuterium", h.deuterium - f.deuterium - f.consumption),
+            2 === PAGE.Para.calculator &&
+              (e("shipA", "202"),
+              e("shipB", "203"),
+              e("shipC", PAGE[2].thirdShip)),
+            5 === PAGE.Para.calculator &&
+              DOM.updateText(
+                "ago_collect_coords",
+                "id",
+                AGO.Fleet.Get("Routine", "Collect", 6)
+              )));
+  },
+  displayShortcuts: function(a) {
+    var e;
+    (e = document.getElementById("ago_shortcuts")) &&
+      DOM.iterateChildren(e.querySelector(".ago_shortcuts_own"), function(e) {
+        var f, c;
+        "A" === e.nodeName &&
+          ((c = e.getAttribute("rel")),
+          (f =
+            c === AGO.Acc.coords
+              ? AGO.Token.getClassHighlight(AGO.Acc.type)
+              : ""),
+          DOM.setClassGroup(e, null, "ago_highlight", f),
+          (f =
+            c === a.coords
+              ? " " + AGO.Token.getClassSelected(a.typeActive, !0)
+              : ""),
+          DOM.setClassGroup(e, null, "ago_selected", f));
+      });
+    e = null;
+  },
+  Action: function(a) {
+    function e(a) {
+      var b;
+      28 === a.action
+        ? ((b = a.id),
+          b in AGO.Item.Resource &&
+            ((d[b] =
+              2 !== k.calculator
+                ? 0
+                : d[b]
+                  ? PAGE.lastActive === "ago_calc_resource_" + b
+                    ? Math.max(g[b] - d[b], 0)
+                    : 0
+                  : g[b]),
+            DOM.setValue("ago_calc_resource_" + b, "id", d[b], 8)))
+        : a.action &&
+          OBJ.iterate(AGO.Item.Resource, function(b) {
+            d[b] =
+              21 === a.action
+                ? AGO.Units.Data[b]
+                : 22 === a.action
+                  ? Math.max(AGO.Units.Data[b] - PAGE.Mini[b], 0)
+                  : 23 === a.action
+                    ? 0
+                    : +a[b] || 0;
+            DOM.setValue("ago_calc_resource_" + b, "id", d[b], 8);
+          });
+    }
+
+    function h(a) {
+      d.ships = 0;
+      OBJ.iterate(AGO.Item.Ship, function(b) {
+        if ("212" !== b) {
+          var c;
+          c = 12 === a.action ? Math.max(g[b] - PAGE.Mini[b], 0) : +a[b] || 0;
+          d[b] = Math.min(c, g[b]);
+          d.ships += d[b];
+          c = c ? g[b] - c : 0;
+          g[b] && DOM.updateValue("ship_" + b, "id", d[b], 0, "change");
+          DOM.updateText("anti_ship_" + b, "id", c, 2);
+          DOM.setStyleColor(
+            "anti_ship_" + b,
+            "id",
+            0 > c ? "#E41615" : "#00B000"
+          );
+        }
+      });
+    }
+
+    function f() {
+      function b(c) {
+        var f = AGO.Ogame.getShipCapacity(c, a.distance, d.speed);
+        g[c] &&
+          0 < f &&
+          ((a[c] = Math.min(Math.ceil(e / f), g[c])), (e -= a[c] * f));
+      }
+
+      var c, e;
+      c = PAGE[2].preferShip;
+      19 === a.action && a.id in AGO.Item.Ship && (c = a.id);
+      d.mission = a.mission || d.mission;
+      e = d.resources;
+      if (a.recalculate || 19 === a.action)
+        (a.speed = d.speed),
+          (a.distance = AGO.Ogame.getFleetDistance(AGO.Acc, d)),
+          b(c),
+          0 < e && "203" !== c && b("203"),
+          0 < e && "202" !== c && b("202"),
+          0 < e &&
+            c !== PAGE[2].thirdShip &&
+            PAGE[2].thirdShip &&
+            b(PAGE[2].thirdShip),
+          0 < e &&
+            (a[c] += Math.ceil(
+              e / AGO.Ogame.getShipCapacity(c, a.distance, a.speed)
+            )),
+          (VAL.check(a.action, 21, 22) ||
+            (28 === a.action && "deuterium" === a.id)) &&
+            d.deuterium &&
+            (AGO.Task.updateShips(a, a.distance),
+            (d.deuterium -= a.consumption),
+            DOM.setValue("ago_calc_resource_deuterium", "id", d.deuterium, 8)),
+          (a.action = 10),
+          h(a);
+      c = e = null;
+    }
+
+    function c() {
+      var b;
+      AGO.Task.updateShips(a);
+      a.ships &&
+        ((a.action = 10),
+        a["202"]
+          ? ((b = a["202"] - g["202"]),
+            0 < b &&
+              ((PAGE[3].status = 2),
+              (a["202"] = g["202"]),
+              (a["203"] = Math.ceil(b / 5)),
+              a["203"] > g["203"] && (PAGE[3].status = 1)))
+          : ((b = a["203"] - g["203"]),
+            0 < b &&
+              ((PAGE[3].status = 2),
+              (a["203"] = g["203"]),
+              (a["202"] = 5 * b),
+              a["202"] > g["202"] && (PAGE[3].status = 1))),
+        h(a));
+    }
+
+    function b() {
+      var b, c;
+      c = d.metal + d.crystal;
+      a.recalculate &&
+        ((b = AGO.Ogame.getFleetDistance(AGO.Acc, d)),
+        (b = AGO.Ogame.getShipCapacity("209", b, d.speed)),
+        (a["209"] = Math.ceil(c / b)),
+        (a.action = 10),
+        h(a));
+    }
+
+    var g, k, d, l, m, q;
+    g = AGO.Units.Data;
+    k = PAGE.Para;
+    d = PAGE.Next;
+    if (
+      (l = document.getElementById("inhalt")) &&
+      AGO.Init.status &&
+      OBJ.hasProperties(a)
+    ) {
+      PAGE.lockedDisplay = !0;
+      if ((m = PAGE.getRoutine(a.routine) ? a.routine : 0))
+        (d.routine = d.mission = d.stopActiveSelection = 0),
+          1 === PAGE.getRoutine(m)
+            ? (m !== k.calculator &&
+                ((d.stopAutoHarvest = 2 !== m),
+                d.resources &&
+                  e({
+                    action: 23
+                  }),
+                2 === d.type && (d.type = 0)),
+              2 <= PAGE.getRoutine(k.calculator) &&
+                ((a.speed = 10),
+                h({
+                  action: 10
+                }),
+                AGO.Task.updateCoordsType(a, k.coordstype),
+                4 <= a.owncoords && (d.type = a.type = 0)))
+            : 2 <= PAGE.getRoutine(m) &&
+              (d.resources &&
+                e({
+                  action: 23
+                }),
+              10 === m
+                ? PAGE.getRoutine(m + (+a.last || 0), "status") &&
+                  ((PAGE[10].last = +a.last || 0),
+                  (q = a.target ? 0 : 2),
+                  (a = AGO.Task.create(PAGE[m + PAGE[10].last], q)),
+                  AGO.Task.updateResources(a),
+                  a.resources && ((a.action = 20), e(a)),
+                  (a.action = 2 === q ? 10 : 0))
+                : (PAGE.Init(m, a.last),
+                  (a = AGO.Task.create(PAGE[m], 2)),
+                  (a.action = 10)),
+              (a.speed = a.speed || 10),
+              10 === a.action && h(a)),
+          (k.calculator = m),
+          PAGE.showCalculator();
+      else {
+        VAL.check(a.action, 12, 10) && h(a);
+        a.mission = PAGE.Mission.check(a.mission);
+        if (VAL.check(a.action, 41, 42)) {
+          if (a.type || a.mission) d.stopAutoHarvest = 1;
+          a.type && (d.stopActiveSelection = 1);
+        }
+        3 <= a.owncoords && ((d.type = 0), 3 > d.owncoords && (a.type = 0));
+        4 === k.calculator && (a.type = 0);
+      }
+      a.type = PAGE.Type.check(a.type);
+      AGO.Task.updateCoords(a, 4);
+      OBJ.iterate(AGO.Item.CoordinatesType, function(b) {
+        a[b] &&
+          ((d[b] = a[b]),
+          "type" !== b &&
+            (DOM.setValue('input[name="' + b + '"]', l, a[b], 8),
+            DOM.setValue("ago_" + b, "id", a[b])));
+      });
+      AGO.Task.updateCoords(d, 3);
+      d.owncoords &&
+        (d.owncoords = AGO.Planets.owncoords(d.coords, d.type || AGO.Acc.type));
+      3 > d.owncoords && (d.stopActiveSelection = 0);
+      a.arrival &&
+        ((d.coordsMarked = a.coords || ""),
+        (d.arrivalMarked = +a.arrival || 0));
+      OBJ.iterateArray(
+        [
+          "holdingtime",
+          "expeditiontime",
+          "union",
+          "retreatAfterDefenderRetreat",
+          "preferResource"
+        ],
+        function(b) {
+          d[b] = +a[b] || 0;
+        }
+      );
+      VAL.check(a.plunder, 50, 75, 100) && (d.plunder = a.plunder);
+      NMR.isMinMax(a.speed, 1, 10) &&
+        ((d.speed = a.speed),
+        DOM.setValue('input[name="speed"]', l, d.speed, 8));
+      VAL.check(a.action, 20, 21, 22, 23, 28) && e(a);
+      AGO.Task.updateResources(d);
+      a.recalculate =
+        (d.coords + ":" + d.speed !== d.previousTarget && d.resources) ||
+        (d.metal + ":" + d.crystal + ":" + d.deuterium !==
+          d.previousResources &&
+          ("0:0:0" !== d.previousResources || d.resources));
+      switch (k.calculator) {
+        case 2:
+          f();
+          break;
+        case 3:
+          a.stop = a.owncoords && 41 === a.action;
+          c();
+          break;
+        case 4:
+          a.stop = 2 !== a.type && 42 === a.action;
+          b();
+          break;
+        case 5:
+          a.stop = !d.owncoords || 2 === d.type;
+          d.mission = VAL.select(a.mission, 3, 4) || d.mission;
+          2 <= a.owncoords &&
+            41 === a.action &&
+            (PAGE.Init(5, 2, a.coordstype), PAGE.showCalculator());
+          break;
+        case 7:
+          a.stop = VAL.check(a.action, 11, 12);
+          break;
+        case 6:
+          d.mission = a.mission || d.mission;
+          break;
+        case 10:
+          d.mission = a.mission || d.mission;
+      }
+      if (a.stop) {
+        PAGE.Action({
+          routine: 2,
+          action: 13
+        });
+        return;
+      }
+    }
+    d.previousTarget = d.coords + ":" + d.speed;
+    d.previousResources = d.metal + ":" + d.crystal + ":" + d.deuterium;
+    PAGE.Display();
+    g = k = d = l = m = q = null;
+  },
+  Continue: function() {
+    var a;
+    DOM.hasClass("continue", "id", "on") &&
+      ((a = {}),
+      DOM.addClass("continue", "id", "ago_selected_button"),
+      DOM.addClass("ago_routine", "id", "ago_selected"),
+      (PAGE.Next.routine = PAGE.Next.routine || PAGE.getRoutine(1, "status")),
+      OBJ.iterateFilter(
+        PAGE.Next,
+        function(e) {
+          a[e] = PAGE.Next[e];
+        },
+        PAGE.filterContinue
+      ),
+      AGO.Fleet.Set("Current", {
+        Task2: JSON.stringify(a)
+      }),
+      window.setTimeout(function() {
+        AGO.Init.status &&
+          (DOM.removeClass("continue", "id", "ago_selected_button"),
+          DOM.removeClass("ago_routine", "id", "ago_selected"));
+      }, 1500));
+  },
+  getRoutine: function(a, e) {
+    return a && PAGE[a] ? +PAGE[a][e || "group"] || 0 : 0;
+  },
+  Mission: {
+    1: 1,
+    2: 1,
+    3: 1,
+    4: 1,
+    5: 1,
+    15: 1,
+    check: function(a) {
+      return this[a] ? a : 0;
+    }
+  },
+  Type: {
+    1: 1,
+    3: 1,
+    check: function(a) {
+      return this[a] ? a : 0;
+    }
+  },
+  onKeydown: function(a) {
+    if (13 === a.keyCode)
+      return (
+        DOM.hasClass("continue", "id", "on")
+          ? DOM.click("#continue.on")
+          : (DOM.click("#ago_routine_" + PAGE.Para.calculator),
+            2 <= PAGE.getRoutine(PAGE.Para.calculator) &&
+              2 <= PAGE.getRoutine(PAGE.Para.calculator, "status") &&
+              DOM.click("#continue.on")),
+        !1
+      );
+    if (12 !== a.inputType) {
+      if (65 === a.keyCode) return DOM.click("#sendall"), !1;
+      if (77 === a.keyCode) return DOM.click("span.send_most a"), !1;
+      if (81 === a.keyCode) return DOM.click("span.send_none a"), !1;
+      if (84 === a.keyCode) return DOM.click("#ago_routine_2"), !1;
+      if (82 === a.keyCode) return DOM.click("#ago_routine_4"), !1;
+      if (83 === a.keyCode) return DOM.click("#ago_routine_5"), !1;
+      if (70 === a.keyCode) return DOM.click("#ago_routine_6"), !1;
+      if (69 === a.keyCode) return DOM.click("#ago_routine_7"), !1;
+      if (76 === a.keyCode) return DOM.click("#ago_routine_10"), !1;
+    }
+    return 11 !== a.inputType ||
+      (38 !== a.keyCode && 40 !== a.keyCode) ||
+      (!AGO.Item.Ship[STR.check(NMR.parseIntAbs(a.target.id))] &&
+        !HTML.hasClass(a.target.className, "ago_keys_arrows"))
+      ? !0
+      : DOM.changeInput(a, a.target);
+  },
+  onSwipe: function(a) {
+    "diagUp" === a && DOM.click("span.send_none a");
+    "diagDown" === a && DOM.click("span.send_most a");
+    "left" === a && DOM.click('#menuTable .menubutton[href*="page=fleet1"]');
+    if ("right" === a)
+      PAGE.onKeydown({
+        keyCode: 13
+      });
+  },
+  onBriefing: function(a) {
+    7 <= AGO.Init.status &&
+      ((a = DOM.getData(a.target, null, 5)),
+      "continue" === a.action
+        ? DOM.hasClass("continue", "id", "on") ||
+          PAGE.Action({
+            action: 12
+          })
+        : a.action && PAGE.Action(a));
+  },
+  onCalculator: function(a) {
+    var e, h, f, c;
+    e = a && a.target ? a.type : "";
+    h = DOM.getData(a.target, null, 2);
+    "click" === e &&
+      (a.stopPropagation(),
+      "ago_display_arrow" === a.target.className &&
+        ((f =
+          1 < DOM.getAttribute("ago_summary", "id", "ago_display_status", 2)
+            ? 1
+            : 2),
+        DOM.setAttribute("ago_summary", "id", "ago_display_status", f, 8),
+        AGO.Option.set("F13", 2 !== f, 1),
+        PAGE.displayCalculator()));
+    if (7 <= AGO.Init.status && e && OBJ.hasProperties(h)) {
+      c = h.id;
+      f = h.type || 19 === h.action;
+      if (PAGE.timeoutCalculator) window.clearTimeout(PAGE.timeoutCalculator);
+      else if ("click" === e && f) return !0;
+      if ("mousedown" === e) {
+        if (f) {
+          var b = JSON.stringify(h);
+          PAGE.timeoutCalculator = window.setTimeout(function() {
+            var a, c;
+            PAGE.timeoutCalculator = null;
+            a = OBJ.parse(b);
+            c = a.id;
+            19 === a.action && c in AGO.Item.Ship
+              ? (2 === PAGE.Para.calculator &&
+                  (AGO.Option.set(
+                    "F62",
+                    "202" === c ? 0 : "203" === c ? 1 : 2,
+                    2
+                  ),
+                  PAGE.Init(2),
+                  PAGE.Action(a)),
+                3 === PAGE.Para.calculator &&
+                  (AGO.Option.set("FA2", "202" === c, 1),
+                  PAGE.Init(3),
+                  PAGE.Action(a)))
+              : VAL.check(a.type, 1, 3) &&
+                3 === PAGE.Para.calculator &&
+                ((c = AGO.Option.get("FA1", 2) === a.type ? 0 : a.type),
+                AGO.Option.set("FA1", c, 2),
+                PAGE.Action(a));
+          }, 1e3);
+        }
+      } else if (c in AGO.Item.Coordinates)
+        (h[c] = f = NMR.parseIntAbs(a.target.value)),
+          "focus" === e && f
+            ? (a.target.setAttribute("ago_value", f), (f = 0))
+            : "blur" !== e || f
+              ? f && (f = AGO.Task.checkCoordsPart(f, c))
+              : (f = NMR.parseIntAbs(a.target.getAttribute("ago_value"))),
+          h[c] !== f && ((h[c] = f), (a.target.value = STR.check(f))),
+          PAGE.Action(h);
+      else if (c in AGO.Item.Resource) {
+        if ("INPUT" === a.target.nodeName) {
+          if ("blur" === e) PAGE.onActive(a.target.id);
+          f = NMR.parseIntShortcut(a.target.value);
+          e =
+            "click" !== e || f
+              ? "dblclick" === e
+                ? ""
+                : "blur" !== e || f
+                  ? STR.check(f)
+                  : "0"
+              : "";
+          PAGE.Next[c] = +e || 0;
+          e !== a.target.value && (a.target.value = e);
+        } else PAGE.Next[c] = DOM.getValue("ago_calc_resource_" + c, "id", 3);
+        PAGE.Action(h);
+      } else
+        "click" === e &&
+          (PAGE.Para.calculator !== h.routine ||
+          !PAGE.Next.ships ||
+          (void 0 !== h.last && h.last !== PAGE[h.routine].last)
+            ? (PAGE.Para.calculator === h.routine &&
+                1 === PAGE.getRoutine(h.routine) &&
+                (1 ===
+                DOM.getAttribute("ago_summary", "id", "ago_display_status", 2)
+                  ? (DOM.setAttribute(
+                      "ago_summary",
+                      "id",
+                      "ago_display_status",
+                      2,
+                      8
+                    ),
+                    PAGE.displayCalculator())
+                  : 2 !== h.routine ||
+                    PAGE.Next.ships ||
+                    PAGE.Next.resources ||
+                    (h.action = 22)),
+              PAGE.Action(h))
+            : DOM.click("#continue.on"));
+    }
+    e = h = f = e = f = c = null;
+  },
+  onShortcuts: function(a) {
+    var e, h, f;
+    !(h = a && a.target ? a.type : "") ||
+      7 > AGO.Init.status ||
+      ("click" === h && a.currentTarget
+        ? "ago_shortcuts_header" === a.currentTarget.className
+          ? ((e =
+              1 <
+              DOM.getAttribute("ago_shortcuts", "id", "ago_display_status", 2)
+                ? 1
+                : 2),
+            DOM.setAttribute("ago_shortcuts", "id", "ago_display_status", e, 8),
+            AGO.Option.set("F14", 2 !== e, 1))
+          : ((e = a.currentTarget.rel || ""),
+            DOM.hasClass(
+              a.currentTarget.parentNode,
+              null,
+              "ago_shortcuts_own"
+            ) &&
+              ((f =
+                "SPAN" === a.target.nodeName
+                  ? a.target.className
+                  : a.target.parentNode.className),
+              (e +=
+                ":" +
+                ("ago_shortcuts_moon" === f
+                  ? 3
+                  : "ago_shortcuts_debris" === f
+                    ? 2
+                    : 1))),
+            (a = AGO.Task.split(e, 2, 4)),
+            (a.routine = 0),
+            (a.action = 41),
+            PAGE.Action(a))
+        : "dblclick" === h
+          ? AGO.Option.is("U34") && DOM.click("#continue")
+          : ("A" === a.target.nodeName
+              ? (e = a.target)
+              : "SPAN" === a.target.nodeName
+                ? ((f = a.target.className), (e = a.target.parentNode))
+                : "SPAN" === a.target.parentNode.nodeName &&
+                  ((f = a.target.parentNode.className),
+                  (e = a.target.parentNode.parentNode)),
+            e &&
+              "A" === e.nodeName &&
+              DOM.setClassGroup(
+                e,
+                null,
+                "ago_hover",
+                AGO.Token.getClassHover(
+                  "ago_shortcuts_moon" === f
+                    ? 3
+                    : "ago_shortcuts_debris" === f
+                      ? 2
+                      : 1,
+                  "own"
+                )
+              )));
+  },
+  onActive: function(a) {
+    PAGE.lastActive = a;
+    window.setTimeout(function() {
+      PAGE.lastActive = "";
+    }, 150);
+  }
+};
+AGO.Task.updateShips = function(a, e) {
+  var h;
+  OBJ.is(a) &&
+    ((a.consumption = 1),
+    (a["212"] = 0),
+    (a.ships = a.shipsCivil = a.shipsCombat = a.capacity = a.expoints = a.minspeed = 0),
+    OBJ.iterate(AGO.Item.Ship, function(e) {
+      var c;
+      if ((c = a[e]))
+        if (
+          (e in AGO.Item.ShipCivil ? (a.shipsCivil += c) : (a.shipsCombat += c),
+          (a.ships += c),
+          (a.capacity += c * AGO.Item[e].capacity),
+          (a.expoints += (AGO.Item[e].metal + AGO.Item[e].crystal) / 200 * c),
+          (c = AGO.Ogame.getShipSpeed(e)),
+          !a.minspeed || c < a.minspeed)
+        )
+          (a.minspeed = c), (h = e);
+    }),
+    e &&
+      ((a.duration = AGO.Ogame.getFleetDuration(h, e, a.speed)),
+      OBJ.iterate(AGO.Item.Ship, function(f) {
+        a[f] &&
+          (a.consumption +=
+            a[f] * AGO.Ogame.getShipConsumption(f, e, a.duration));
+      }),
+      (a.consumption = Math.round(a.consumption))));
+};
