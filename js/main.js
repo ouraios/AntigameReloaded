@@ -21,7 +21,7 @@ AGO.Main = {
         var a, b, d, c;
         if ((a = document.getElementById("menuTableTools")))
             (b = document.createDocumentFragment()),
-                AGO.Main.addVersionCheck(b),
+        // AGO.Main.addVersionCheck(b),
                 (d = b.appendChild(document.createElement("li"))),
                 (c = DOM.appendSPAN(d, "menu_icon")),
                 DOM.appendA(
@@ -71,7 +71,7 @@ AGO.Main = {
     },
     Complete: function() {
         AGO.Main.updateTitle();
-        AGO.Main.checkVersionCheck();
+    // AGO.Main.checkVersionCheck();
         AGO.Main.Check();
     },
     onKeydown: function(a) {

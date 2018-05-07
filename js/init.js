@@ -1,11 +1,12 @@
 if (!AGO) var AGO = {};
 AGO.versionOGameMax = "5.7.99";
-if (window.navigator.userAgent.indexOf("Firefox" > -1)){
+if (window.navigator.userAgent.indexOf("Firefox") > -1){
     AGO.isPhone = -1 < window.navigator.userAgent.indexOf("Mobile");
     AGO.isTablet = -1 < window.navigator.userAgent.indexOf("Tablet");
     AGO.isMobile = AGO.isPhone || AGO.isTablet;
+    AGO.isFirefox = 0;
 }
-AGO.isChrome = true;
+AGO.isChrome = -1 < window.navigator.userAgent.indexOf("Chrome");
 AGO.context = AGO.isFirefox ? this : 0;
 AGO.Page = {
     Messages: function(a, b) {
