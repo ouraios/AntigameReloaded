@@ -42,15 +42,15 @@ AGO.Galaxy = {
         );
       37 === a.keyCode && (AGO.Galaxy.direction = -1);
       39 === a.keyCode && (AGO.Galaxy.direction = 1);
-      if (65 === a.keyCode) return DOM.click("#solarscroll .backGalaxy"), !1;
-      if (68 === a.keyCode) return DOM.click("#solarscroll .forwardGalaxy"), !1;
+      if (65 === a.keyCode) return DOM.click("#galaxyHeader .galaxy_icons:nth-child(6)"), !1;
+      if (68 === a.keyCode) return DOM.click("#galaxyHeader .galaxy_icons:nth-child(8)"), !1;
     }
     return !0;
   },
   onSwipe: function(a) {
     AGO.App.OgameMobile ||
-      ("left" === a && DOM.click("#solarscroll .backGalaxy"),
-      "right" === a && DOM.click("#solarscroll .forwardGalaxy"));
+      ("left" === a && DOM.click("#galaxyHeader .galaxy_icons:nth-child(6)"),
+      "right" === a && DOM.click("#galaxyHeader .galaxy_icons:nth-child(8)"));
   },
   Show: function() {
     var a;
@@ -67,7 +67,7 @@ AGO.Galaxy = {
         a.planet && (AGO.Galaxy.Task.position = +a.planet || 0);
     AGO.Task.updateCoords(AGO.Galaxy.Task, 1);
     DOM.addEventsAll(
-      "#solarscroll .forwardGalaxy, #solarscroll .backGalaxy, .btn_blue > a",
+      "#galaxyHeader .galaxy_icons:nth-child(6), #galaxyHeader .galaxy_icons:nth-child(8), .btn_blue > a",
       null,
       {
         click: AGO.Galaxy.clickArrow
@@ -773,9 +773,9 @@ AGO.Galaxy = {
     a &&
       a.currentTarget &&
       (AGO.Galaxy.direction =
-        "showbutton" === a.currentTarget.parentNode.id
+          DOM.hasClass(a.currentTarget, null, "btn_blue")
           ? 0
-          : DOM.hasClass(a.currentTarget, null, "backGalaxy")
+          : DOM.hasClass(a.currentTarget, null, "prev")
             ? -1
             : 1);
   },
