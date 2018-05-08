@@ -137,7 +137,6 @@ AGO.Galaxy = {
           tab: "Flights"
         }));
         console.log('galaxy improve');
-        console.log(AGO.Galaxy.improve);
       if (AGO.Galaxy.improve)
         function improveGalaxy(galaxyNb, head){
             if(head) {
@@ -397,7 +396,6 @@ AGO.Galaxy = {
         (c.debrisResources = c.debrisMetal + c.debrisCrystal),
         c.debrisResources)
       ) {
-        console.log(c);
         c.highlightDebris = NMR.isGreater(
           c.debrisResources,
           AGO.Token.getLimit(95)
@@ -501,7 +499,6 @@ AGO.Galaxy = {
     });
   },
   Display: function(a) {
-    console.log(a);
     var b;
     if ((b = document.getElementById("galaxyHeader")))
       a && "update" === a.update
