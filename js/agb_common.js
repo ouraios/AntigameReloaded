@@ -288,7 +288,7 @@ AGB.Label = {
                   (h = STR.check((f.split(">")[1] || "").split("<")[0]).trim()),
                   +l &&
                     h &&
-                    ("techs" === g && (c["L" + STR.trimZero(l, 3)] = h),
+                    ("techs" === g && l.length < 4 && (c["L" + STR.trimZero(l, 3)] = h),
                     "missions" === g && (c["LM" + STR.trimZero(l, 2)] = h)),
                   -1 < f.indexOf("<techs>") && (g = "techs"),
                   -1 < f.indexOf("<missions>") && (g = "missions");
@@ -3017,6 +3017,9 @@ AGB.Tools = {
         case "T1C":
           AGB.Tools.createWarRiders(a);
           break;
+        case "T1D":
+          AGB.Tools.createMmorpStats(a);
+          break;
         case "T2A":
           AGB.Tools.createCumulative(a);
           break;
@@ -3075,6 +3078,21 @@ AGB.Tools = {
           "&uni=" +
           (a.abbrUni || "").toLowerCase() +
           encodeURI(b));
+  },
+  createMmorpStats: function(a) {
+      var b, c;
+      if ((c = AGB.Com.Get(a.abbrCom, "Mmorpgstat")))
+          (b =
+              "Alliance" === a.tab
+                  ? "0_fiche_alliance.php?ftr="+ (a.searchAlliance || "")+".all"
+                  : "Player" === a.tab
+                  ? "0_fiche_joueur.php?ftr="+(a.searchPlayer || "")+".dat"
+                  : ""),
+              (a.href =
+                  "https://www.mmorpg-stat.eu/" +encodeURI(b)+
+                  "&pays="+c +
+                  "&univers=_" +
+                  (a.abbrUni.replace("UNI", "") || "").toLowerCase());
   },
   createInfuza: function(a) {
     var b;
