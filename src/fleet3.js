@@ -414,7 +414,7 @@ AGO.Fleet3 = {
       OBJ.iterate(AGO.Item.Resource, function(b) {
         var c;
         c = AGO.Units.get(b);
-        "deuterium" === b && (c -= DOM.getText("consumption", "id", 3));
+        "deuterium" === b && (c -= document.querySelector('#consumption').textContent.split(' ')[0].replace('.', ''));
         a.resources += a[b];
         1.01 * a[b] < c - PAGE.Mini[b] && (d = !1);
         DOM.setText("ago_fleet_remaining_" + b, "id", Math.max(c - a[b], 0), 5);
@@ -588,7 +588,7 @@ AGO.Fleet3 = {
     function b(a) {
       return (
         AGO.Units.get(a) -
-        ("deuterium" === a ? DOM.getText("consumption", "id", 3) : 0)
+        ("deuterium" === a ? document.querySelector('#consumption').textContent.split(' ')[0].replace('.', '') : 0)
       );
     }
 
