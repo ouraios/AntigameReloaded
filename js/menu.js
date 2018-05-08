@@ -849,15 +849,13 @@ AGO.Menu = {
       " - " +
       AGO.App.versionAGO +
       (AGO.App.beta ? " Beta" : "");
-    DOM.appendSPAN(b, "ago_color_limeorange", "by Francolino");
+    DOM.appendSPAN(b, "ago_color_limeorange", "by Ouraios based on Francolino work");
     b = DOM.appendDIV(a, "ago_menu_header_button");
     a = DOM.appendTABLE(b, null, null, [434, 220]);
     a = DOM.appendTR(a);
     b = DOM.appendTD(a);
     c =
-      '<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----"><input type="image" src="' +
-      HTML.urlImage("paypal.gif") +
-      '" border="0" name="submit" alt="PayPal"><img alt="" border="0" src="https://www.paypalobjects.com/de_DE/i/scr/pixel.gif" width="1" height="1"></form>';
+      '<a href="https://paypal.me/ouraios" target="_blank"><image src="' + HTML.urlImage("paypal.gif") +'" alt="PayPal"/></a>';
     DOM.setText(b, null, c, 9);
     AGO.Menu.appendButton(b, "AM2", "AM2", {
       message: {
