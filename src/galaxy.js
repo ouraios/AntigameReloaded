@@ -34,9 +34,9 @@ AGO.Galaxy = {
       if (32 === a.keyCode && AGO.Option.is("U33"))
         return (
           -1 === AGO.Galaxy.direction
-            ? DOM.click("#solarscroll .backGalaxy")
+            ? DOM.click("#galaxyHeader .galaxy_icons:nth-child(6)")
             : 1 === AGO.Galaxy.direction
-              ? DOM.click("#solarscroll .forwardGalaxy")
+              ? DOM.click("#galaxyHeader .galaxy_icons:nth-child(8)")
               : DOM.click("#galaxyHeader .btn_blue"),
           !1
         );
@@ -158,7 +158,7 @@ AGO.Galaxy = {
             }
         }
         improveGalaxy(galaxyTable.querySelectorAll("#galaxyheadbg2 th"), true);
-        galaxyTable.querySelectorAll(".row").forEach(row => {
+        galaxyTable.querySelectorAll(".row").forEach(function(row){
             improveGalaxy(row.querySelectorAll('td'), false);
 
         });

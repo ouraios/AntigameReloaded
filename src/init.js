@@ -1132,4 +1132,4 @@ AGO.Data = {
     }
 };
 // window.top === window.self && AGO.Init.Start();
-document.addEventListener('DOMContentLoaded', () => AGO.Init.Start(), false);
+document.addEventListener('DOMContentLoaded', function(){AGO.Init.Start()}, false);
