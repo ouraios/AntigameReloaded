@@ -1,1 +1,792 @@
-AGO.Galaxy={status:0,enabled:!1,improve:!1,direction:1,Data:{},Task:{},Messages:function(e,a){"Action"===e?AGO.Galaxy.Action(a):"Display"===e?AGO.Galaxy.Display(a):"sendShips"===e&&AGO.Galaxy.sendShips(a)},Run:function(){AGO.Option.is("G40")&&!AGO.App.OgameMobile&&(AGO.Galaxy.enabled=!0,AGO.Galaxy.improve=AGO.Option.is("G41"),AGO.Galaxy.shrink=AGO.Option.get("G42",2),AGO.Galaxy.status=5,AGO.Galaxy.Show(),document.getElementById("galaxytable")&&AGO.Galaxy.Content())},onKeydown:function(e){if(13===e.keyCode&&!e.cached)return AGO.Galaxy.direction=0,12===e.inputType&&document.activeElement.blur(),DOM.click("#galaxyHeader .btn_blue"),!1;if(12!==e.inputType&&!e.cached){if(32===e.keyCode&&AGO.Option.is("U33"))return-1===AGO.Galaxy.direction?DOM.click("#galaxyHeader .galaxy_icons:nth-child(6)"):1===AGO.Galaxy.direction?DOM.click("#galaxyHeader .galaxy_icons:nth-child(8)"):DOM.click("#galaxyHeader .btn_blue"),!1;if(37===e.keyCode&&(AGO.Galaxy.direction=-1),39===e.keyCode&&(AGO.Galaxy.direction=1),65===e.keyCode)return DOM.click("#solarscroll .backGalaxy"),!1;if(68===e.keyCode)return DOM.click("#solarscroll .forwardGalaxy"),!1}return!0},onSwipe:function(e){AGO.App.OgameMobile||("left"===e&&DOM.click("#solarscroll .backGalaxy"),"right"===e&&DOM.click("#solarscroll .forwardGalaxy"))},Show:function(){var e;AGO.Galaxy.shrink&&DOM.extendClass("inhalt","id","ago_shrink ago_shrink_"+AGO.Galaxy.shrink),(e=STR.splitParameter(document.location.search))&&(e.galaxy&&(AGO.Galaxy.Task.galaxy=+e.galaxy||0),e.system&&(AGO.Galaxy.Task.system=+e.system||0),e.position&&(AGO.Galaxy.Task.position=+e.position||0),e.planet&&(AGO.Galaxy.Task.position=+e.planet||0)),AGO.Task.updateCoords(AGO.Galaxy.Task,1),DOM.addEventsAll("#solarscroll .forwardGalaxy, #solarscroll .backGalaxy, .btn_blue > a",null,{click:AGO.Galaxy.clickArrow}),DOM.addEvents("galaxyContent","id",{click:AGO.Galaxy.click})},Content:function(){var e,a,t,l;if(console.log("galaxy content"),e=document.getElementById("galaxytable"),AGO.Galaxy.status=5,AGO.Galaxy.status&&e&&DOM.updateAttribute(e,null,"ago-status",1,8)){if(a=DOM.getAttribute(e,null,"data-galaxy",2),t=DOM.getAttribute(e,null,"data-system",2),AGO.Galaxy.sameSystem=a===AGO.Galaxy.Data.galaxy&&t===AGO.Galaxy.Data.system,AGO.Galaxy.Data={galaxy:a,system:t,Row:[]},AGO.Galaxy.behave=AGO.Option.is("G51")||AGO.Init.mobile?AGO.Option.is("G52")?3:AGO.isMobile?2:1:0,AGO.Galaxy.behave&&(3===AGO.Galaxy.behave&&DOM.extendClass(e,null,"ago_galaxy_espionage"),a={update:"reload",setting:{id:"G52",mode:"toggle"}},DOM.setData('th[colspan="3"]',e,a),DOM.setData("th.text_moon",e,a),(a=3===AGO.Galaxy.behave?"#008000":2===AGO.Galaxy.behave?"#656977":"")&&DOM.updateStyle('th[colspan="3"]',e,"color",a),(a=AGO.Option.is("commander")?a:2<=AGO.Galaxy.behave?"#656977":"")&&DOM.updateStyle("th.text_moon",e,"color",a)),+(a=DOM.getText("#slotValue",e,7).split("/"))[1]&&(AGO.Fleet.Set("Current",{fleets:+a[0]||0,fleetsSlots:+a[1]||0}),AGO.Init.Messages("Panel","updateTab",{tab:"Flights"})),console.log("galaxy improve"),console.log(AGO.Galaxy.improve),AGO.Galaxy.improve)function o(e,a){a?(e[0].style.width="60px",e[1].style.width="150px",e[4].style.width="160px",DOM.before(e[0],e[1])):(e[1].style.width="60px",e[2].style.width="150px",e[5].style.width="160px",DOM.before(e[1],e[2])),t=e[l],DOM.hasChildren(t)&&(DOM.before(t.children[2],t.children[3]),DOM.before(t.children[4],t.children[5]))}o(e.querySelectorAll("#galaxyheadbg2 th"),!0),e.querySelectorAll(".row").forEach(function(e){o(e.querySelectorAll("td"),!1)}),AGO.Galaxy.showRows(e.querySelectorAll(".row")),AGO.Galaxy.showHighlight(e.querySelectorAll(".row")),AGO.Galaxy.updateDataBase()}},showRows:function(e){var t,l,o,n,i,r,s,a,d,c,y,O,p,G,g,u;for(p=AGO.Option.get("G45",2),g=AGO.Option.is("G58"),u=0;u<e.length;u++)(O={position:u+1}).coords=AGO.Galaxy.Data.galaxy+":"+AGO.Galaxy.Data.system+":"+O.position,O.owncoords=AGO.Planets.owncoords(O.coords,1),O.coordsActive=AGO.Task.cutCoords(AGO.Panel.GetActive("Target","coords",6)),O.coordsCurrent=AGO.Galaxy.Task.coords,AGO.Galaxy.Data.Row[O.position]=O,s=r=i=n=o=l=t=void 0,DOM.iterateChildren(e[u],function(e){var a=e.className||"";HTML.hasClass(a,"allytag")?t=e:HTML.hasClass(a,"playername")?l=e:HTML.hasClass(a,"microplanet")?o=e:HTML.hasClass(a,"moon")?n=e:HTML.hasClass(a,"debris")?i=e:HTML.hasClass(a,"position")?r=e:HTML.hasClass(a,"planetname")&&(s=e)}),t&&(a=t.querySelector(".allytagwrapper"),G=DOM.getAttribute(a,null,"rel"),O.allianceId=STR.check(NMR.parseIntFormat(G)),a&&O.allianceId&&(O.allianceTag=DOM.getTextChild(a,null,7),O.allianceOwn=HTML.hasClass(a.className,"status_abbr_ally_own")?41:0,O.allianceColor=AGO.Token.getClass(AGO.Galaxy.getToken("Alliance",O.allianceId)||O.allianceOwn),O.allianceColor&&DOM.addClass(t,null,O.allianceColor),d=a.querySelector(".htmlTooltip"),c=a.querySelector(".htmlTooltip .ListLinks"),d&&c&&(O.allianceName=DOM.getText("h1",d,7),O.allianceRank=DOM.getText(".rank a",c,2),O.allianceMember=DOM.getText(".members",c,2),y={tab:"Alliance",id:O.allianceId,name:O.allianceName,tag:O.allianceTag},DOM.setData(c,null,y),AGO.Option.is("G44")&&(c=DOM.appendA(null,{class:"ago_galaxy_rank",href:DOM.getAttribute(".rank a",c,"href")}),y=("ago_galaxy_rank "+O.allianceColor).trim(),DOM.appendSPAN(c,y,O.allianceRank+"/"+O.allianceMember),DOM.appendChild(t,c)),g||(DOM.setAttribute(a,null,"rel",G+String.fromCharCode(65+O.position)),DOM.setAttribute(d,null,"id",G+String.fromCharCode(65+O.position)))))),l&&!O.owncoords&&(a=l.querySelector("a.tooltipRel"),G=DOM.getAttribute(a,null,"rel"),O.playerId=STR.check(NMR.parseIntFormat(G)),a&&O.playerId&&(O.playerBuddy=DOM.hasClass(r,null,"status_abbr_buddy")?51:0,O.playerColor=AGO.Token.getClass(AGO.Galaxy.getToken("Player",O.playerId)||O.playerBuddy)||O.allianceColor,O.playerStatus=AGO.Token.getPlayerStatus(".status > span",l)||21,d=l.querySelector(".htmlTooltip"),c=l.querySelector(".htmlTooltip .ListLinks"),d&&c&&(O.playerName=DOM.getText("h1 span",d,7),O.playerRank=DOM.getText(".rank a",c,2),y={message:{page:"Token",role:"Action",data:{action:"set",tab:"Player",token:81,id:O.playerId,name:O.playerName}}},DOM.setData(a,null,y),y={tab:"Player",id:O.playerId,name:O.playerName},DOM.setData(c,null,y),AGO.Option.is("G43")&&(c=DOM.appendA(null,{class:"ago_galaxy_rank",href:DOM.getAttribute(".rank a",c,"href")}),y=("ago_galaxy_rank "+O.playerColor).trim(),y=DOM.appendSPAN(c,y,1e4<=O.playerRank?"10 k":O.playerRank),DOM.appendChild(AGO.Galaxy.improve?l.nextElementSibling:l,c)),g||(DOM.setAttribute(a,null,"rel",G+String.fromCharCode(65+O.position)),DOM.setAttribute(d,null,"id",G+String.fromCharCode(65+O.position)))))),G=2!==AGO.Galaxy.behave&&!O.allianceOwn&&!O.playerBuddy&&VAL.check(O.playerStatus,21,22,23,26,27,28),o&&(O.planetId=DOM.getAttribute(o,null,"data-planet-id",7),O.planetId&&(d=o.querySelector(".htmlTooltip"),c=o.querySelector(".htmlTooltip .ListLinks"),d&&c&&(O.planetName=DOM.getText("h1 span",d,7),o.querySelector(".activity")&&(O.planetActivity=DOM.getText(c.firstElementChild,null,2)||1)),O.owncoords||(y={tab:"Target",id:O.planetId,name:O.playerName,coords:O.coords+":1"},DOM.setData(c,null,y),G&&(3===AGO.Galaxy.behave&&DOM.extendClass(o,null,"ago_galaxy_espionage"),DOM.setAttribute(o,null,"onclick","sendShips(6,"+O.coords.replace(/:/g,",")+",1,0,0,this); return false;"))))),n&&(O.moonId=DOM.getAttribute(n,null,"data-moon-id",7),O.moonId&&(d=n.querySelector(".htmlTooltip"),c=n.querySelector(".htmlTooltip .ListLinks"),d&&c&&(O.moonName=DOM.getText("h1 span",d,7),n.querySelector(".activity")&&(O.moonActivity=DOM.getText(c.firstElementChild,null,2)||1)),O.owncoords||(y={tab:"Target",id:O.planetId,name:O.playerName,coords:O.coords+":3"},DOM.setData(c,null,y),G&&3===AGO.Galaxy.behave&&DOM.extendClass(n,null,"ago_galaxy_espionage"),AGO.Option.is("commander")&&(a=n.querySelector("a[onclick]"),G&&(d=DOM.getAttribute(a,null,"onclick",7).split(");").join(",0,this);"),DOM.setAttribute(n,null,"onclick",d)),DOM.removeAttribute(a,null,"onclick"))))),i&&(y=i.querySelectorAll(".debris-content"),O.debrisMetal=DOM.getText(y[0],null,2),O.debrisCrystal=DOM.getText(y[1],null,2),O.debrisResources=O.debrisMetal+O.debrisCrystal,O.debrisResources)&&(console.log(O),O.highlightDebris=NMR.isGreater(O.debrisResources,AGO.Token.getLimit(95))?95:NMR.isGreater(O.debrisResources,AGO.Token.getLimit(94))?94:0,(a=i.querySelector("a.tooltipRel div"))&&(a.parentElement.style["text-decoration"]="none"),a.parentElement.style["line-height"]="13px",1===p?(d=Math.max(2+3*(O.debrisResources+"").length-AGO.Galaxy.shrink,14),d=Math.min(d,[30,28,26,24][AGO.Galaxy.shrink]),DOM.set(a,null,{width:d,height:d}),O.highlightDebris&&(a.style.background="url("+HTML.urlImage("galaxy_debris.gif")+")")):1<p&&(y=("ago_galaxy_debris "+AGO.Token.getClass(O.highlightDebris)).trim(),c=DOM.appendDIV(null,y),y=O.highlightDebris?"ago_text_background":"",(y=DOM.appendSPAN(c,y)).innerHTML=(3!==p||AGO.Galaxy.sameSystem?STR.formatNumber(O.debrisMetal):STR.shortNumber(O.debrisMetal,0))+"<br/>"+(3!==p||AGO.Galaxy.sameSystem?STR.formatNumber(O.debrisCrystal):STR.shortNumber(O.debrisCrystal,0)),DOM.setStyleDisplay(a),DOM.appendChild(a.parentNode,c),AGO.Galaxy.improve&&DOM.addClass(i,null,"ago_galaxy_debris_shadow")),O.owncoords||(y={tab:"Target",id:O.planetId,name:O.playerName,coords:O.coords+":2"},DOM.setData(".htmlTooltip .ListLinks",i,y))),O.planetId&&(DOM.addClass(e[u],null,"ago_galaxy_row"),O.positionColor=AGO.Token.getClass(AGO.Galaxy.getToken("Target",O.planetId))||O.playerColor,O.positionColor&&DOM.addClass(r,null,O.positionColor),s&&(O.positionColor?(DOM.addClass(s,null,O.positionColor),DOM.addClass("a",s,O.positionColor),DOM.addClass("span",s,O.positionColor)):AGO.Option.is("CT0")&&DOM.addClass("a",s,"ago_color_bright")));a=c=y=a=null},updateDataBase:function(){var e,a,t;for(a={Player:{},Planet:{}},t=1;t<AGO.Galaxy.Data.Row.length;t++)(e=AGO.Galaxy.Data.Row[t]).playerId?(a.Player[e.playerId]={I:+e.playerId,N:e.playerName,s:e.playerStatus},e.allianceId&&(a.Player[e.playerId].aI=+e.allianceId),a.Planet[e.coords]=e.moonId?{I:+e.playerId,pI:+e.planetId,pN:e.planetName,c:e.coords,mI:+e.moonId,mN:e.moonName}:{I:+e.playerId,pI:+e.planetId,pN:e.planetName,c:e.coords}):a.Planet[e.coords]=null;AGB.message("DataBase","Set",{keyUni:AGO.App.keyUni,data:a})},Display:function(e){var a;console.log(e),(a=document.getElementById("galaxyHeader"))&&(e&&"update"===e.update?(e=a.querySelectorAll(".row"),AGO.Galaxy.showHighlight(e,"update")):DOM.click("#galaxyHeader .btn_blue"))},showHighlight:function(e,a){var t,l,o,n,i,r,s,d,c,y,O;if(n=AGO.Task.cutCoords(AGO.Panel.GetActive("Target","coords",6)),i=AGO.Galaxy.Task.coords,OBJ.is(e)&&OBJ.is(AGO.Galaxy.Data.Row))for(o=0;o<e.length;o++)((t=AGO.Galaxy.Data.Row[o+1]).planetId||t.debrisResources)&&(a&&(y=e[o],O=null,DOM.updateStyle(y,O,"backgroundColor","inherit"),DOM.updateStyle(y,O,"opacity","inherit"),DOM.removeClass(y,O,"ago_highlight"),DOM.setClassGroup(e[o],null,"ago_selected")),(l=(l=!t.coords||t.coords!==n&&t.coords!==i?t.playerId&&t.playerId===AGO.Panel.GetActive("Player","id",6)?"SB":"":"SA")&&AGO.Token.getColor(l)?l:"")&&DOM.extendClass(e[o],null,AGO.Token.getClassSelected(l)),t=AGO.Token.getColorOpacity(AGO.Galaxy.highlight(t)),r=e[o],s=null,c=l,(d=t)&&("string"==typeof d?(DOM.addClass(r,s,"ago_highlight"),DOM.updateStyle(r,s,"backgroundColor",d)):c||DOM.updateStyle(r,s,"opacity",d)))},highlight:function(e){function a(e,a,t,l){var o,n;return(o=AGO.Token.getCondition(a))&&(n=AGO.Token.getLimit(a),n=1===o&&!l||2===o&&NMR.isLesser(e.allianceRank,n)||5===o&&"Player"===t||6===o&&NMR.isLesser(e.playerRank,n)||10===o&&"Target"===t||13===o&&NMR.isGreater(e.debrisResources,n)||16===o&&(NMR.isLesser(e.planetActivity,n)||NMR.isLesser(e.moonActivity,n))),n?a:0}var t;return OBJ.is(e)&&(AGO.Option.is("CE0")&&(t=a(e,99,"",!0)||a(e,96,"",!0)||a(e,98,"",!e.planetActivity&&!e.moonActivity)||a(e,97,"",!e.planetActivity&&!e.moonActivity)||a(e,95,"",!e.debrisResources)||a(e,94,"",!e.debrisResources)||0),!t&&AGO.Option.is("CT0")&&(t=a(e,AGO.Galaxy.getToken("Target",e.planetId),"Target")||a(e,AGO.Galaxy.getToken("Player",e.playerId),"Player")||a(e,e.playerBuddy,"Player")||a(e,e.playerStatus,"Player")||a(e,AGO.Galaxy.getToken("Alliance",e.allianceId),"Alliance")||a(e,e.allianceOwn,"Alliance"))),t||0},getToken:function(e,a){return e&&a&&AGO.Token.Data[e]&&AGO.Token.Data[e][a]&&+STR.check(AGO.Token.Data[e][a]).split("|")[0]||0},Tooltip:function(e){var a;(e=document.querySelector('#galaxytable .tooltipRel[ago-tooltip="'+e+'"]'))&&((e=(e="TD"===e.nodeName?e:e.parentNode).querySelector(".galaxyTooltip .ListLinks"))&&((a=DOM.getData(e,null,1)).tab&&(e.addEventListener("click",AGO.Galaxy.click,!1),AGO.Galaxy.appendTooltipToken(e,a),AGO.Galaxy.appendTooltipSearch(e,a))))},appendTooltipToken:function(e,l){function a(e){var a,t;AGO.Token.getColor(e)&&((a=OBJ.create(l)).action=n===e?"remove":"set",a.token=e,t=AGO.Token.getClass(e)+(n===e?" ago_selected":""),DOM.appendA(DOM.appendLI(o),t,null,{message:{page:"Token",role:"Action",data:a}}).textContent=AGO.Token.getLabel(e))}var o,n,t;if(e&&OBJ.is(l)){if(o=document.createDocumentFragment(),DOM.appendDIV(o,"splitLine"),DOM.appendA(DOM.appendLI(o),null,null,{message:{page:"Token",role:"Action",data:{action:"set",tab:l.tab,token:81,id:l.id,name:l.name,tag:l.tag,coords:l.coords}}}).textContent=AGO.Label.get("DT1"),DOM.append(o,"li",null,{lineHeight:"6px"}).textContent=" ",AGO.Option.is("CT0")){if(n=AGO.Galaxy.getToken(l.tab,l.id),"Alliance"===l.tab)for(t=42;t<50;t++)a(t);if("Player"===l.tab){for(t=52;t<60;t++)a(t);DOM.append(o,"li",null,{lineHeight:"6px"}).textContent=" "}if("Player"===l.tab||"Target"===l.tab)for(t=61;t<80;t++)a(t)}e.appendChild(o)}},appendTooltipSearch:function(e,a){var t,l,o;if(AGO.Option.is("T00")&&a.id&&("Alliance"===a.tab||"Player"===a.tab)){for(t=document.createDocumentFragment(),DOM.appendDIV(t,"splitLine"),o=0;o<AGO.Tools.List.length;o++){var n="T1"+AGO.Tools.List[o],i=void 0,r=void 0;AGO.Option.is(n)&&(l=!0,i={message:{page:"Tools",role:"Action",data:{id:n,Search:OBJ.create(a)}}},r=AGO.Option.getPair(n)[0]||AGO.Label.get(n),DOM.appendA(DOM.appendLI(t),"",null,i).textContent=r)}l&&e.appendChild(t)}},getActivityTooltip:function(){return""},getDebrisTooltip:function(){return""},get:function(e,a){if(a){if(!e)return AGO.Galaxy.Data[a]||0;if(OBJ.is(AGO.Galaxy.Data.Row)&&OBJ.is(AGO.Galaxy.Data.Row[e]))return AGO.Galaxy.Data.Row[e][a]}return 0},Action:function(a){var e,t,l,o;console.log("galaxy action"),e=AGO.Galaxy.Data,AGO.Galaxy.status&&e&&OBJ.get(a,"id")&&(l={Alliance:"allianceId",Player:"playerId",Target:"planetId"}[a.tab],OBJ.iterateArray(e.Row,function(e){OBJ.get(e,l)===a.id&&(o="update")}),"Target"===a.tab&&(AGO.Galaxy.Task={},t=AGO.Galaxy.Task,AGO.Task.cutSystem(a.id)===e.galaxy+":"+e.system&&(o="update"),"set"===a.action||"select"===a.action)&&(o="update",AGO.Task.updateCoords(t,4,a),t.galaxy&&t.galaxy!==e.galaxy&&(o="reload",DOM.setValue("galaxy_input","id",t.galaxy)),t.system&&t.system!==e.system&&(o="reload",DOM.setValue("system_input","id",t.system))),o&&(o=80<a.token?o:"set"===a.action||"remove"===a.action?"reload":o,AGO.Galaxy.Display({update:o})))},click:function(e){var a;console.log("galaxy click"),e&&e.target&&e.currentTarget&&(DOM.click(".close-tooltip",e.currentTarget.parentNode.parentNode.parentNode),(a=DOM.getData(e.target,null,2)).setting&&("toggle"===a.setting.mode&&(a.setting.value=!AGO.Option.get(a.setting.id,1)),AGO.Option.set(a.setting.id,a.setting.value,1)),a.message&&("Tools"===a.message.page&&OBJ.set(a.message.data,"shiftKeys",e.shiftKey||e.ctrlKey),AGO.Init.Messages(a.message.page,a.message.role,a.message.data)),a.update&&AGO.Galaxy.Display(a))},clickArrow:function(e){e&&e.currentTarget&&(AGO.Galaxy.direction="showbutton"===e.currentTarget.parentNode.id?0:DOM.hasClass(e.currentTarget,null,"backGalaxy")?-1:1)},sendShips:function(e){var a,t;a=AGO.Fleet.Get("Current","fleets"),t=AGO.Fleet.Get("Current","fleetsSlots"),DOM.setStyleColor("#galaxytable #slots",null,"start"===e.mode?"#FF4B00":t&&t<=a?"#D43635":"#00B000")}};
+AGO.Galaxy = {
+  status: 0,
+  enabled: !1,
+  improve: !1,
+  direction: 1,
+  Data: {},
+  Task: {},
+  Messages: function(a, b) {
+    "Action" === a
+      ? AGO.Galaxy.Action(b)
+      : "Display" === a
+        ? AGO.Galaxy.Display(b)
+        : "sendShips" === a && AGO.Galaxy.sendShips(b);
+  },
+  Run: function() {
+    AGO.Option.is("G40") &&
+      !AGO.App.OgameMobile &&
+      ((AGO.Galaxy.enabled = !0),
+      (AGO.Galaxy.improve = AGO.Option.is("G41")),
+      (AGO.Galaxy.shrink = AGO.Option.get("G42", 2)),
+      (AGO.Galaxy.status = 5),
+      AGO.Galaxy.Show(),
+      document.getElementById("galaxytable") && AGO.Galaxy.Content());
+  },
+  onKeydown: function(a) {
+    if (13 === a.keyCode && !a.cached)
+      return (
+        (AGO.Galaxy.direction = 0),
+        12 === a.inputType && document.activeElement.blur(),
+        DOM.click("#galaxyHeader .btn_blue"),
+        !1
+      );
+    if (12 !== a.inputType && !a.cached) {
+      if (32 === a.keyCode && AGO.Option.is("U33"))
+        return (
+          -1 === AGO.Galaxy.direction
+            ? DOM.click("#galaxyHeader .galaxy_icons:nth-child(6)")
+            : 1 === AGO.Galaxy.direction
+              ? DOM.click("#galaxyHeader .galaxy_icons:nth-child(8)")
+              : DOM.click("#galaxyHeader .btn_blue"),
+          !1
+        );
+      37 === a.keyCode && (AGO.Galaxy.direction = -1);
+      39 === a.keyCode && (AGO.Galaxy.direction = 1);
+      if (65 === a.keyCode) return DOM.click("#solarscroll .backGalaxy"), !1;
+      if (68 === a.keyCode) return DOM.click("#solarscroll .forwardGalaxy"), !1;
+    }
+    return !0;
+  },
+  onSwipe: function(a) {
+    AGO.App.OgameMobile ||
+      ("left" === a && DOM.click("#solarscroll .backGalaxy"),
+      "right" === a && DOM.click("#solarscroll .forwardGalaxy"));
+  },
+  Show: function() {
+    var a;
+    AGO.Galaxy.shrink &&
+      DOM.extendClass(
+        "inhalt",
+        "id",
+        "ago_shrink ago_shrink_" + AGO.Galaxy.shrink
+      );
+    if ((a = STR.splitParameter(document.location.search)))
+      a.galaxy && (AGO.Galaxy.Task.galaxy = +a.galaxy || 0),
+        a.system && (AGO.Galaxy.Task.system = +a.system || 0),
+        a.position && (AGO.Galaxy.Task.position = +a.position || 0),
+        a.planet && (AGO.Galaxy.Task.position = +a.planet || 0);
+    AGO.Task.updateCoords(AGO.Galaxy.Task, 1);
+    DOM.addEventsAll(
+      "#solarscroll .forwardGalaxy, #solarscroll .backGalaxy, .btn_blue > a",
+      null,
+      {
+        click: AGO.Galaxy.clickArrow
+      }
+    );
+    DOM.addEvents("galaxyContent", "id", {
+      click: AGO.Galaxy.click
+    });
+  },
+  Content: function() {
+    console.log('galaxy content');
+    var galaxyTable, galaxyNb, systemNb, h;
+    galaxyTable = document.getElementById("galaxytable");
+      AGO.Galaxy.status = 5;
+    if (
+      AGO.Galaxy.status &&
+      galaxyTable &&
+      DOM.updateAttribute(galaxyTable, null, "ago-status", 1, 8)
+    ) {
+      galaxyNb = DOM.getAttribute(galaxyTable, null, "data-galaxy", 2);
+      systemNb = DOM.getAttribute(galaxyTable, null, "data-system", 2);
+      AGO.Galaxy.sameSystem =
+        galaxyNb === AGO.Galaxy.Data.galaxy && systemNb === AGO.Galaxy.Data.system;
+      AGO.Galaxy.Data = {
+        galaxy: galaxyNb,
+        system: systemNb,
+        Row: []
+      };
+      AGO.Galaxy.behave =
+        AGO.Option.is("G51") || AGO.Init.mobile
+          ? AGO.Option.is("G52")
+            ? 3
+            : AGO.isMobile
+              ? 2
+              : 1
+          : 0;
+      AGO.Galaxy.behave &&
+        (3 === AGO.Galaxy.behave &&
+          DOM.extendClass(galaxyTable, null, "ago_galaxy_espionage"),
+        (galaxyNb = {
+          update: "reload",
+          setting: {
+            id: "G52",
+            mode: "toggle"
+          }
+        }),
+        DOM.setData('th[colspan="3"]', galaxyTable, galaxyNb),
+        DOM.setData("th.text_moon", galaxyTable, galaxyNb),
+        (galaxyNb =
+          3 === AGO.Galaxy.behave
+            ? "#008000"
+            : 2 === AGO.Galaxy.behave
+              ? "#656977"
+              : "") && DOM.updateStyle('th[colspan="3"]', galaxyTable, "color", galaxyNb),
+        (galaxyNb = AGO.Option.is("commander")
+          ? galaxyNb
+          : 2 <= AGO.Galaxy.behave
+            ? "#656977"
+            : "") && DOM.updateStyle("th.text_moon", galaxyTable, "color", galaxyNb));
+      galaxyNb = DOM.getText("#slotValue", galaxyTable, 7).split("/");
+      +galaxyNb[1] &&
+        (AGO.Fleet.Set("Current", {
+          fleets: +galaxyNb[0] || 0,
+          fleetsSlots: +galaxyNb[1] || 0
+        }),
+        AGO.Init.Messages("Panel", "updateTab", {
+          tab: "Flights"
+        }));
+        console.log('galaxy improve');
+        console.log(AGO.Galaxy.improve);
+      if (AGO.Galaxy.improve)
+        function improveGalaxy(galaxyNb, head){
+            if(head) {
+                galaxyNb[0].style.width = "60px";
+                galaxyNb[1].style.width = "150px";
+                galaxyNb[4].style.width = "160px";
+                DOM.before(galaxyNb[0], galaxyNb[1]);
+            } else {
+                galaxyNb[1].style.width = "60px";
+                galaxyNb[2].style.width = "150px";
+                galaxyNb[5].style.width = "160px";
+                DOM.before(galaxyNb[1], galaxyNb[2]);
+            }
+            systemNb = galaxyNb[h];
+            if(DOM.hasChildren(systemNb)){
+              DOM.before(systemNb.children[2], systemNb.children[3]);
+              DOM.before(systemNb.children[4], systemNb.children[5]);
+            }
+        }
+        improveGalaxy(galaxyTable.querySelectorAll("#galaxyheadbg2 th"), true);
+        galaxyTable.querySelectorAll(".row").forEach(function(row){
+            improveGalaxy(row.querySelectorAll('td'), false);
+
+        });
+
+      AGO.Galaxy.showRows(galaxyTable.querySelectorAll(".row"));
+      AGO.Galaxy.showHighlight(galaxyTable.querySelectorAll(".row"));
+      AGO.Galaxy.updateDataBase();
+    }
+  },
+  showRows: function(a) {
+    var allyTag, playerName, microplanet, moon, debris, position, planetName, f, n, k, l, c, s, q, t, r;
+    s = AGO.Option.get("G45", 2);
+    t = AGO.Option.is("G58");
+    for (r = 0; r < a.length; r++) {
+      c = {
+        position: r + 1
+      };
+      c.coords =
+        AGO.Galaxy.Data.galaxy +
+        ":" +
+        AGO.Galaxy.Data.system +
+        ":" +
+        c.position;
+      c.owncoords = AGO.Planets.owncoords(c.coords, 1);
+      c.coordsActive = AGO.Task.cutCoords(
+        AGO.Panel.GetActive("Target", "coords", 6)
+      );
+      c.coordsCurrent = AGO.Galaxy.Task.coords;
+      AGO.Galaxy.Data.Row[c.position] = c;
+      planetName = position = debris = moon = microplanet = playerName = allyTag = void 0;
+      DOM.iterateChildren(a[r], function(a) {
+        var c = a.className || "";
+        HTML.hasClass(c, "allytag")
+          ? (allyTag = a)
+          : HTML.hasClass(c, "playername")
+            ? (playerName = a)
+            : HTML.hasClass(c, "microplanet")
+              ? (microplanet = a)
+              : HTML.hasClass(c, "moon")
+                ? (moon = a)
+                : HTML.hasClass(c, "debris")
+                  ? (debris = a)
+                  : HTML.hasClass(c, "position")
+                    ? (position = a)
+                    : HTML.hasClass(c, "planetname") && (planetName = a);
+      });
+      allyTag &&
+        ((f = allyTag.querySelector(".allytagwrapper")),
+        (q = DOM.getAttribute(f, null, "rel")),
+        (c.allianceId = STR.check(NMR.parseIntFormat(q))),
+        f &&
+          c.allianceId &&
+          ((c.allianceTag = DOM.getTextChild(f, null, 7)),
+          (c.allianceOwn = HTML.hasClass(f.className, "status_abbr_ally_own")
+            ? 41
+            : 0),
+          (c.allianceColor = AGO.Token.getClass(
+            AGO.Galaxy.getToken("Alliance", c.allianceId) || c.allianceOwn
+          )),
+          c.allianceColor && DOM.addClass(allyTag, null, c.allianceColor),
+          (n = f.querySelector(".htmlTooltip")),
+          (k = f.querySelector(".htmlTooltip .ListLinks")),
+          n &&
+            k &&
+            ((c.allianceName = DOM.getText("h1", n, 7)),
+            (c.allianceRank = DOM.getText(".rank a", k, 2)),
+            (c.allianceMember = DOM.getText(".members", k, 2)),
+            (l = {
+              tab: "Alliance",
+              id: c.allianceId,
+              name: c.allianceName,
+              tag: c.allianceTag
+            }),
+            DOM.setData(k, null, l),
+            AGO.Option.is("G44") &&
+              ((k = DOM.appendA(null, {
+                class: "ago_galaxy_rank",
+                href: DOM.getAttribute(".rank a", k, "href")
+              })),
+              (l = ("ago_galaxy_rank " + c.allianceColor).trim()),
+              DOM.appendSPAN(k, l, c.allianceRank + "/" + c.allianceMember),
+              DOM.appendChild(allyTag, k)),
+            t ||
+              (DOM.setAttribute(
+                f,
+                null,
+                "rel",
+                q + String.fromCharCode(65 + c.position)
+              ),
+              DOM.setAttribute(
+                n,
+                null,
+                "id",
+                q + String.fromCharCode(65 + c.position)
+              )))));
+      playerName &&
+        !c.owncoords &&
+        ((f = playerName.querySelector("a.tooltipRel")),
+        (q = DOM.getAttribute(f, null, "rel")),
+        (c.playerId = STR.check(NMR.parseIntFormat(q))),
+        f &&
+          c.playerId &&
+          ((c.playerBuddy = DOM.hasClass(position, null, "status_abbr_buddy")
+            ? 51
+            : 0),
+          (c.playerColor =
+            AGO.Token.getClass(
+              AGO.Galaxy.getToken("Player", c.playerId) || c.playerBuddy
+            ) || c.allianceColor),
+          (c.playerStatus =
+            AGO.Token.getPlayerStatus(".status > span", playerName) || 21),
+          (n = playerName.querySelector(".htmlTooltip")),
+          (k = playerName.querySelector(".htmlTooltip .ListLinks")),
+          n &&
+            k &&
+            ((c.playerName = DOM.getText("h1 span", n, 7)),
+            (c.playerRank = DOM.getText(".rank a", k, 2)),
+            (l = {
+              message: {
+                page: "Token",
+                role: "Action",
+                data: {
+                  action: "set",
+                  tab: "Player",
+                  token: 81,
+                  id: c.playerId,
+                  name: c.playerName
+                }
+              }
+            }),
+            DOM.setData(f, null, l),
+            (l = {
+              tab: "Player",
+              id: c.playerId,
+              name: c.playerName
+            }),
+            DOM.setData(k, null, l),
+            AGO.Option.is("G43") &&
+              ((k = DOM.appendA(null, {
+                class: "ago_galaxy_rank",
+                href: DOM.getAttribute(".rank a", k, "href")
+              })),
+              (l = ("ago_galaxy_rank " + c.playerColor).trim()),
+              (l = DOM.appendSPAN(
+                k,
+                l,
+                1e4 <= c.playerRank ? "10 k" : c.playerRank
+              )),
+              DOM.appendChild(
+                AGO.Galaxy.improve ? playerName.nextElementSibling : playerName,
+                k
+              )),
+            t ||
+              (DOM.setAttribute(
+                f,
+                null,
+                "rel",
+                q + String.fromCharCode(65 + c.position)
+              ),
+              DOM.setAttribute(
+                n,
+                null,
+                "id",
+                q + String.fromCharCode(65 + c.position)
+              )))));
+      q =
+        2 !== AGO.Galaxy.behave &&
+        !c.allianceOwn &&
+        !c.playerBuddy &&
+        VAL.check(c.playerStatus, 21, 22, 23, 26, 27, 28);
+      microplanet &&
+        ((c.planetId = DOM.getAttribute(microplanet, null, "data-planet-id", 7)),
+        c.planetId &&
+          ((n = microplanet.querySelector(".htmlTooltip")),
+          (k = microplanet.querySelector(".htmlTooltip .ListLinks")),
+          n &&
+            k &&
+            ((c.planetName = DOM.getText("h1 span", n, 7)),
+            microplanet.querySelector(".activity") &&
+              (c.planetActivity =
+                DOM.getText(k.firstElementChild, null, 2) || 1)),
+          c.owncoords ||
+            ((l = {
+              tab: "Target",
+              id: c.planetId,
+              name: c.playerName,
+              coords: c.coords + ":1"
+            }),
+            DOM.setData(k, null, l),
+            q &&
+              (3 === AGO.Galaxy.behave &&
+                DOM.extendClass(microplanet, null, "ago_galaxy_espionage"),
+              DOM.setAttribute(
+                microplanet,
+                null,
+                "onclick",
+                "sendShips(6," +
+                  c.coords.replace(/:/g, ",") +
+                  ",1,0,0,this); return false;"
+              )))));
+      moon &&
+        ((c.moonId = DOM.getAttribute(moon, null, "data-moon-id", 7)),
+        c.moonId &&
+          ((n = moon.querySelector(".htmlTooltip")),
+          (k = moon.querySelector(".htmlTooltip .ListLinks")),
+          n &&
+            k &&
+            ((c.moonName = DOM.getText("h1 span", n, 7)),
+            moon.querySelector(".activity") &&
+              (c.moonActivity =
+                DOM.getText(k.firstElementChild, null, 2) || 1)),
+          c.owncoords ||
+            ((l = {
+              tab: "Target",
+              id: c.planetId,
+              name: c.playerName,
+              coords: c.coords + ":3"
+            }),
+            DOM.setData(k, null, l),
+            q &&
+              3 === AGO.Galaxy.behave &&
+              DOM.extendClass(moon, null, "ago_galaxy_espionage"),
+            AGO.Option.is("commander") &&
+              ((f = moon.querySelector("a[onclick]")),
+              q &&
+                ((n = DOM.getAttribute(f, null, "onclick", 7)
+                  .split(");")
+                  .join(",0,this);")),
+                DOM.setAttribute(moon, null, "onclick", n)),
+              DOM.removeAttribute(f, null, "onclick")))));
+      if (
+        debris &&
+        ((l = debris.querySelectorAll(".debris-content")),
+        (c.debrisMetal = DOM.getText(l[0], null, 2)),
+        (c.debrisCrystal = DOM.getText(l[1], null, 2)),
+        (c.debrisResources = c.debrisMetal + c.debrisCrystal),
+        c.debrisResources)
+      ) {
+        console.log(c);
+        c.highlightDebris = NMR.isGreater(
+          c.debrisResources,
+          AGO.Token.getLimit(95)
+        )
+          ? 95
+          : NMR.isGreater(c.debrisResources, AGO.Token.getLimit(94))
+            ? 94
+            : 0;
+        if ((f = debris.querySelector("a.tooltipRel div")))
+          f.parentElement.style['text-decoration'] = 'none';
+          f.parentElement.style['line-height'] = '13px';
+          1 === s
+            ? ((n = Math.max(
+                2 + 3 * (c.debrisResources + "").length - AGO.Galaxy.shrink,
+                14
+              )),
+              (n = Math.min(n, [30, 28, 26, 24][AGO.Galaxy.shrink])),
+              DOM.set(f, null, {
+                width: n,
+                height: n
+              }),
+              c.highlightDebris && (f.style.background = "url("+HTML.urlImage("galaxy_debris.gif")+")"))
+            : 1 < s &&
+              ((l = (
+                "ago_galaxy_debris " + AGO.Token.getClass(c.highlightDebris)
+              ).trim()),
+              (k = DOM.appendDIV(null, l)),
+              (l = c.highlightDebris ? "ago_text_background" : ""),
+              (l = DOM.appendSPAN(k, l)),
+              (l.innerHTML =
+                (3 !== s || AGO.Galaxy.sameSystem
+                  ? STR.formatNumber(c.debrisMetal)
+                  : STR.shortNumber(c.debrisMetal, 0)) +
+                "<br/>" +
+                (3 !== s || AGO.Galaxy.sameSystem
+                  ? STR.formatNumber(c.debrisCrystal)
+                  : STR.shortNumber(c.debrisCrystal, 0))),
+              DOM.setStyleDisplay(f),
+              DOM.appendChild(f.parentNode, k),
+              AGO.Galaxy.improve &&
+                DOM.addClass(debris, null, "ago_galaxy_debris_shadow"));
+        c.owncoords ||
+          ((l = {
+            tab: "Target",
+            id: c.planetId,
+            name: c.playerName,
+            coords: c.coords + ":2"
+          }),
+          DOM.setData(".htmlTooltip .ListLinks", debris, l));
+      }
+      c.planetId &&
+        (DOM.addClass(a[r], null, "ago_galaxy_row"),
+        (c.positionColor =
+          AGO.Token.getClass(AGO.Galaxy.getToken("Target", c.planetId)) ||
+          c.playerColor),
+        c.positionColor && DOM.addClass(position, null, c.positionColor),
+        planetName &&
+          (c.positionColor
+            ? (DOM.addClass(planetName, null, c.positionColor),
+              DOM.addClass("a", planetName, c.positionColor),
+              DOM.addClass("span", planetName, c.positionColor))
+            : AGO.Option.is("CT0") &&
+              DOM.addClass("a", planetName, "ago_color_bright")));
+    }
+    f = k = l = f = null;
+  },
+  updateDataBase: function() {
+    var a, b, d;
+    b = {
+      Player: {},
+      Planet: {}
+    };
+    for (d = 1; d < AGO.Galaxy.Data.Row.length; d++)
+      (a = AGO.Galaxy.Data.Row[d]),
+        a.playerId
+          ? ((b.Player[a.playerId] = {
+              I: +a.playerId,
+              N: a.playerName,
+              s: a.playerStatus
+            }),
+            a.allianceId && (b.Player[a.playerId].aI = +a.allianceId),
+            (b.Planet[a.coords] = a.moonId
+              ? {
+                  I: +a.playerId,
+                  pI: +a.planetId,
+                  pN: a.planetName,
+                  c: a.coords,
+                  mI: +a.moonId,
+                  mN: a.moonName
+                }
+              : {
+                  I: +a.playerId,
+                  pI: +a.planetId,
+                  pN: a.planetName,
+                  c: a.coords
+                }))
+          : (b.Planet[a.coords] = null);
+    AGB.message("DataBase", "Set", {
+      keyUni: AGO.App.keyUni,
+      data: b
+    });
+  },
+  Display: function(a) {
+    console.log(a);
+    var b;
+    if ((b = document.getElementById("galaxyHeader")))
+      a && "update" === a.update
+        ? ((a = b.querySelectorAll(".row")),
+          AGO.Galaxy.showHighlight(a, "update"))
+        : DOM.click("#galaxyHeader .btn_blue");
+  },
+  showHighlight: function(a, b) {
+    function d(a, b, d, c) {
+      d &&
+        ("string" === typeof d
+          ? (DOM.addClass(a, b, "ago_highlight"),
+            DOM.updateStyle(a, b, "backgroundColor", d))
+          : c || DOM.updateStyle(a, b, "opacity", d));
+    }
+
+    function h(a, b) {
+      DOM.updateStyle(a, b, "backgroundColor", "inherit");
+      DOM.updateStyle(a, b, "opacity", "inherit");
+      DOM.removeClass(a, b, "ago_highlight");
+    }
+
+    var e, g, p, m, f;
+    m = AGO.Task.cutCoords(AGO.Panel.GetActive("Target", "coords", 6));
+    f = AGO.Galaxy.Task.coords;
+    if (OBJ.is(a) && OBJ.is(AGO.Galaxy.Data.Row))
+      for (p = 0; p < a.length; p++)
+        if (((e = AGO.Galaxy.Data.Row[p + 1]), e.planetId || e.debrisResources))
+          b && (h(a[p], null), DOM.setClassGroup(a[p], null, "ago_selected")),
+            (g =
+              (g =
+                !e.coords || (e.coords !== m && e.coords !== f)
+                  ? e.playerId &&
+                    e.playerId === AGO.Panel.GetActive("Player", "id", 6)
+                    ? "SB"
+                    : ""
+                  : "SA") && AGO.Token.getColor(g)
+                ? g
+                : "") &&
+              DOM.extendClass(a[p], null, AGO.Token.getClassSelected(g)),
+            (e = AGO.Token.getColorOpacity(AGO.Galaxy.highlight(e))),
+            d(a[p], null, e, g);
+  },
+  highlight: function(a) {
+    function b(a, b, d, p) {
+      var m, f;
+      if ((m = AGO.Token.getCondition(b)))
+        (f = AGO.Token.getLimit(b)),
+          (f =
+            (1 === m && !p) ||
+            (2 === m && NMR.isLesser(a.allianceRank, f)) ||
+            (5 === m && "Player" === d) ||
+            (6 === m && NMR.isLesser(a.playerRank, f)) ||
+            (10 === m && "Target" === d) ||
+            (13 === m && NMR.isGreater(a.debrisResources, f)) ||
+            (16 === m &&
+              (NMR.isLesser(a.planetActivity, f) ||
+                NMR.isLesser(a.moonActivity, f))));
+      return f ? b : 0;
+    }
+
+    var d;
+    OBJ.is(a) &&
+      (AGO.Option.is("CE0") &&
+        (d =
+          b(a, 99, "", !0) ||
+          b(a, 96, "", !0) ||
+          b(a, 98, "", !a.planetActivity && !a.moonActivity) ||
+          b(a, 97, "", !a.planetActivity && !a.moonActivity) ||
+          b(a, 95, "", !a.debrisResources) ||
+          b(a, 94, "", !a.debrisResources) ||
+          0),
+      !d &&
+        AGO.Option.is("CT0") &&
+        (d =
+          b(a, AGO.Galaxy.getToken("Target", a.planetId), "Target") ||
+          b(a, AGO.Galaxy.getToken("Player", a.playerId), "Player") ||
+          b(a, a.playerBuddy, "Player") ||
+          b(a, a.playerStatus, "Player") ||
+          b(a, AGO.Galaxy.getToken("Alliance", a.allianceId), "Alliance") ||
+          b(a, a.allianceOwn, "Alliance")));
+    return d || 0;
+  },
+  getToken: function(a, b) {
+    return a && b && AGO.Token.Data[a] && AGO.Token.Data[a][b]
+      ? +STR.check(AGO.Token.Data[a][b]).split("|")[0] || 0
+      : 0;
+  },
+  Tooltip: function(a) {
+    var b;
+    if (
+      (a = document.querySelector(
+        '#galaxytable .tooltipRel[ago-tooltip="' + a + '"]'
+      ))
+    )
+      if (
+        ((a = "TD" === a.nodeName ? a : a.parentNode),
+        (a = a.querySelector(".galaxyTooltip .ListLinks")))
+      )
+        (b = DOM.getData(a, null, 1)),
+          b.tab &&
+            (a.addEventListener("click", AGO.Galaxy.click, !1),
+            AGO.Galaxy.appendTooltipToken(a, b),
+            AGO.Galaxy.appendTooltipSearch(a, b));
+  },
+  appendTooltipToken: function(a, b) {
+    function d(a) {
+      var d, f;
+      AGO.Token.getColor(a) &&
+        ((d = OBJ.create(b)),
+        (d.action = e === a ? "remove" : "set"),
+        (d.token = a),
+        (f = AGO.Token.getClass(a) + (e === a ? " ago_selected" : "")),
+        (DOM.appendA(DOM.appendLI(h), f, null, {
+          message: {
+            page: "Token",
+            role: "Action",
+            data: d
+          }
+        }).textContent = AGO.Token.getLabel(a)));
+    }
+
+    var h, e, g;
+    if (a && OBJ.is(b)) {
+      h = document.createDocumentFragment();
+      DOM.appendDIV(h, "splitLine");
+      DOM.appendA(DOM.appendLI(h), null, null, {
+        message: {
+          page: "Token",
+          role: "Action",
+          data: {
+            action: "set",
+            tab: b.tab,
+            token: 81,
+            id: b.id,
+            name: b.name,
+            tag: b.tag,
+            coords: b.coords
+          }
+        }
+      }).textContent = AGO.Label.get("DT1");
+      DOM.append(h, "li", null, {
+        lineHeight: "6px"
+      }).textContent =
+        "\u2009";
+      if (AGO.Option.is("CT0")) {
+        e = AGO.Galaxy.getToken(b.tab, b.id);
+        if ("Alliance" === b.tab) for (g = 42; 50 > g; g++) d(g);
+        if ("Player" === b.tab) {
+          for (g = 52; 60 > g; g++) d(g);
+          DOM.append(h, "li", null, {
+            lineHeight: "6px"
+          }).textContent =
+            "\u2009";
+        }
+        if ("Player" === b.tab || "Target" === b.tab)
+          for (g = 61; 80 > g; g++) d(g);
+      }
+      a.appendChild(h);
+    }
+  },
+  appendTooltipSearch: function(a, b) {
+    var d, h, e;
+    if (
+      AGO.Option.is("T00") &&
+      b.id &&
+      ("Alliance" === b.tab || "Player" === b.tab)
+    ) {
+      d = document.createDocumentFragment();
+      DOM.appendDIV(d, "splitLine");
+      for (e = 0; e < AGO.Tools.List.length; e++) {
+        var g = "T1" + AGO.Tools.List[e],
+          p = void 0,
+          m = void 0;
+        AGO.Option.is(g) &&
+          ((h = !0),
+          (p = {
+            message: {
+              page: "Tools",
+              role: "Action",
+              data: {
+                id: g,
+                Search: OBJ.create(b)
+              }
+            }
+          }),
+          (m = AGO.Option.getPair(g)[0] || AGO.Label.get(g)),
+          (DOM.appendA(DOM.appendLI(d), "", null, p).textContent = m));
+      }
+      h && a.appendChild(d);
+    }
+  },
+  getActivityTooltip: function() {
+    return "";
+  },
+  getDebrisTooltip: function() {
+    return "";
+  },
+  get: function(a, b) {
+    if (b) {
+      if (!a) return AGO.Galaxy.Data[b] || 0;
+      if (OBJ.is(AGO.Galaxy.Data.Row) && OBJ.is(AGO.Galaxy.Data.Row[a]))
+        return AGO.Galaxy.Data.Row[a][b];
+    }
+    return 0;
+  },
+  Action: function(a) {
+    console.log('galaxy action');
+    var b, d, h, e;
+    b = AGO.Galaxy.Data;
+    AGO.Galaxy.status &&
+      b &&
+      OBJ.get(a, "id") &&
+      ((h = {
+        Alliance: "allianceId",
+        Player: "playerId",
+        Target: "planetId"
+      }[a.tab]),
+      OBJ.iterateArray(b.Row, function(b) {
+        OBJ.get(b, h) === a.id && (e = "update");
+      }),
+      "Target" === a.tab &&
+        ((AGO.Galaxy.Task = {}),
+        (d = AGO.Galaxy.Task),
+        AGO.Task.cutSystem(a.id) === b.galaxy + ":" + b.system &&
+          (e = "update"),
+        "set" === a.action || "select" === a.action) &&
+        ((e = "update"),
+        AGO.Task.updateCoords(d, 4, a),
+        d.galaxy &&
+          d.galaxy !== b.galaxy &&
+          ((e = "reload"), DOM.setValue("galaxy_input", "id", d.galaxy)),
+        d.system &&
+          d.system !== b.system &&
+          ((e = "reload"), DOM.setValue("system_input", "id", d.system))),
+      e &&
+        ((e =
+          80 < a.token
+            ? e
+            : "set" === a.action || "remove" === a.action
+              ? "reload"
+              : e),
+        AGO.Galaxy.Display({
+          update: e
+        })));
+  },
+  click: function(a) {
+    console.log('galaxy click');
+    var b;
+    a &&
+      a.target &&
+      a.currentTarget &&
+      (DOM.click(
+        ".close-tooltip",
+        a.currentTarget.parentNode.parentNode.parentNode
+      ),
+      (b = DOM.getData(a.target, null, 2)),
+      b.setting &&
+        ("toggle" === b.setting.mode &&
+          (b.setting.value = !AGO.Option.get(b.setting.id, 1)),
+        AGO.Option.set(b.setting.id, b.setting.value, 1)),
+      b.message &&
+        ("Tools" === b.message.page &&
+          OBJ.set(b.message.data, "shiftKeys", a.shiftKey || a.ctrlKey),
+        AGO.Init.Messages(b.message.page, b.message.role, b.message.data)),
+      b.update && AGO.Galaxy.Display(b));
+  },
+  clickArrow: function(a) {
+    a &&
+      a.currentTarget &&
+      (AGO.Galaxy.direction =
+        "showbutton" === a.currentTarget.parentNode.id
+          ? 0
+          : DOM.hasClass(a.currentTarget, null, "backGalaxy")
+            ? -1
+            : 1);
+  },
+  sendShips: function(a) {
+    var b, d;
+    b = AGO.Fleet.Get("Current", "fleets");
+    d = AGO.Fleet.Get("Current", "fleetsSlots");
+    DOM.setStyleColor(
+      "#galaxytable #slots",
+      null,
+      "start" === a.mode ? "#FF4B00" : d && b >= d ? "#D43635" : "#00B000"
+    );
+  }
+};
