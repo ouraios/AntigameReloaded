@@ -308,7 +308,7 @@ AGO.Galaxy = {
                 1e4 <= c.playerRank ? "10 k" : c.playerRank
               )),
               DOM.appendChild(
-                AGO.Galaxy.improve ? playerName.nextElementSibling : playerName,
+                playerName,
                 k
               )),
             t ||
