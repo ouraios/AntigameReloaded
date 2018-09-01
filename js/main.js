@@ -16,6 +16,8 @@ AGO.Main = {
         OBJ.iterate(a, function(b) {
             AGO.Option.set(b, a[b]);
         });
+        AGO.Option.set("allofficers", document.querySelector("#officers").classList.contains("all"))
+
     },
     Run: function() {
         var a, b, d, c;

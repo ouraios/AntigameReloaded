@@ -1003,33 +1003,39 @@ AGO.Ogame = {
       : 0;
   },
   getProductionEnergy: function(a, b) {
-    var c;
-    c =
-      "4" === a
-        ? 20 * b * Math.pow(1.1, b)
-        : "12" === a
-          ? 30 * b * Math.pow(1.05 + 0.01 * AGO.Units.get("113"), b)
-          : "212" === a
-            ? Math.floor((AGO.Planets.Get("active", "temp") + 40 + 140) / 6) * b
-            : 0;
-    return AGO.Option.is("engineer") ? Math.floor(1.1 * c) : Math.floor(c);
+      var energy = 0, multiplicator = 1;
+      if("4" === a){
+          energy = 20 * b * Math.pow(1.1, b)
+      } else if("12" === a){
+          energy = 30 * b * Math.pow(1.05 + 0.01 * AGO.Units.get("113"), b)
+      }else if("212" === a){
+          energy = Math.floor((AGO.Planets.Get("active", "temp") + 40 + 140) / 6) * b
+      }
+
+      if(AGO.Option.is("allofficers")){
+          multiplicator = 1.12
+      }else if(AGO.Option.is("engineer")){
+          multiplicator = 1.1
+      }
+    return Math.floor(energy * multiplicator);
   },
   getProductionResources: function(a, b) {
-    var c;
-    c =
-      "1" === a
-        ? 30 * b * Math.pow(1.1, b)
-        : "2" === a
-          ? 20 * b * Math.pow(1.1, b)
-          : "3" === a
-            ? 10 *
-              b *
-              Math.pow(1.1, b) *
-              (1.28 - 0.004 * AGO.Planets.Get("active", "temp"))
-            : 0;
-    return AGO.Option.is("geologist")
-      ? Math.floor(1.1 * c) * AGO.Uni.speed
-      : Math.floor(c) * AGO.Uni.speed;
+    var resources = 0, multiplicator = 1;
+
+    if("1" === a){
+        resources = 30 * b * Math.pow(1.1, b)
+    }else if("2" === a){
+        resources = 20 * b * Math.pow(1.1, b)
+    } else if("3" === a){
+        resources = 10 * b * Math.pow(1.1, b) * (1.28 - 0.004 * AGO.Planets.Get("active", "temp"))
+    }
+
+    if(AGO.Option.is("geologist")){
+        multiplicator = 1.1
+    }else if(AGO.Option.is("allofficers")){
+        multiplicator = 1.12
+    }
+    return Math.floor(multiplicator * resources) * AGO.Uni.speed;
   },
   getStandardUnitsCache: null,
   getStandardUnits: function(a, b) {
