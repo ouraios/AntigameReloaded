@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.9.3 (02/09/2018)
+* Empire view is handled back in AGR
+* Fix Solar plants produced energy
+* Tooltip of planets/moons appear again in the galaxy view
+
 ## 0.9.2 (08/05/2018)
 * Added new credentials and new donate button
 * Added Mmorp-Stat tool in menu
