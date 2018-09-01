@@ -219,15 +219,6 @@ var AGO = {
     });
   },
   Tooltip: function() {
-    function b(a, b) {
-      return b
-        ? -1 <
-            (" " + (a || "").toLowerCase() + " ").indexOf(
-              " " + b.toLowerCase().trim() + " "
-            )
-        : !1;
-    }
-
     var a;
     AGO.TooltipQueue = 0;
     a = window.getTooltipOptions;
@@ -238,20 +229,20 @@ var AGO = {
         AGO.message("Init", "Tooltip", AGO.TooltipQueue);
       }
 
-      var f, e, g, k, h, l, m;
+      var f, elClassList, g, k, h, l, m;
       f = a(c);
-      e = $(c).attr("class") || "";
+      elClassList = c[0].classList || "";
       k = AGO.Data.U60;
       h = AGO.Data.U61;
       l = !1;
       m = +AGO.Data.U62 || 0;
       g = AGO.Data.page;
-      -1 < e.indexOf("ago_menu_help")
+      elClassList.contains("ago_menu_help")
         ? ((k = !0),
           (m = Math.max(m, 5)),
           (f.hideOthers = !0),
           (f.maxWidth = Math.max(Math.min(600, window.innerWidth - 30), 0)),
-          e.indexOf("ago_menu_help_label" > -1)
+          elClassList.contains("ago_menu_help_label")
             ? (f.hook = {
                 target: "topleft",
                 tooltip: "bottomleft"
@@ -271,29 +262,29 @@ var AGO = {
                 tooltip: "rightmiddle"
               })),
           d(c))
-        : b(e, "planetlink")
+        : elClassList.contains("planetlink")
           ? ((l = h),
             AGO.Data.O51 &&
               (f.hook = {
                 target: "leftmiddle",
                 tooltip: "rightmiddle"
               }))
-          : b(e, "moonlink")
+          : elClassList.contains("moonlink")
             ? ((l = h),
               AGO.Data.O51 &&
                 (f.hook = {
                   target: "rightmiddle",
                   tooltip: "leftmiddle"
                 }))
-            : b(e, "constructionIcon")
+            : elClassList.contains("constructionIcon")
               ? AGO.Data.O53 && (l = k)
-              : (k || "galaxy" === g) && b(e, "tooltipClose")
+              : (k || "galaxy" === g) && elClassList.contains("tooltipClose")
                 ? ("galaxy" === g
                     ? ((m = +AGO.Data.U67 || 0),
-                      (b(e, "microplanet") ||
-                        (b(e, "moon") &&
+                      (elClassList.contains("microplanet") ||
+                        (elClassList.contains("moon") &&
                           (AGO.Data.commander ||
-                            !b(e, "ago_galaxy_espionage")))) &&
+                            !elClassList.contains("ago_galaxy_espionage")))) &&
                         $("#galaxytable.ago_galaxy_espionage").length &&
                         (l = k),
                       d(c))
@@ -304,12 +295,12 @@ var AGO = {
                     (f.hideOthers = !0)))
                 : k &&
                   ("overview" === g
-                    ? b(e, "tooltipLeft") &&
+                    ? elClassList.contains("tooltipLeft") &&
                       $(c)
                         .parent()
                         .hasClass("planetMoveStart")
                       ? (h = !0)
-                      : b(e, "tooltipBottom") &&
+                      : elClassList.contains("tooltipBottom") &&
                         ((c = $(c)
                           .parent()
                           .attr("id")),
@@ -320,9 +311,9 @@ var AGO = {
                       "research" === g ||
                       "shipyard" === g ||
                       "defense" === g
-                      ? b(e, "slideIn")
+                      ? elClassList.contains("slideIn")
                         ? (h = 1 === AGO.Data.B21 || 3 === AGO.Data.B21)
-                        : b(e, "tooltip") &&
+                        : elClassList.contains("tooltip") &&
                           "resources" ===
                             $(c)
                               .parent()
@@ -338,7 +329,7 @@ var AGO = {
                           "fleet2" !== g &&
                           "movement" !== g &&
                           ("galaxy" === g
-                            ? b(e, "activity ")
+                            ? elClassList.contains("activity ")
                               ? (h = !0)
                               : $(c)
                                   .parent()
@@ -348,7 +339,7 @@ var AGO = {
                               : "messages" === g
                                 ? "button" === $(c).attr("type") && (h = !1)
                                 : (h = !1)),
-                  b(e, "tooltip") && (l = h));
+                  elClassList.contains("tooltip") && (l = h));
       l ? (f.showOn = !1) : k && (f.showDelay = Math.max(100 * m, 100));
       return f;
     };
