@@ -39,7 +39,7 @@ AGO.Empire = {
         2: "crystal",
         3: "deuterium"
       };
-      a = l.querySelectorAll(".supply.groupsupply > div");
+      a = l.querySelectorAll(".supply.groupsupply > div[title]");
       for (k = 0; k < a.length; k++)
         for (f in e)
           DOM.hasClass(a[k], null, f) &&

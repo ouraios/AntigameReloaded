@@ -905,6 +905,7 @@ AGO.App = {
             "page",
             document.location.href
             ).toLowerCase()),
+                AGO.App.page = (AGO.App.page == 'standalone' ? 'empire' : AGO.App.page),
                 (AGO.App.page =
                     0 === AGO.App.page.indexOf("fleet") &&
                     STR.getParameter("cp", document.location.href)
