@@ -252,8 +252,6 @@ AGO.Styles = {
         window.setTimeout(AGO.Styles.preload, 5)));
   },
   Init: function() {
-  },
-  Load: function(a) {
       var a;
       a = document.createDocumentFragment();
       AGO.Styles.Sheet = DOM.append(a, "style", {
@@ -267,7 +265,8 @@ AGO.Styles = {
           DOM.extendClass(document.body, null, "ago_improve")),
           AGO.Styles.set(AGO.Styles.Data.Styles));
       document.head.appendChild(a);
-
+  },
+  Load: function(a) {
     AGO.App.Ogame &&
       (1 !== AGO.Styles.status || AGO.App.reload || a) &&
       (AGB.Log("Update   - Styles   :", !0),

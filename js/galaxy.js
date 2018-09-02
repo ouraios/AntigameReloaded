@@ -13,14 +13,16 @@ AGO.Galaxy = {
         : "sendShips" === a && AGO.Galaxy.sendShips(b);
   },
   Run: function() {
-    AGO.Option.is("G40") &&
-      !AGO.App.OgameMobile &&
-      ((AGO.Galaxy.enabled = !0),
-      (AGO.Galaxy.improve = AGO.Option.is("G41")),
-      (AGO.Galaxy.shrink = AGO.Option.get("G42", 2)),
-      (AGO.Galaxy.status = 5),
-      AGO.Galaxy.Show(),
-      document.getElementById("galaxytable") && AGO.Galaxy.Content());
+    if(AGO.Option.is("G40") && !AGO.App.OgameMobile){
+        AGO.Galaxy.enabled = !0;
+        AGO.Galaxy.improve = AGO.Option.is("G41");
+        AGO.Galaxy.shrink = AGO.Option.get("G42", 2);
+        AGO.Galaxy.status = 5;
+        AGO.Galaxy.Show();
+        document.querySelector("#galaxytable");
+        AGO.Galaxy.Content();
+    }
+
   },
   onKeydown: function(a) {
     if (13 === a.keyCode && !a.cached)
@@ -78,7 +80,6 @@ AGO.Galaxy = {
     });
   },
   Content: function() {
-    console.log('galaxy content');
     var galaxyTable, galaxyNb, systemNb, h;
     galaxyTable = document.getElementById("galaxytable");
       AGO.Galaxy.status = 5;
@@ -136,7 +137,6 @@ AGO.Galaxy = {
         AGO.Init.Messages("Panel", "updateTab", {
           tab: "Flights"
         }));
-        console.log('galaxy improve');
       if (AGO.Galaxy.improve)
         function improveGalaxy(galaxyNb, head){
             if(head) {
@@ -706,7 +706,6 @@ AGO.Galaxy = {
     return 0;
   },
   Action: function(a) {
-    console.log('galaxy action');
     var b, d, h, e;
     b = AGO.Galaxy.Data;
     AGO.Galaxy.status &&
@@ -746,7 +745,6 @@ AGO.Galaxy = {
         })));
   },
   click: function(a) {
-    console.log('galaxy click');
     var b;
     a &&
       a.target &&

@@ -641,7 +641,11 @@ AGO.Observer = {
         function b(a) {
             var b;
             OBJ.iterate(a, function(e) {
-                "BODY" === a[e].target.nodeName && (b = !0);
+                "HTML" === a[e].target.nodeName &&
+                a[e].addedNodes.length &&
+                "BODY" === a[e].addedNodes[0].nodeName &&
+                a[e].addedNodes[0].childNodes.length &&
+                (b = !0)
             });
             b && AGO.Observer.Call(AGO.Observer.head);
         }
@@ -1132,5 +1136,4 @@ AGO.Data = {
         a && (window.localStorage[a] = "");
     }
 };
-// window.top === window.self && AGO.Init.Start();
-document.addEventListener('DOMContentLoaded', function(){AGO.Init.Start()}, false);
+window.top === window.self && AGO.Init.Start();
