@@ -28,6 +28,6 @@
    "name": "AntiGameReloaded",
    "permissions": [ "unlimitedStorage", "storage", "tabs", "https://*/*" ],
    "short_name": "AGR",
-   "version": "0.9.3",
+   "version": "0.9.5",
    "web_accessible_resources": [ "js/*.js", "skin/*", "loca/*.json" ]
 }
