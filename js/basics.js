@@ -99,7 +99,55 @@ var DOM = {
         for (f in d) d.hasOwnProperty(f) && a.addEventListener(f, d[f], !1);
       if (e) for (f in e) e.hasOwnProperty(f) && (a[f] = e[f]);
       return a;
-    },
+    }, parse: function (html) {
+            // based on jQuery.buildFragment()
+            //
+            // jQuery JavaScript Library v1.11.3
+            // http://jquery.com/
+            //
+            // Copyright 2005, 2014 jQuery Foundation, Inc. and other contributors
+            // Released under the MIT license
+            // http://jquery.org/license
+            var rxhtmlTag = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/gi,
+                rtagName = /<([\w:]+)/,
+                rhtml = /<|&#?\w+;/,
+                wrapMap = {
+                    option: [ 1, "<select multiple='multiple'>", "</select>" ],
+                    legend: [ 1, "<fieldset>", "</fieldset>" ],
+                    area: [ 1, "<map>", "</map>" ],
+                    param: [ 1, "<object>", "</object>" ],
+                    thead: [ 1, "<table>", "</table>" ],
+                    tr: [ 2, "<table><tbody>", "</tbody></table>" ],
+                    col: [ 2, "<table><tbody></tbody><colgroup>", "</colgroup></table>" ],
+                    td: [ 3, "<table><tbody><tr>", "</tr></tbody></table>" ],
+                    _default: [ 0, "", "" ]
+                },
+                nodes = [];
+            wrapMap.optgroup = wrapMap.option, wrapMap.th = wrapMap.td,
+                wrapMap.tbody = wrapMap.tfoot = wrapMap.colgroup = wrapMap.caption = wrapMap.thead;
+
+            if (!rhtml.test(html)) {
+                // Convert non-html into a text node
+                return document.createTextNode(html);
+            } else {
+                // Convert html into DOM nodes
+                var tmp = document.createElement('div');
+
+                // Deserialize a standard representation
+                var tag = (rtagName.exec(html) || ["", ""])[1].toLowerCase();
+                var wrap = wrapMap[tag] || wrapMap._default;
+
+                tmp.innerHTML = wrap[1] + html.replace(rxhtmlTag, "<$1></$2>" ) + wrap[2];
+
+                // Descend through wrappers to the right content
+                var j = wrap[0] + 1;
+                while (j--) {
+                    tmp = tmp.lastChild;
+                }
+
+                return tmp;
+            }
+        },
     append: function(a, b, c, d, e, f, g) {
       var h;
       a = a
@@ -757,7 +805,14 @@ var DOM = {
     },
     iterateArray: function(a, b) {
       Array.isArray(a) && a.forEach(b);
-    }
+    }, isEmpty: function (object) {
+          for(var key in object) {
+              if(object.hasOwnProperty(key)){
+                  return false;
+              }
+          }
+          return true;
+      }
   },
   VAL = {
     choose: function(a) {
@@ -826,7 +881,17 @@ var DOM = {
       return (
         (-1 < a.indexOf("k") ? 1e3 : 1) * parseInt(a.replace(/[^\d]/g, ""), 10)
       );
-    }
+    }, parseIntRess: function (a) {
+          var r;
+          a = STR.trim((a.match(/: ([^<]+)*/) ? a.match(/: ([^<]+)*/)[1] : a));
+          if (a.match(/^[0-9]{1,3}\.[0-9]{3}$/))
+              a = a.replace('.', '');
+          else if((r = new RegExp('^([0-9]{1,3}(\.|,))?[0-9]{1,3}(' + AGO.Label.is("KU0B") + ')')) && a.match(r))
+              a = a.replace(/,/g,'.').replace(AGO.Label.is("KU0B"),'')*1000000000;
+          else if((r = new RegExp('^([0-9]{1,3}(\.|,))?[0-9]{1,3}(' + AGO.Label.is("KU0M") + ')')) && a.match(r))
+              a = a.replace(/,/g,'.').replace(AGO.Label.is("KU0M"),'')*1000000;
+          return parseInt(a);
+      }
   },
   STR = {
     check: function(a) {
@@ -912,5 +977,12 @@ var DOM = {
         for (b = {}, a = a.split("&"), d = 0; d < a.length; d++)
           (c = (a[d] || "").split("=")), c[0] && (b[c[0]] = c[1] || "");
       return b;
-    }
+    }, getMatches: function (string, regex, index) {
+          index || (index = 1); // default to the first capturing group
+          var matches = [];
+          var match;
+          while (match = regex.exec(string))
+              matches.push(match[index]);
+          return matches;
+      }
   };
