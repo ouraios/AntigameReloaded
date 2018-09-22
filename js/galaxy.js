@@ -142,12 +142,12 @@ AGO.Galaxy = {
             if(head) {
                 galaxyNb[0].style.width = "60px";
                 galaxyNb[1].style.width = "150px";
-                galaxyNb[4].style.width = "160px";
+                galaxyNb[4].style.width = "165px";
                 DOM.before(galaxyNb[0], galaxyNb[1]);
             } else {
                 galaxyNb[1].style.width = "60px";
                 galaxyNb[2].style.width = "150px";
-                galaxyNb[5].style.width = "160px";
+                galaxyNb[5].style.width = "165px";
                 DOM.before(galaxyNb[1], galaxyNb[2]);
             }
             systemNb = galaxyNb[h];
