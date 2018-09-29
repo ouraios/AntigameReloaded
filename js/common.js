@@ -1008,7 +1008,7 @@ AGO.Ogame = {
       } else if("12" === a){
           energy = 30 * b * Math.pow(1.05 + 0.01 * AGO.Units.get("113"), b)
       }else if("212" === a){
-          energy = Math.floor((AGO.Planets.Get("active", "temp") + 40 + 140) / 6) * b
+          energy = Math.floor((AGO.Planets.Get("active", "temp") + 140) / 6) * b
       }
 
       if(AGO.Option.is("allofficers")){

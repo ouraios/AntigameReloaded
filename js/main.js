@@ -355,9 +355,7 @@ AGO.Planets = {
                                         c.name = (
                                             f.split("[", 1)[0].split("<b>", 2)[1] || ""
                                         ).trim(),
-                                        c.temp = NMR.parseInt(
-                                            (f.match(/<br>.*<br>[^\d\-]*([\d\-]+)/i) || [])[1]
-                                        ),
+                                        c.temp = NMR.parseInt((f.match(/<br\/>.*<br>[^\d\-]*[\d\-]+.+\s([\d-]+)..<br\/>/i) || [])[1]),
                                         d = b.firstChild;
                                     d;
                                     d = d.nextSibling
