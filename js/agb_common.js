@@ -3184,7 +3184,7 @@ AGB.Tools = {
       c +=
         encodeURI(OBJ.get(a.Planets[d], "name")) +
         "." +
-        ((+OBJ.get(a.Planets[d], "temp") || 0) + 40).toString(36) +
+        ((+OBJ.get(a.Planets[d], "tempMin") || 0) + 40).toString(36) +
         "." +
         AGB.Units.Get(b, d, "1").toString(36) +
         "." +

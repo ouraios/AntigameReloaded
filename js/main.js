@@ -336,7 +336,8 @@ AGO.Planets = {
             e,
             f,
             g = 0,
-            h;
+            h,
+            temp;
         a = document.getElementById("planetList");
         b = DOM.getText("#countColonies .textCenter span").split("/");
         AGO.Planets.count = NMR.parseIntAbs(b[0]);
@@ -355,7 +356,9 @@ AGO.Planets = {
                                         c.name = (
                                             f.split("[", 1)[0].split("<b>", 2)[1] || ""
                                         ).trim(),
-                                        c.temp = NMR.parseInt((f.match(/<br\/>.*<br>[^\d\-]*[\d\-]+.+\s([\d-]+)..<br\/>/i) || [])[1]),
+                                        temp = f.match(/<br\/>.*<br>([\d-]+).+\s([\d-]+)..<br\/>/i),
+                                        c.tempMin = NMR.parseInt(temp[1] || 0),
+                                        c.tempMax = NMR.parseInt(temp[2] || 0),
                                         d = b.firstChild;
                                     d;
                                     d = d.nextSibling

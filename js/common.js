@@ -990,16 +990,18 @@ AGO.Ogame = {
     c = "12" === a ? 10 * b * Math.pow(1.1, b) : 0;
     return Math.floor(c) * AGO.Uni.speed;
   },
-  getConsumptionEnergy: function(a, b) {
-    var c;
-    "1" === a
-      ? Math.pow(1.1, b)
-      : "2" === a
-        ? Math.pow(1.1, b)
-        : "3" === a && Math.pow(1.1, b);
-    return (c = "1" === a || "2" === a ? 10 : "3" === a ? 20 : 0) && 0 <= b
-      ? Math.floor(c * b * Math.pow(1.1, b))
-      : 0;
+  getConsumptionEnergy: function(idResource, level) {
+    var energy;
+    if(level == 0){
+      return 0;
+    }
+    if("1" === idResource || "2" === idResource){
+      energy = 10 * level * Math.pow(1.1, level)
+    }else if("3" === idResource){
+      energy = 20 * level * Math.pow(1.1, level)
+    }
+
+    return Math.ceil(energy)
   },
   getProductionEnergy: function(a, b) {
       var energy = 0, multiplicator = 1;
@@ -1008,7 +1010,7 @@ AGO.Ogame = {
       } else if("12" === a){
           energy = 30 * b * Math.pow(1.05 + 0.01 * AGO.Units.get("113"), b)
       }else if("212" === a){
-          energy = Math.floor((AGO.Planets.Get("active", "temp") + 140) / 6) * b
+          energy = Math.floor((AGO.Planets.Get("active", "tempMax") + 140) / 6) * b
       }
 
       if(AGO.Option.is("allofficers")){
@@ -1018,21 +1020,21 @@ AGO.Ogame = {
       }
     return Math.floor(energy * multiplicator);
   },
-  getProductionResources: function(a, b) {
+  getProductionResources: function(idResource, level) {
     var resources = 0, multiplicator = 1;
 
-    if("1" === a){
-        resources = 30 * b * Math.pow(1.1, b)
-    }else if("2" === a){
-        resources = 20 * b * Math.pow(1.1, b)
-    } else if("3" === a){
-        resources = 10 * b * Math.pow(1.1, b) * (1.28 - 0.004 * AGO.Planets.Get("active", "temp"))
+    if("1" === idResource){
+        resources = 30 * level * Math.pow(1.1, level)
+    }else if("2" === idResource){
+        resources = 20 * level * Math.pow(1.1, level)
+    } else if("3" === idResource){
+        resources = 10 * level * Math.pow(1.1, level) * (1.36-0.004 * ((AGO.Planets.Get("active", "tempMin")+AGO.Planets.Get("active", "tempMax"))/2))
     }
 
-    if(AGO.Option.is("geologist")){
-        multiplicator = 1.1
-    }else if(AGO.Option.is("allofficers")){
+    if(AGO.Option.is("allofficers")){
         multiplicator = 1.12
+    }else if(AGO.Option.is("geologist")){
+          multiplicator = 1.1
     }
     return Math.floor(multiplicator * resources) * AGO.Uni.speed;
   },
@@ -2045,7 +2047,8 @@ AGO.Tools = {
       AGO.Planets.iterate(1, function(b, c) {
         a.Planets[c] = {
           name: b.name,
-          temp: b.temp
+          tempMin: b.tempMin,
+          tempMax: b.tempMax
         };
       }),
       AGB.message("Tools", "Action", a, function(b) {
