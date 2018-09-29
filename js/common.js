@@ -915,11 +915,11 @@ AGO.Ogame = {
         AGO.Item[a].consumption * b / 35e3 * (c / 10 + 1) * (c / 10 + 1))
       : 0;
   },
-  getShipCapacity: function(a, b, c) {
-    c = AGO.Ogame.getFleetDuration(a, b, c);
+  getShipCapacity: function(shipId, distance, speed) {
+    duration = AGO.Ogame.getFleetDuration(shipId, distance, speed);
     return (
-      AGO.Item[a].capacity -
-      Math.round(AGO.Ogame.getShipConsumption(a, b, c)) -
+      AGO.Item[shipId].capacity +
+      Math.round(AGO.Ogame.getShipConsumption(shipId, distance, duration)) +
       1
     );
   },
