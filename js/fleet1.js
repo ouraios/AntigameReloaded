@@ -48,7 +48,7 @@ AGO.Fleet1 = {
             }));
     h &&
       AGO.Option.is("F00") &&
-      ((PAGE.enabled = !0),
+      ((PAGE.enabled = true),
       DOM.iterate(
         document.querySelectorAll(
           '#buttonz .content > form input[type="hidden"]'
@@ -230,7 +230,7 @@ AGO.Fleet1 = {
             : 0;
         break;
       case 6:
-        k = PAGE[6] = AGO.Task.splitActive(AGO.Option.get("F91", -1), 2, 3, !0);
+        k = PAGE[6] = AGO.Task.splitActive(AGO.Option.get("F91", -1), 2, 3, true);
         k.group = 2;
         k.mode = AGO.Option.get("F90");
         k.label = AGO.Label.get("F90");
@@ -900,7 +900,7 @@ AGO.Fleet1 = {
           c(v, "crystal"),
           w ? DOM.appendTD(v) : c(v, "deuterium");
       w
-        ? (b(s, "shipC", "209", !1),
+        ? (b(s, "shipC", "209", false),
           DOM.appendTD(s, "ago_calc_ships"),
           DOM.appendTD(s, "ago_calc_ships"),
           g(n, "ago_calc_consumption_shipC"),
@@ -922,9 +922,9 @@ AGO.Fleet1 = {
                           coords: " "
                         },
                         null,
-                        !0
+                        true
                       )
-                    : h(l, PAGE[5], null, !0),
+                    : h(l, PAGE[5], null, true),
                   (DOM.appendA(l, "ago_target_reset btn_blue", null, {
                     routine: 5,
                     last: -1
@@ -987,7 +987,7 @@ AGO.Fleet1 = {
             : (b(s, "shipA", "202"),
               b(s, "shipB", "203"),
               r && PAGE[2].thirdShip
-                ? b(s, "shipC", PAGE[2].thirdShip, !1)
+                ? b(s, "shipC", PAGE[2].thirdShip, false)
                 : DOM.appendTD(s, "ago_calc_ships"),
               g(n, "ago_calc_consumption_shipA"),
               g(n, "ago_calc_consumption_shipB"),
@@ -1043,7 +1043,7 @@ AGO.Fleet1 = {
         ago_display_status: AGO.Option.is("F14") ? 1 : 2
       });
       f = DOM.appendDIV(h, "ago_shortcuts_header");
-      f.addEventListener("click", PAGE.onShortcuts, !1);
+      f.addEventListener("click", PAGE.onShortcuts, false);
       DOM.appendA(f, "ago_display_arrow");
       f = DOM.appendTABLE(
         h,
@@ -1112,7 +1112,7 @@ AGO.Fleet1 = {
             2 === b.type
               ? 8 === a && b["209"]
               : 8 === a
-                ? !1
+                ? false
                 : 15 === a
                   ? 16 === b.position
                   : b.owncoords && (3 > b.owncoords || c.stopActiveSelection)
@@ -1125,7 +1125,7 @@ AGO.Fleet1 = {
                           ? b["214"] && (3 <= b.owncoords || 3 === b.type)
                           : 4 === a
                             ? b.owncoords
-                            : !0)
+                            : true)
           ? a
           : 0
         : 0;
@@ -1341,7 +1341,7 @@ AGO.Fleet1 = {
         type: b.typeActive
       });
     }
-    PAGE.lockedDisplay = !1;
+    PAGE.lockedDisplay = false;
     f = c = b = g = k = d = l = g = null;
   },
   displayCalculator: function() {
@@ -1442,7 +1442,7 @@ AGO.Fleet1 = {
           DOM.setClassGroup(e, null, "ago_highlight", f),
           (f =
             c === a.coords
-              ? " " + AGO.Token.getClassSelected(a.typeActive, !0)
+              ? " " + AGO.Token.getClassSelected(a.typeActive, true)
               : ""),
           DOM.setClassGroup(e, null, "ago_selected", f));
       });
@@ -1576,7 +1576,7 @@ AGO.Fleet1 = {
       AGO.Init.status &&
       OBJ.hasProperties(fleetParams)
     ) {
-      PAGE.lockedDisplay = !0;
+      PAGE.lockedDisplay = true;
       if ((m = PAGE.getRoutine(fleetParams.routine) ? fleetParams.routine : 0))
         (d.routine = d.mission = d.stopActiveSelection = 0),
           1 === PAGE.getRoutine(m)
@@ -1757,24 +1757,24 @@ AGO.Fleet1 = {
             2 <= PAGE.getRoutine(PAGE.Para.calculator) &&
               2 <= PAGE.getRoutine(PAGE.Para.calculator, "status") &&
               DOM.click("#continue.on")),
-        !1
+        false
       );
     if (12 !== a.inputType) {
-      if (65 === a.keyCode) return DOM.click("#sendall"), !1;
-      if (77 === a.keyCode) return DOM.click("span.send_most a"), !1;
-      if (81 === a.keyCode) return DOM.click("span.send_none a"), !1;
-      if (84 === a.keyCode) return DOM.click("#ago_routine_2"), !1;
-      if (82 === a.keyCode) return DOM.click("#ago_routine_4"), !1;
-      if (83 === a.keyCode) return DOM.click("#ago_routine_5"), !1;
-      if (70 === a.keyCode) return DOM.click("#ago_routine_6"), !1;
-      if (69 === a.keyCode) return DOM.click("#ago_routine_7"), !1;
-      if (76 === a.keyCode) return DOM.click("#ago_routine_10"), !1;
+      if (65 === a.keyCode) return DOM.click("#sendall"), false;
+      if (77 === a.keyCode) return DOM.click("span.send_most a"), false;
+      if (81 === a.keyCode) return DOM.click("span.send_none a"), false;
+      if (84 === a.keyCode) return DOM.click("#ago_routine_2"), false;
+      if (82 === a.keyCode) return DOM.click("#ago_routine_4"), false;
+      if (83 === a.keyCode) return DOM.click("#ago_routine_5"), false;
+      if (70 === a.keyCode) return DOM.click("#ago_routine_6"), false;
+      if (69 === a.keyCode) return DOM.click("#ago_routine_7"), false;
+      if (76 === a.keyCode) return DOM.click("#ago_routine_10"), false;
     }
     return 11 !== a.inputType ||
       (38 !== a.keyCode && 40 !== a.keyCode) ||
       (!AGO.Item.Ship[STR.check(NMR.parseIntAbs(a.target.id))] &&
         !HTML.hasClass(a.target.className, "ago_keys_arrows"))
-      ? !0
+      ? true
       : DOM.changeInput(a, a.target);
   },
   onSwipe: function(a) {
@@ -1814,7 +1814,7 @@ AGO.Fleet1 = {
       c = h.id;
       f = h.type || 19 === h.action;
       if (PAGE.timeoutCalculator) window.clearTimeout(PAGE.timeoutCalculator);
-      else if ("click" === e && f) return !0;
+      else if ("click" === e && f) return true;
       if ("mousedown" === e) {
         if (f) {
           var b = JSON.stringify(h);

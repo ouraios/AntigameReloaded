@@ -28,6 +28,12 @@
    "name": "AntiGameReloaded",
    "permissions": [ "unlimitedStorage", "storage", "tabs", "https://*/*" ],
    "short_name": "AGR",
-   "version": "0.9.5.2",
-   "web_accessible_resources": [ "js/*.js", "skin/*", "loca/*.json" ]
+   "version": "0.9.7",
+   "web_accessible_resources": [ "js/*.js", "skin/*", "loca/*.json" ],
+   "applications": {
+      "gecko": {
+         "id": "{2f155f65-db33-433f-8c6c-6f8e922e8b3c}",
+         "update_url": "https://raw.githubusercontent.com/ouraios/AntigameReloaded/master/updates.json"
+      }
+   }
 }

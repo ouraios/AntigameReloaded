@@ -191,7 +191,7 @@ AGB.App = {
     var b, c;
     if ((c = AGB.App.getPlayer(a, "copy")))
       (b = new XMLHttpRequest()),
-        b.open("POST", "http://antigame.de/antigame/ago_appdata.php", !0),
+        b.open("POST", "http://antigame.de/antigame/ago_appdata.php", true),
         b.setRequestHeader("Content-type", "application/x-www-form-urlencoded"),
         (b.onerror = b.onload = function() {
           var c, g, e;
@@ -216,7 +216,7 @@ AGB.App = {
                 c.versionUpdate +
                 "http://antigame.de/antigame/ago_appdata.php" +
                 (e.versionFinal ? "" : " - failed !"),
-              !0
+              true
             ));
         }),
         b.send(
@@ -368,9 +368,9 @@ AGB.Data = {
           AGB.Construction.Init(a, d);
           AGB.Item.Init(a);
           AGB.Data.Status[c] = 1;
-          b && b(!0);
+          b && b(true);
         }))
-      : b && b(!1);
+      : b && b(false);
   },
   Change: function() {
     AGB.Core.clearTimeout(AGB.Data.changeTimeout);
@@ -412,7 +412,7 @@ AGB.Data = {
           (c[b + "_SYNC_" + a + "_" + e] = d);
       }),
       AGB.Storage.Sync({
-        sync: !0,
+        sync: true,
         mode: d,
         key: c
       }));
@@ -434,7 +434,7 @@ AGB.Data = {
         "&header=" +
         encodeURIComponent(JSON.stringify(a.data.Sync_Data));
       c = new XMLHttpRequest();
-      c.open("POST", "http://antigame.de/antigame/usave/ago_sync.php", !0);
+      c.open("POST", "http://antigame.de/antigame/usave/ago_sync.php", true);
       c.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
       c.onerror = c.onload = function() {
         b &&
@@ -451,7 +451,7 @@ AGB.Data = {
       OBJ.iterate(a.data, function(b) {
         c[a.keyPlayer + "_SYNC_" + b] = JSON.stringify(a.data[b]);
       });
-      AGB.Storage.Set({ sync: !0, data: c }, function(c) {
+      AGB.Storage.Set({ sync: true, data: c }, function(c) {
         b &&
           ((a.status = c),
           (a.error = -1 === c),
@@ -595,7 +595,7 @@ AGB.Data = {
             e.open(
               "POST",
               "http://antigame.de/antigame/usave/ago_sync.php",
-              !0
+              true
             ),
             e.setRequestHeader(
               "Content-type",
@@ -606,7 +606,7 @@ AGB.Data = {
               b =
                 200 === +e.status && e.responseText
                   ? OBJ.parse(e.responseText)
-                  : { error: !0 };
+                  : { error: true };
               "restore" === a.action ? d(b) : c(b);
             }),
             e.send(f))
@@ -617,7 +617,7 @@ AGB.Data = {
               2 <= AGB.Data.get(a, b, "storage") &&
                 (f[g + "_SYNC_" + a + "_" + b] = a + "_" + b);
             }),
-            AGB.Storage.Get({ sync: !0, key: f }, function(b) {
+            AGB.Storage.Get({ sync: true, key: f }, function(b) {
               var e = {};
               OBJ.iterate(b, function(a) {
                 var c = STR.check(a).split("_SYNC_")[1];
@@ -634,21 +634,21 @@ AGB.Data = {
     c = AGB.App.getPlayer(a, "copy");
     if (AGB.Data.isStatus(c)) {
       d = a.mode;
-      e = (g = VAL.check(d, "acc", "ago")) || !1;
+      e = (g = VAL.check(d, "acc", "ago")) || false;
       if (g || "Account" === d)
-        (e = !0),
+        (e = true),
           AGB.Data.removeStorageGroup(a, "App"),
           AGB.Data.removeStorageGroup(a, "Label"),
           AGB.Data.removeStorageGroup(a, "Units"),
           AGB.Data.removeStorageGroup(a, "Fleet"),
           AGB.Data.removeStorageGroup(a, "Messages");
-      if (g || "Token" === d) (e = !0), AGB.Data.removeStorageGroup(a, "Token");
+      if (g || "Token" === d) (e = true), AGB.Data.removeStorageGroup(a, "Token");
       if (g || "Panel" === d)
-        (e = !0),
+        (e = true),
           AGB.Data.removeStorageGroup(a, "Panel"),
           AGB.Data.removeStorageGroup(a, "Construction");
       if (g || "Option" === d)
-        (e = !0), AGB.Data.removeStorageGroup(a, "Option");
+        (e = true), AGB.Data.removeStorageGroup(a, "Option");
       (g || "DataBase" === d) && AGB.DataBase.Remove(a);
       "acc" === d && AGB.Storage.RemoveFilter({ filter: c });
       "ago" === d && AGB.Storage.RemoveFilter({ filter: "" });
@@ -1082,7 +1082,7 @@ AGB.Uni = {
       b.open(
         "GET",
         a.urlUni + "/api/serverData.xml?nocache=" + AGB.Time.timestamp(),
-        !0
+        true
       ),
       b.overrideMimeType("text/html"),
       b.setRequestHeader("Cache-Control", "no-cache"),
@@ -1110,7 +1110,7 @@ AGB.Uni = {
               a.urlUni +
               "/api/serverData.xml" +
               ((g = 1), ""),
-            !0
+            true
           ));
       }),
       b.send(null));

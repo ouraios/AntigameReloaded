@@ -4,7 +4,7 @@ AGO.Overview = {
   },
   Run: function() {
     AGO.Option.is("B01") &&
-      ((AGO.Overview.enabled = !0),
+      ((AGO.Overview.enabled = true),
       (AGO.Overview.improve = 1 === AGO.Acc.type));
     AGO.Overview.Show();
     AGO.Building.showConstructions();
@@ -46,15 +46,15 @@ AGO.Overview = {
   onKeydown: function(a) {
     if (!a.inputType && !a.cached) {
       if (13 === a.keyCode)
-        return (document.location.href = AGO.Uni.path + "overview"), !1;
+        return (document.location.href = AGO.Uni.path + "overview"), false;
       if (32 === a.keyCode)
         return (
           DOM.click("#planet #moon a, #planet #planet_as_moon a"),
           a.preventDefault(),
-          !1
+          false
         );
     }
-    return !0;
+    return true;
   },
   Show: function() {
     var a, b, c, d;
@@ -124,7 +124,7 @@ AGO.Overview = {
             ? AGO.Time.format(AGO.Time.getFinishTime(a))
             : "\u2009"));
       }),
-      (AGO.Overview.storage = !0));
+      (AGO.Overview.storage = true));
   }
 };
 AGO.Building = {
@@ -145,7 +145,7 @@ AGO.Building = {
     "research" === AGO.App.page && AGO.Notify.set("Problem", -12);
   },
   Run: function() {
-    AGO.Option.is("B00") && (AGO.Building.enabled = !0);
+    AGO.Option.is("B00") && (AGO.Building.enabled = true);
     AGO.Building.Show();
     AGO.Building.showConstructions();
   },
@@ -157,15 +157,15 @@ AGO.Building = {
       if (65 === a.keyCode || 77 === a.keyCode)
         return (
           DOM.click("#detail .ago_items_shortcut #ago_items_number[ago-data]"),
-          !1
+          false
         );
       if (81 === a.keyCode)
-        return DOM.setValue("#detail #number", null, "", 0, "click"), !1;
+        return DOM.setValue("#detail #number", null, "", 0, "click"), false;
     }
     return 11 !== a.inputType ||
       (38 !== a.keyCode && 40 !== a.keyCode) ||
       "number" !== a.target.id
-      ? !0
+      ? true
       : DOM.changeInput(a, a.target);
   },
   Show: function() {
@@ -494,7 +494,7 @@ AGO.Building = {
         if (c in AGO.Item.Ship || (AGO.Uni.defToTF && c in AGO.Item.Defense))
           (b = {}),
             (b[c] = Math.max(AGO.Building.Data[c].level, 1)),
-            (b = AGO.Ogame.getDebris(b, !0)),
+            (b = AGO.Ogame.getDebris(b, true)),
             (d = "(" + Math.min(Math.floor(b.total / 1e4) / 10, 20) + "%)"),
             AGO.Building.updateValue("ago_items_detail", b.total, d);
         b = (d = DOM.getText("#maxlink", a, 7))
@@ -659,7 +659,7 @@ AGO.Building = {
           (DOM.append(e, "h1").textContent = l),
           DOM.appendDIV(e, "splitLine"),
           (g = DOM.append(e, "ul", "ListLinks")),
-          g.addEventListener("click", AGO.Building.clickTooltip, !1),
+          g.addEventListener("click", AGO.Building.clickTooltip, false),
           OBJ.iterate(AGO.Item.ShipTransport, function(a) {
             h = DOM.appendLI(
               g,
@@ -691,7 +691,7 @@ AGO.Building = {
         "string" === typeof c
           ? DOM.updateText("span", a, c)
           : ((b = c
-              ? (0 < c ? "(+" : "(") + STR.formatNumber(Math.ceil(c), !0) + ")"
+              ? (0 < c ? "(+" : "(") + STR.formatNumber(Math.ceil(c), true) + ")"
               : "(0)"),
             (b = DOM.updateText("span", a, b)) &&
               DOM.updateClass(b, null, HTML.classStatus(c)));

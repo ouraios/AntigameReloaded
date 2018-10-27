@@ -18,7 +18,7 @@ AGO.Movement = {
   Run: function() {
     AGO.Option.is("E10") &&
       !AGO.App.OgameMobile &&
-      ((AGO.Movement.enabled = !0),
+      ((AGO.Movement.enabled = true),
       (AGO.Movement.improve = AGO.Option.is("E11")),
       AGO.Movement.Show());
   },
@@ -30,8 +30,8 @@ AGO.Movement = {
               type: AGO.Acc.type
             })
           : DOM.click('#menuTable .menubutton[href*="page=fleet1"]'),
-        !1)
-      : !0;
+        false)
+      : true;
   },
   onSwipe: function(b) {
     "right" === b && DOM.click('#menuTable .menubutton[href*="page=fleet1"]');

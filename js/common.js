@@ -33,8 +33,8 @@ AGO.Notify = {
       b = 0;
     }
     5 < AGO.Init.status &&
-      ("Hide" === a && (AGO.Notify.loading = !1),
-      3 === b && (AGO.Notify.loading = !0),
+      ("Hide" === a && (AGO.Notify.loading = false),
+      3 === b && (AGO.Notify.loading = true),
       (e = HTML.colorStatusData(b)),
       3 !== b &&
         ((AGO.Notify.color =
@@ -269,7 +269,7 @@ AGO.Styles = {
   Load: function(a) {
     AGO.App.Ogame &&
       (1 !== AGO.Styles.status || AGO.App.reload || a) &&
-      (AGB.Log("Update   - Styles   :", !0),
+      (AGB.Log("Update   - Styles   :", true),
       AGB.message(
         "Styles",
         "Init",
@@ -1164,7 +1164,7 @@ AGO.Units = {
   Update: function(a) {
     var b;
     b = new XMLHttpRequest();
-    b.open("GET", AGO.Uni.url + "/game/index.php?page=fetchTechs&ajax=1", !0);
+    b.open("GET", AGO.Uni.url + "/game/index.php?page=fetchTechs&ajax=1", true);
     b.setRequestHeader("Cache-Control", "no-cache");
     b.setRequestHeader("Pragma", "no-cache");
     b.overrideMimeType("text/html");
@@ -1269,7 +1269,7 @@ AGO.Time = {
             (d = AGO.Time.format(
               AGO.Time.ogameTime,
               "[d].[m].[Y] [H]:[i]:[s]",
-              !0
+              true
             ))),
           (b.title = AGO.Label.get("A38")),
           DOM.addClass(b, null, "tooltip"),
@@ -1312,7 +1312,7 @@ AGO.Time = {
       DOM.setText(
         "ago_clock_server",
         "id",
-        AGO.Time.format(a, "[d].[m].[Y] [H]:[i]:[s]", !0)
+        AGO.Time.format(a, "[d].[m].[Y] [H]:[i]:[s]", true)
       ));
   },
   timestamp: function() {
@@ -1368,7 +1368,7 @@ AGO.Time = {
   },
   formatTimestamp: function(a, b) {
     return 1e6 < a
-      ? AGO.Time.format(1e3 * a, b || "[d].[m].[Y] [H]:[i]:[s]", !0)
+      ? AGO.Time.format(1e3 * a, b || "[d].[m].[Y] [H]:[i]:[s]", true)
       : "";
   },
   formatTime: function(a, b) {
@@ -1837,7 +1837,7 @@ AGO.Task = {
           c[0] &&
           (d || (d = a.split(c[0])[1]),
           AGO.Task.updateCoordsType(b, c[0].replace(/[^\d:]/g, ""))),
-        d && (b.time = AGO.Time.parseDateTime(d, !0));
+        d && (b.time = AGO.Time.parseDateTime(d, true));
     return b;
   },
   trimCoords: function(a) {
@@ -2002,7 +2002,7 @@ AGO.Fleet = {
 };
 AGO.DataBase = {
   status: 0,
-  enabled: !1,
+  enabled: false,
   Data: {},
   Info: {
     Player: "D36",

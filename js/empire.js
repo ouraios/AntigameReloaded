@@ -255,7 +255,7 @@ AGO.Empire = {
             '<span style="text-decoration:underline;font-weight:bold;">you will have enough ressources<br/>in your account in:</span><br/>'),
           (a +=
             '<span style="color:orange;font-weight:bold;font-size:1.2em;">' +
-            AGO.Time.formatTime(Math.floor(3600 * c), !0) +
+            AGO.Time.formatTime(Math.floor(3600 * c), true) +
             "</span><br/>"),
           (b = new Date(1e3 * (AGO.Acc.timestamp + Math.ceil(3600 * c)))),
           (a +=

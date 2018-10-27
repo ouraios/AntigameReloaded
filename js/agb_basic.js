@@ -1,23 +1,25 @@
-if (!AGB) var AGB = {};
+if (!AGB){
+  var AGB = {};
+}
 AGB.Time = {
   timestamp: function() {
     return Math.floor(Date.now() / 1e3);
   },
   timestampMinute: function() {
-    return Math.floor((Date.now() - 1381e9) / 6e4);
+    return Math.floor((Date.now() - 1381000000000) / 60000);
   },
   timestampMinuteConvert: function(a) {
-    return 1e3 < a ? 60 * (+a || 0) + 1381e6 : 0;
+    return 1000 < a ? 60 * (+a || 0) + 1381000000 : 0;
   }
 };
 var VAL = {
-    choose: function(a) {
-      return 0 < a ? arguments[a] : "";
+    choose: function(value) {
+      return 0 < value ? arguments[value] : "";
     },
     check: function(a) {
       for (var b = 1; b < arguments.length; b++)
-        if (a === arguments[b]) return !0;
-      return !1;
+        if (a === arguments[b]) return true;
+      return false;
     },
     status: function(a, b, c, d) {
       return 0 > a ? b : 0 < a ? d : c;
@@ -134,7 +136,7 @@ var VAL = {
     compare: function(a, b) {
       return "string" === typeof a && "string" === typeof a
         ? a.length === b.length && a === b
-        : !1;
+        : false;
     },
     getAttribute: function(a, b) {
       return "string" === typeof a

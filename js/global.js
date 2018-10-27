@@ -97,7 +97,7 @@ window.addEventListener(
         a.msgIds && window.executeAction(a.msgIds, a.actionMode);
     }
   },
-  !1
+  false
 );
 var AGO = {
   Data: {},
@@ -234,13 +234,13 @@ var AGO = {
       elClassList = c[0].classList || "";
       k = AGO.Data.U60;
       h = AGO.Data.U61;
-      l = !1;
+      l = false;
       m = +AGO.Data.U62 || 0;
       g = AGO.Data.page;
       elClassList.contains("ago_menu_help")
-        ? ((k = !0),
+        ? ((k = true),
           (m = Math.max(m, 5)),
-          (f.hideOthers = !0),
+          (f.hideOthers = true),
           (f.maxWidth = Math.max(Math.min(600, window.innerWidth - 30), 0)),
           elClassList.contains("ago_menu_help_label")
             ? (f.hook = {
@@ -292,14 +292,14 @@ var AGO = {
                   AGO.Data.U65 &&
                     ((f.hideAfter = Math.max(100 * (+AGO.Data.U65 || 0), 300)),
                     (f.hideDelay = f.hideAfter),
-                    (f.hideOthers = !0)))
+                    (f.hideOthers = true)))
                 : k &&
                   ("overview" === g
                     ? elClassList.contains("tooltipLeft") &&
                       $(c)
                         .parent()
                         .hasClass("planetMoveStart")
-                      ? (h = !0)
+                      ? (h = true)
                       : elClassList.contains("tooltipBottom") &&
                         ((c = $(c)
                           .parent()
@@ -318,7 +318,7 @@ var AGO = {
                             $(c)
                               .parent()
                               .attr("id")
-                          ? (h = !1)
+                          ? (h = false)
                           : "maxlink" === $(c).attr("id") && (l = h)
                       : "fleet1" === g
                         ? -1 <
@@ -330,17 +330,17 @@ var AGO = {
                           "movement" !== g &&
                           ("galaxy" === g
                             ? elClassList.contains("activity ")
-                              ? (h = !0)
+                              ? (h = true)
                               : $(c)
                                   .parent()
-                                  .hasClass("buildingimg") && (h = !1)
+                                  .hasClass("buildingimg") && (h = false)
                             : "galaxy" === g
-                              ? (h = !1)
+                              ? (h = false)
                               : "messages" === g
-                                ? "button" === $(c).attr("type") && (h = !1)
-                                : (h = !1)),
+                                ? "button" === $(c).attr("type") && (h = false)
+                                : (h = false)),
                   elClassList.contains("tooltip") && (l = h));
-      l ? (f.showOn = !1) : k && (f.showDelay = Math.max(100 * m, 100));
+      l ? (f.showOn = false) : k && (f.showDelay = Math.max(100 * m, 100));
       return f;
     };
   },

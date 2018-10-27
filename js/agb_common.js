@@ -83,14 +83,14 @@ AGB.Option = {
     b = AGB.Data.get("Option", "Data", "version");
     a.version &&
       12 > a.version &&
-      (AGB.Core.Log("Option - Upgrade version 12 ", !0),
+      (AGB.Core.Log("Option - Upgrade version 12 ", true),
       (a.F01 = 0),
       (a.F13 = a.FH0 = 1),
       (a.F70 = 2),
       (a.FA0 = 3),
       (a.F80 = a.F90 = a.FL0 = 4),
       (a.F63 = ""));
-    a.version !== b && ((a.version = b), (a.changed = !0), AGB.Data.Change());
+    a.version !== b && ((a.version = b), (a.changed = true), AGB.Data.Change());
   },
   Save: function(a) {
     var b, c, d, e, f, g;
@@ -137,7 +137,7 @@ AGB.Option = {
         }),
         (c.status = 1)),
       (a.data = null),
-      (c.changed = !0),
+      (c.changed = true),
       AGB.Data.Change(d),
       AGB.Token.InitInfo(a),
       AGB.Data.Sync(a),
@@ -155,7 +155,7 @@ AGB.Option = {
             id: e,
             value: AGB.Option.set(c, e, a.value)
           }),
-          d !== e.value && ((c.changed = !0), AGB.Data.Change()),
+          d !== e.value && ((c.changed = true), AGB.Data.Change()),
           b && b(e))
         : e && (c[e] = a.value));
   },
@@ -266,7 +266,7 @@ AGB.Label = {
       b.open(
         "GET",
         a.urlUni + "/api/localization.xml?nocache=" + AGB.Time.timestamp(),
-        !0
+        true
       ),
       b.overrideMimeType("text/html"),
       b.setRequestHeader("Cache-Control", "no-cache"),
@@ -301,7 +301,7 @@ AGB.Label = {
               a.urlUni +
               "/api/localization.xml" +
               ((c.status = 1), ""),
-            !0
+            true
           );
         }
       }),
@@ -359,7 +359,7 @@ AGB.Label = {
           b.KD0M +
           ":" +
           b.KD0S,
-        !0
+        true
       ),
       AGB.Data.setStorage(c, "Label", "Loca", b),
       OBJ.copy(b, AGB.Label.Data[c]),
@@ -1185,7 +1185,7 @@ AGB.Units = {
         a && c(a.planet, a.tabs, a.action, a.data);
       }),
       a.planets && (d(a.planets), AGB.Units.SummarizePlanets(a)),
-      (e.changed = !0),
+      (e.changed = true),
       AGB.Data.Change());
     b && b();
   },
@@ -1529,7 +1529,7 @@ AGB.Construction = {
   Upgrade: function(a) {
     var b;
     b = AGB.Data.get("Construction", "Data", "version");
-    a.version !== b && ((a.changed = !0), (a.version = b), AGB.Data.Change());
+    a.version !== b && ((a.changed = true), (a.version = b), AGB.Data.Change());
   },
   Save: function(a) {
     var b, c, d;
@@ -1565,7 +1565,7 @@ AGB.Construction = {
           (g = AGB.Task.getCoordsType(f))) &&
           (AGB.Construction.update(d, f),
           OBJ.is(c[g]) ? c[g].unshift(f) : (c[g] = [f]),
-          (c.changed = !0),
+          (c.changed = true),
           AGB.Data.Change(),
           b({
             tab: "Construction",
@@ -1577,7 +1577,7 @@ AGB.Construction = {
           OBJ.is(c[g]) &&
             c[g][h] &&
             (c[g].splice(h, 1),
-            (c.changed = !0),
+            (c.changed = true),
             AGB.Data.Change(),
             b({
               tab: "Construction",
@@ -1598,7 +1598,7 @@ AGB.Construction = {
                 (g = f.coordstype),
                 OBJ.is(c[g]) ? c[g].push(f) : (c[g] = [f]),
                 (h = c[g].length - 1),
-                (c.changed = !0),
+                (c.changed = true),
                 AGB.Data.Change(),
                 b({
                   tab: "Construction",
@@ -1635,7 +1635,7 @@ AGB.Construction = {
           f.level += l;
         AGB.Construction.update(d, f);
         c[g][h] = f;
-        c.changed = !0;
+        c.changed = true;
         AGB.Data.Change();
         b({ tab: "Construction", data: g + ":" + h });
       }
@@ -1915,7 +1915,7 @@ AGB.Token = {
     c = AGB.Token.Data[a];
     OBJ.is(c[b]) || (c[b] = {});
     c[b].version !== d &&
-      ((c[b].changed = !0), (c[b].version = d), AGB.Data.Change());
+      ((c[b].changed = true), (c[b].version = d), AGB.Data.Change());
   },
   Save: function(a) {
     var b, c;
@@ -1970,16 +1970,16 @@ AGB.Token = {
           ((h += "|" + STR.check(a.coords)), a.time && (h += "|" + a.time))),
       80 > f
         ? "set" === a.action
-          ? ((p.changed = !0), (c[e].changed = !0), (c[e][g] = h))
+          ? ((p.changed = true), (c[e].changed = true), (c[e][g] = h))
           : "remove" === a.action &&
             g in c[e] &&
-            ((p.changed = !0), (c[e].changed = !0), delete c[e][g])
+            ((p.changed = true), (c[e].changed = true), delete c[e][g])
         : 81 === f &&
           OBJ.is(c.Current) &&
           ((g = e[0] + g),
           "set" === a.action
-            ? ((p.changed = !0),
-              (c.Current.changed = !0),
+            ? ((p.changed = true),
+              (c.Current.changed = true),
               (c.Current[g] = h),
               (l = 0),
               OBJ.iterate(c.Current, function(a) {
@@ -1991,8 +1991,8 @@ AGB.Token = {
               }))
             : "remove" === a.action &&
               g in c.Current &&
-              ((p.changed = !0),
-              (c.Current.changed = !0),
+              ((p.changed = true),
+              (c.Current.changed = true),
               delete c.Current[g])),
       p.changed &&
         (OBJ.is(AGB.Token.Sort[d]) && (AGB.Token.Sort[d][e] = null),
@@ -2175,7 +2175,7 @@ AGB.Fleet = {
             ? (c[b] = OBJ.is(d[b]) && !f ? d[b] : 3 === a.tab ? [] : {})
             : a.tab && (c[b] = {});
         }),
-        f && ((c.changed = !0), AGB.Data.Change());
+        f && ((c.changed = true), AGB.Data.Change());
     c = d = e = f = null;
   },
   Save: function(a) {
@@ -2201,9 +2201,9 @@ AGB.Fleet = {
       b &&
       (OBJ.is(b[d]) || (b[d] = {}),
       OBJ.iterate(a.data, function(c) {
-        b[d][c] !== a.data[c] && ((b[d][c] = a.data[c]), (e = !0));
+        b[d][c] !== a.data[c] && ((b[d][c] = a.data[c]), (e = true));
       }),
-      e && ((b.changed = !0), AGB.Data.Change()));
+      e && ((b.changed = true), AGB.Data.Change()));
     b = c = d = e = null;
   },
   Action: function(a) {
@@ -2246,7 +2246,7 @@ AGB.Fleet = {
           c < e.length && !(e[c] && b.Last.push(e[c]), 8 < b.Last.length);
           c++
         );
-        b.changed = !0;
+        b.changed = true;
         AGB.Data.Change();
       } else
         5 === e
@@ -2367,11 +2367,11 @@ AGB.DataBase = {
       var c;
       AGB.App.getUni({ keyUni: a }) &&
         AGB.DataBase.Info[b] &&
-        (AGB.Core.Log("DataBase - Remove   : " + a + "_" + b, !0),
-        (c = !0),
+        (AGB.Core.Log("DataBase - Remove   : " + a + "_" + b, true),
+        (c = true),
         AGB.DataBase.set(a + "_" + b, "status", 0),
         OBJ.iterate(AGB.DataBase.Info, function(b) {
-          -3 === AGB.DataBase.get(a + "_" + b, "status") && (c = !1);
+          -3 === AGB.DataBase.get(a + "_" + b, "status") && (c = false);
         }),
         c && AGB.DataBase.set(a, "status", 0));
     }
@@ -2404,7 +2404,7 @@ AGB.DataBase = {
           (d = AGB.DataBase.get(c, "status")),
           1 === d || 2 === d ? c : ""
         );
-      a.error = !0;
+      a.error = true;
     }
     return "";
   },
@@ -2701,8 +2701,8 @@ AGB.DataBase = {
             l.objectStoreNames.contains(f) ||
               ((f = l.createObjectStore(f, { keyPath: f })),
               "Universe" === b &&
-                (f.createIndex("I", "I", { unique: !1 }),
-                f.createIndex("c", "c", { unique: !1 })));
+                (f.createIndex("I", "I", { unique: false }),
+                f.createIndex("c", "c", { unique: false })));
             c(d, 2);
           }),
           (e.onsuccess = function(a) {
@@ -2748,7 +2748,7 @@ AGB.DataBase = {
           AGB.Time.timestamp() - b.timestampRead > AGB.DataBase.readLimit)
           ? ((c = new XMLHttpRequest()),
             (c.timeout = 2e3),
-            c.open("HEAD", a.urlUni + AGB.DataBase.Info[a.tab].url, !0),
+            c.open("HEAD", a.urlUni + AGB.DataBase.Info[a.tab].url, true),
             (c.onerror = c.onload = function() {
               AGB.DataBase.isRead(a) &&
                 ((b.timestampRead = AGB.Time.timestamp()),
@@ -2762,7 +2762,7 @@ AGB.DataBase = {
                     AGB.Core.Log(
                       "DataBase   - ########## Problem: These OGame API is not available - " +
                         a.tab,
-                      !0
+                      true
                     )));
               AGB.DataBase.Read(a);
             }),
@@ -2772,7 +2772,7 @@ AGB.DataBase = {
         -1 === d &&
           AGB.Core.Log(
             "DataBase   - Problem: Please restart your browser (" + a.key + ")",
-            !0
+            true
           ),
         -2 === d &&
           AGB.Core.Log(
@@ -2780,7 +2780,7 @@ AGB.DataBase = {
               a.tab +
               " for the universe " +
               a.keyUni,
-            !0
+            true
           ),
         AGB.DataBase.Read(a));
   },
@@ -2887,7 +2887,7 @@ AGB.DataBase = {
           " (" +
           b +
           ")",
-        !0
+        true
       );
       d(a);
     }
@@ -2909,7 +2909,7 @@ AGB.DataBase = {
 
     var e, f, g;
     3 === AGB.DataBase.isRead(a)
-      ? (AGB.Core.Log("DataBase - Read     : " + a.key, !0),
+      ? (AGB.Core.Log("DataBase - Read     : " + a.key, true),
         (f = AGB.DataBase.Info[a.tab]),
         (e = AGB.DataBase.Data[a.key]),
         (e.loading = 0),
@@ -2918,7 +2918,7 @@ AGB.DataBase = {
           loading: e.loading
         }),
         (g = new XMLHttpRequest()),
-        g.open("GET", a.urlUni + f.url, !0),
+        g.open("GET", a.urlUni + f.url, true),
         g.overrideMimeType("text/html"),
         (g.onerror = g.onload = function() {
           var d, e;
@@ -2935,7 +2935,7 @@ AGB.DataBase = {
               : (AGB.Core.Log(
                   "DataBase   - ########## Problem: These OGame API is not available - " +
                     f.url,
-                  !0
+                  true
                 ),
                 c()));
           g = null;

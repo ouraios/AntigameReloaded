@@ -1,7 +1,7 @@
 AGO.Galaxy = {
   status: 0,
-  enabled: !1,
-  improve: !1,
+  enabled: false,
+  improve: false,
   direction: 1,
   Data: {},
   Task: {},
@@ -14,7 +14,7 @@ AGO.Galaxy = {
   },
   Run: function() {
     if(AGO.Option.is("G40") && !AGO.App.OgameMobile){
-        AGO.Galaxy.enabled = !0;
+        AGO.Galaxy.enabled = true;
         AGO.Galaxy.improve = AGO.Option.is("G41");
         AGO.Galaxy.shrink = AGO.Option.get("G42", 2);
         AGO.Galaxy.status = 5;
@@ -30,7 +30,7 @@ AGO.Galaxy = {
         (AGO.Galaxy.direction = 0),
         12 === a.inputType && document.activeElement.blur(),
         DOM.click("#galaxyHeader .btn_blue"),
-        !1
+        false
       );
     if (12 !== a.inputType && !a.cached) {
       if (32 === a.keyCode && AGO.Option.is("U33"))
@@ -40,14 +40,14 @@ AGO.Galaxy = {
             : 1 === AGO.Galaxy.direction
               ? DOM.click("#galaxyHeader .galaxy_icons:nth-child(8)")
               : DOM.click("#galaxyHeader .btn_blue"),
-          !1
+          false
         );
       37 === a.keyCode && (AGO.Galaxy.direction = -1);
       39 === a.keyCode && (AGO.Galaxy.direction = 1);
-      if (65 === a.keyCode) return DOM.click("#galaxyHeader .galaxy_icons:nth-child(6)"), !1;
-      if (68 === a.keyCode) return DOM.click("#galaxyHeader .galaxy_icons:nth-child(8)"), !1;
+      if (65 === a.keyCode) return DOM.click("#galaxyHeader .galaxy_icons:nth-child(6)"), false;
+      if (68 === a.keyCode) return DOM.click("#galaxyHeader .galaxy_icons:nth-child(8)"), false;
     }
-    return !0;
+    return true;
   },
   onSwipe: function(a) {
     AGO.App.OgameMobile ||
@@ -564,8 +564,8 @@ AGO.Galaxy = {
     OBJ.is(a) &&
       (AGO.Option.is("CE0") &&
         (d =
-          b(a, 99, "", !0) ||
-          b(a, 96, "", !0) ||
+          b(a, 99, "", true) ||
+          b(a, 96, "", true) ||
           b(a, 98, "", !a.planetActivity && !a.moonActivity) ||
           b(a, 97, "", !a.planetActivity && !a.moonActivity) ||
           b(a, 95, "", !a.debrisResources) ||
@@ -600,7 +600,7 @@ AGO.Galaxy = {
       )
         (b = DOM.getData(a, null, 1)),
           b.tab &&
-            (a.addEventListener("click", AGO.Galaxy.click, !1),
+            (a.addEventListener("click", AGO.Galaxy.click, false),
             AGO.Galaxy.appendTooltipToken(a, b),
             AGO.Galaxy.appendTooltipSearch(a, b));
   },
@@ -674,7 +674,7 @@ AGO.Galaxy = {
           p = void 0,
           m = void 0;
         AGO.Option.is(g) &&
-          ((h = !0),
+          ((h = true),
           (p = {
             message: {
               page: "Tools",

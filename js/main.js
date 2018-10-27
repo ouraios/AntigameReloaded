@@ -87,8 +87,8 @@ AGO.Main = {
                 a.shiftKey ? "a.moonlink" : "a.planetlink",
                 b[a.keyCode - 112].parentNode
             ),
-                !1)
-            : !0;
+                false)
+            : true;
     },
     onSwipe: function(a, b) {
         if (12 === b) AGO.Panel.onSwipe(a);
@@ -108,7 +108,7 @@ AGO.Main = {
     },
     clickButton: function() {
         AGO.App.disabled
-            ? AGO.App.Save({ disabled: !1 })
+            ? AGO.App.Save({ disabled: false })
             : 20 > AGO.Notify.problem && AGO.Option.Menu();
     },
     updateButton: function() {
@@ -238,7 +238,7 @@ AGO.Main = {
         (a = document.getElementById("oGameVersionCheckData")) &&
         AGO.Option.is("O02") &&
         (DOM.iterateChildren(a, function(a) {
-            "true" !== DOM.getText(DOM.getChildren(a, 3)) && (b = !0);
+            "true" !== DOM.getText(DOM.getChildren(a, 3)) && (b = true);
         }),
             DOM.setStyleDisplay(a.parentNode, null, b ? "list-item" : "none"));
     },
@@ -408,7 +408,7 @@ AGO.Planets = {
                 }
             }
         else
-            (AGO.Planets.status = 0), AGO.Planets.count && AGB.Log("Planets - Error - Something wrong with the planetlist !", !0);
+            (AGO.Planets.status = 0), AGO.Planets.count && AGB.Log("Planets - Error - Something wrong with the planetlist !", true);
     },
     Run: function() {
         var a, b, d;
@@ -416,7 +416,7 @@ AGO.Planets = {
         d = AGO.Option.isAnd("U32", "O54");
         (a = document.getElementById("rechts")) &&
         AGO.Option.is("O50") &&
-        ((AGO.Planets.enabled = !0),
+        ((AGO.Planets.enabled = true),
             (AGO.Planets.improve = AGO.Option.is("O51")),
             (AGO.Planets.coloring = AGO.Option.isAnd("CS0", "O55")),
         AGO.Option.is("O52") && DOM.extendClass(a, null, "ago_planets_shrink"),
@@ -460,7 +460,7 @@ AGO.Planets = {
             mouseout: AGO.Planets.hover
         }),
             DOM.addEvents("countColonies", "id", { click: AGO.Planets.clickArrow }),
-            AGO.Planets.Display(!0));
+            AGO.Planets.Display(true));
         a = a = null;
     },
     Display: function(a) {
@@ -637,7 +637,7 @@ AGO.Planets = {
 };
 AGO.Panel = {
     displayStatus: 0,
-    mouseStatus: !1,
+    mouseStatus: false,
     mouseCount: 0,
     Data: {},
     Messages: function(a, b) {
@@ -672,7 +672,7 @@ AGO.Panel = {
     },
     Run: function() {
         AGO.Option.is("I00") &&
-        ((AGO.Panel.enabled = !0),
+        ((AGO.Panel.enabled = true),
             (AGO.Panel.place = Math.ceil(
                 Math.max((+document.body.clientWidth || 0) - 1e3, 2) / 2
             )),
@@ -712,7 +712,7 @@ AGO.Panel = {
     onSwipe: function(a) {
         "left" === a &&
         window.setTimeout(function() {
-            AGO.Panel.panelInactive(!0);
+            AGO.Panel.panelInactive(true);
         }, 333);
         "right" === a && AGO.Panel.panelActive(3);
     },
@@ -807,7 +807,7 @@ AGO.Panel = {
     Display: function(a) {
         var b, d;
         if (5 < AGO.Init.status && !AGO.Panel.updateDisplayLock) {
-            AGO.Panel.updateDisplayLock = !0;
+            AGO.Panel.updateDisplayLock = true;
             b = OBJ.parse(a);
             AGO.Panel.enabled &&
             !b.tab &&
@@ -859,7 +859,7 @@ AGO.Panel = {
                 );
             }
             window.setTimeout(function() {
-                AGO.Panel.updateDisplayLock = !1;
+                AGO.Panel.updateDisplayLock = false;
             }, 50);
         }
     },
@@ -1094,7 +1094,7 @@ AGO.Panel = {
             AGO.Option.is("I24") &&
             (AGO.Task.addResources(c.Units, l), AGO.Task.addShips(c.Units, l)),
             n && AGO.Option.is("I26") && AGO.Task.addResources(c.Units, n),
-                AGO.Panel.appendUnits(e, c.Units, "I27", !0, b, 3, 2),
+                AGO.Panel.appendUnits(e, c.Units, "I27", true, b, 3, 2),
                 AGO.Panel.appendUnits(e, l, "I24", "I24", b, 2, 1, "ago_color_own"),
                 AGO.Panel.appendUnits(e, n, "I26", "I26", b, 1, 0, "ago_color_neutral"),
                 DOM.replaceChildren(DOM.getChildren(a, 2), e),
@@ -1237,12 +1237,12 @@ AGO.Panel = {
                         c(d, k[l].own, 3),
                         c(d, k[l].friend, 5),
                         c(d, k[l].enemy, 6);
-                AGO.Panel.appendUnits(e, k[l].own, "I24", !0, b, 2, 1, "ago_color_own");
+                AGO.Panel.appendUnits(e, k[l].own, "I24", true, b, 2, 1, "ago_color_own");
                 AGO.Panel.appendUnits(
                     e,
                     k[l].back,
                     "I25",
-                    !0,
+                    true,
                     b,
                     2,
                     1,
@@ -1252,7 +1252,7 @@ AGO.Panel = {
                     e,
                     k[l].neutral,
                     "I26",
-                    !0,
+                    true,
                     b,
                     1,
                     1,
@@ -1262,7 +1262,7 @@ AGO.Panel = {
                     e,
                     k[l].hostile,
                     "I26",
-                    !0,
+                    true,
                     b,
                     0,
                     1,
@@ -1491,7 +1491,7 @@ AGO.Panel = {
                     }
                 }),
                 (F = 1 < k.count ? "I3B" : k.reserved ? "I37" : "I3A"),
-                f(s, k, F, !0, "always"),
+                f(s, k, F, true, "always"),
             t &&
             ((s = DOM.append(w, "ul", "ago_panel_content")),
                 DOM.appendLI(s, "ago_panel_content_action", "Account")),
@@ -1520,7 +1520,7 @@ AGO.Panel = {
             ((s = DOM.append(w, "ul", "ago_panel_content")),
                 (x = c.Active || {}),
             AGO.Option.is("I38") &&
-            ((p.mode = !0),
+            ((p.mode = true),
                 OBJ.iterate(AGO.Item.Resource, function(a) {
                     p[a] = Math.max(Math.min(h[a], x[a]), 0);
                     p.resources += p[a];
@@ -1555,7 +1555,7 @@ AGO.Panel = {
                 f(s, p, "", p.mode, "always", "", "colorize")),
             (q && k.resources) || !k.reserved) &&
             ((s = DOM.append(w, "ul", "ago_panel_content")),
-                f(s, h, "I39", !0, "always", "", "colorize"),
+                f(s, h, "I39", true, "always", "", "colorize"),
                 AGO.Task.updateResources(h),
             h.resources &&
             (DOM.appendLI(s),
@@ -1680,7 +1680,7 @@ AGO.Panel = {
             var g, h;
             80 < f &&
             !e &&
-            ((e = !0),
+            ((e = true),
                 (g = DOM.appendTR(a, { colspan: 3 })),
                 DOM.append(g, "TD", null, {
                     height: "10px",
@@ -1910,7 +1910,7 @@ AGO.Panel = {
                 ? (AGO.Option.set("I84", a.value, 2), AGO.Panel.Display())
                 : "icon" === a.action
                     ? ((a.icon = AGO.Panel.Get(b, "icon", 6) === a.icon ? "" : a.icon),
-                        AGO.Panel.set(b, "icon", a.icon, !0),
+                        AGO.Panel.set(b, "icon", a.icon, true),
                         AGO.Init.Messages("Main", "Display"),
                         AGO.Panel.Display())
                     : 2 === a.marked || (a.marked && !AGO.Option.is("I82"))
@@ -1960,7 +1960,7 @@ AGO.Panel = {
         if (a && a.target) {
             b = DOM.getData(a.target, null, 2);
             if (AGO.Panel.updateDisplayLock || a.target.hasAttribute("disabled"))
-                return a.stopPropagation(), a.preventDefault(), !1;
+                return a.stopPropagation(), a.preventDefault(), false;
             OBJ.is(b.setting)
                 ? "INPUT" !== a.target.nodeName &&
                 DOM.click(
@@ -1984,7 +1984,7 @@ AGO.Panel = {
                         "ago_display_status",
                         2
                         )),
-                            2 <= a ? AGO.Panel.panelInactive(!0) : AGO.Panel.panelActive(3))
+                            2 <= a ? AGO.Panel.panelInactive(true) : AGO.Panel.panelActive(3))
                         : AGO.Panel.panelActive(2));
         }
     },
@@ -2066,7 +2066,7 @@ AGO.Box = {
         "Action" === a && AGO.Box.Action(b);
     },
     Init: function(a, b) {
-        AGO.Box.enabled = !0;
+        AGO.Box.enabled = true;
         AGO.Box.Data = OBJ.is(a) ? a : {};
         b && AGO.Box.Display();
     },
@@ -2209,7 +2209,7 @@ AGO.Box = {
 };
 AGO.Events = {
     status: 0,
-    included: !1,
+    included: false,
     Messages: function(a, b) {
         "highlight" === a && AGO.Events.displayHighlight(b);
     },
@@ -2217,7 +2217,7 @@ AGO.Events = {
         var a, b;
         AGO.Events.status = 1;
         AGO.Option.is("E30") &&
-        ((AGO.Events.enabled = !0),
+        ((AGO.Events.enabled = true),
             (AGO.Events.improve = AGO.Option.is("E31")),
             (AGO.Events.modeAbbreviation = AGO.Option.is("E32")),
             (AGO.Events.modeColorMissions = AGO.Option.is("CM0")));
@@ -2284,7 +2284,7 @@ AGO.Events = {
                 (d = DOM.appendSPAN(d, "icon icon_reload ago_eventlist_reload")),
             AGO.Events.improve &&
             (DOM.appendSPAN(c, "ago_display_arrow"),
-                a.addEventListener("click", AGO.Events.toggleEvents, !1)),
+                a.addEventListener("click", AGO.Events.toggleEvents, false)),
                 DOM.prependChild(a, c));
             a = b.querySelectorAll("table#eventContent > tbody > tr");
             for (d = 0; d < a.length; d++)
@@ -2314,7 +2314,7 @@ AGO.Events = {
                 AGO.Events.modeColorMissions &&
                 AGO.Events.eData[f].reverse &&
                 (a[d].className += " ago_events_reverse"),
-                    a[d].addEventListener("click", AGO.Events.clickRow, !1),
+                    a[d].addEventListener("click", AGO.Events.clickRow, false),
                     AGO.Events.parseRow(a[d], AGO.Events.eData[f]),
                 1 !== h &&
                 (AGO.Task.updateShips(AGO.Events.eData[f]),
@@ -2334,8 +2334,8 @@ AGO.Events = {
                 AGO.Events.improve &&
                 (AGO.Events.eData[f].pair &&
                 (a[d].setAttribute("ago-events-pair", AGO.Events.eData[f].pair),
-                    a[d].addEventListener("mouseover", AGO.Events.displayPair, !1),
-                    a[d].addEventListener("mouseout", AGO.Events.displayPair, !1)),
+                    a[d].addEventListener("mouseover", AGO.Events.displayPair, false),
+                    a[d].addEventListener("mouseout", AGO.Events.displayPair, false)),
                     AGO.Events.createDetails(a[d], AGO.Events.eData[f])));
             for (f in AGO.Events.eData)
                 AGO.Events.eData.hasOwnProperty(f) &&
@@ -2352,7 +2352,7 @@ AGO.Events = {
                 2 === AGO.Events.eData[f].fleetType &&
                 5 === AGO.Events.eData[f].mission &&
                 AGO.Events.eData[f - 1] &&
-                (AGO.Events.eData[f].nocalc = !0));
+                (AGO.Events.eData[f].nocalc = true));
             a = b = a = d = a = c = null;
         }
     },
@@ -2482,8 +2482,8 @@ AGO.Events = {
         d.className = "ago_eventlist";
         b.pair &&
         (d.setAttribute("ago-events-pair", b.pair),
-            d.addEventListener("mouseover", AGO.Events.displayPair, !1),
-            d.addEventListener("mouseout", AGO.Events.displayPair, !1));
+            d.addEventListener("mouseover", AGO.Events.displayPair, false),
+            d.addEventListener("mouseout", AGO.Events.displayPair, false));
         c = DOM.appendTD(d);
         c.setAttribute("colspan", 12);
         e = DOM.appendDIV(c, "ago_eventlist_left");

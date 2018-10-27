@@ -15,7 +15,7 @@ AGO.Websim = {
         count_defender: 0
       };
     AGO.Websim.Show();
-    AGO.Websim.ShowResult(!0);
+    AGO.Websim.ShowResult(true);
     AGO.Websim.ShowTarget();
     AGO.Websim.ShowTitle();
     AGO.Websim.CalculateFleet();
@@ -24,8 +24,8 @@ AGO.Websim = {
     function b(a, b) {
       var c = document.getElementsByName("ship_" + a + "_" + b + "_b")[0];
       c &&
-        (c.addEventListener("change", AGO.Websim.CalculateFleet, !1),
-        c.addEventListener("keyup", AGO.Websim.CalculateFleet, !1));
+        (c.addEventListener("change", AGO.Websim.CalculateFleet, false),
+        c.addEventListener("keyup", AGO.Websim.CalculateFleet, false));
     }
 
     var a = document.getElementById("aswift_0_anchor");
@@ -77,7 +77,7 @@ AGO.Websim = {
         function() {
           window.setTimeout(AGO.Websim.CalculateFleet, 10);
         },
-        !1
+        false
       );
     (a = document.querySelector("input[onclick^=sim_ip_attack]")) &&
       a.addEventListener(
@@ -85,7 +85,7 @@ AGO.Websim = {
         function() {
           window.setTimeout(AGO.Websim.ShowResult, 330);
         },
-        !1
+        false
       );
   },
   ShowTitle: function() {
@@ -146,11 +146,11 @@ AGO.Websim = {
     function b(a) {
       var b = document.querySelector("input[name=" + a + "]");
       if (b) {
-        var c = b.cloneNode(!0);
+        var c = b.cloneNode(true);
         c.name = "original_" + a;
         b.parentNode
           .appendChild(c)
-          .addEventListener("change", AGO.Websim.CalculateResourse, !1);
+          .addEventListener("change", AGO.Websim.CalculateResourse, false);
         b.parentNode.style.minWidth = "112px";
         b.parentNode.previousSibling.style.minWidth = "70px";
         b.style.display = "none";
@@ -201,7 +201,7 @@ AGO.Websim = {
   },
   ReadResourse: function() {
     window.setTimeout(function() {
-      AGO.Websim.CalculateResourse(null, !0);
+      AGO.Websim.CalculateResourse(null, true);
     }, 500);
   },
   CalculateResourse: function(b, a) {
@@ -240,7 +240,7 @@ AGO.Websim = {
         f = {};
         var l = k.split(", ");
         2 === l.length
-          ? ((f.flag = !0),
+          ? ((f.flag = true),
             (f.metal = STR.trim(l[0].split(" ")[0])),
             (f.crystal = STR.trim(l[1].split(" ")[0])),
             (g = l[1].split(" ~ ")),
@@ -256,7 +256,7 @@ AGO.Websim = {
             (k = l[1].split(" ")),
             (f.deuterium = 3 <= k.length ? k[k.length - 2] : 0))
           : 8 === g &&
-            ((f.flag = !0),
+            ((f.flag = true),
             (f.deuterium = STR.trim(k.split(" ")[0])),
             (q = k.split(" ")[1]));
         k =
@@ -331,7 +331,7 @@ AGO.Websim = {
       AGO.Websim.ObserverObject = DOM.addObserver(
         document.getElementById("result_table"),
         {
-          childList: !0
+          childList: true
         },
         AGO.Websim.Observer
       );
@@ -438,7 +438,7 @@ AGO.Osimulate = {
     var b, a, c;
     if ((b = document.getElementById("cmdSimulate"))) {
       b = b.parentNode;
-      a = b.cloneNode(!0);
+      a = b.cloneNode(true);
       if ((c = a.querySelector("button")))
         (c.title = AGO.Label.get("X01")),
           (c.innerHTML =
@@ -447,9 +447,9 @@ AGO.Osimulate = {
             "  " +
             AGO.Label.get("FA0") +
             "</span>"),
-          c.addEventListener("click", AGO.Osimulate.SetAttack, !1),
+          c.addEventListener("click", AGO.Osimulate.SetAttack, false),
           b.parentNode.insertBefore(a, b.parentNode.childNodes[6]);
-      a = b.cloneNode(!0);
+      a = b.cloneNode(true);
       if ((c = a.querySelector("button")))
         (c.title = AGO.Label.get("X01")),
           (c.innerHTML =
@@ -458,7 +458,7 @@ AGO.Osimulate = {
             "  " +
             AGO.Label.get("FH0") +
             "</span>"),
-          c.addEventListener("click", AGO.Osimulate.SetHarvest, !1),
+          c.addEventListener("click", AGO.Osimulate.SetHarvest, false),
           b.parentNode.insertBefore(a, b.parentNode.childNodes[7]);
     }
   },

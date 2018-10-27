@@ -86,7 +86,7 @@ AGB.Panel = {
     b = AGB.Panel.Data[c];
     if (c && b && (c = AGB.Panel.getTab(a)) && a.key) {
       if (OBJ.is(a.value) || b[c][a.key] !== a.value)
-        (b.changed = !0), AGB.Data.Change();
+        (b.changed = true), AGB.Data.Change();
       b[c][a.key] = a.value;
     }
   },
