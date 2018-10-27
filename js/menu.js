@@ -36,7 +36,7 @@ AGO.Label.updateLoca = function() {
     (a || b) &&
     (AGO.Notify.set("D02", 3),
     (c = new XMLHttpRequest()),
-    c.open("POST", "http://antigame.de/antigame/ago_apploca.php", !0),
+    c.open("POST", "http://antigame.de/antigame/ago_apploca.php", true),
     c.setRequestHeader("Content-type", "application/x-www-form-urlencoded"),
     (c.onerror = c.onload = function() {
       var a,
@@ -62,7 +62,7 @@ AGO.Label.updateLoca = function() {
                 AGO.App.keyPlayer + "_Label_Help",
                 STR.trim(a[2]).substring(a.indexOf("{"))
               ))),
-        AGB.Log("Label - Update Translation", !0),
+        AGB.Log("Label - Update Translation", true),
         AGO.Notify.set("D02", b));
     }),
     c.send(
@@ -274,7 +274,7 @@ AGO.Menu = {
         : "Install" === a && AGO.Menu.Install(b);
   },
   onKeydown: function() {
-    return !0;
+    return true;
   },
   Init: function() {
     2 > AGO.Menu.status &&
@@ -368,7 +368,7 @@ AGO.Menu = {
         "App",
         "Update",
         {
-          reload: !0
+          reload: true
         },
         function() {}
       ));
@@ -400,13 +400,13 @@ AGO.Menu = {
           (r = a[x].split("]", 2)),
           (h = r[0].toUpperCase()),
           "NOPARSE" === h
-            ? (z = !0)
+            ? (z = true)
             : z
               ? h
                 ? (k || ((k = DOM.append(l, "OL")), (m = null)),
                   m || ((m = DOM.appendLI(k)), (n = null)),
                   DOM.appendTEXT(n || m, "[" + r[0] + "]"))
-                : (z = !1)
+                : (z = false)
               : c[h]
                 ? ((DOM.append(l, "H2").textContent = AGO.Label.get(c[h])),
                   (k = DOM.append(l, "OL")),
@@ -721,7 +721,7 @@ AGO.Menu = {
       else
         switch (a.action) {
           case "update":
-            AGO.Menu.Update(!0);
+            AGO.Menu.Update(true);
             break;
           case "install":
             AGO.Menu.Install();
@@ -732,7 +732,7 @@ AGO.Menu = {
               (AGO.Para.Preset(c), AGO.Menu.Show("Data"));
             break;
           case "reset":
-            a = AGO.Menu.get(a.id);
+            var menuId = AGO.Menu.get(a.id);
             b = {
               Account: "D45",
               Panel: "D49",
@@ -741,14 +741,14 @@ AGO.Menu = {
               Option: "D15",
               acc: "D11",
               ago: "D12"
-            }[a];
-            a &&
+            }[menuId];
+            menuId &&
               b &&
               ((b =
                 "AntiGameOrigin \n \n " +
                 AGO.Label.get("D10") +
                 "\n \n " +
-                ("ago" === a
+                ("ago" === menuId
                   ? ""
                   : AGO.Uni.lang +
                     " " +
@@ -757,11 +757,11 @@ AGO.Menu = {
                     AGO.Acc.name +
                     "\n \n ") +
                 AGO.Label.get(b) +
-                ("DataBase" === a ? "\n \n - " + AGO.Label.get("D19") : "")),
+                ("DataBase" === menuId ? "\n \n - " + AGO.Label.get("D19") : "")),
               window.confirm(b)
-                ? AGO.Data.Remove(a)
+                ? AGO.Data.Remove(menuId)
                 : AGB.message("Data", "List", {
-                    filter: "ago" === a ? "" : AGO.App.keyPlayer
+                    filter: "ago" === menuId ? "" : AGO.App.keyPlayer
                   }));
             break;
           case "topscore":
@@ -791,7 +791,7 @@ AGO.Menu = {
                 AGO.Label.get("a11").replace(/\[BR\]/g, "")
             ) &&
               AGO.App.Save({
-                disabled: !0
+                disabled: true
               });
         }
   },
@@ -831,7 +831,7 @@ AGO.Menu = {
     AGO.Menu.menuNode = DOM.appendDIV(null, {
       id: "ago_menu"
     });
-    AGO.Menu.menuNode.addEventListener("click", AGO.Menu.click, !1);
+    AGO.Menu.menuNode.addEventListener("click", AGO.Menu.click, false);
     DOM.appendDIV(AGO.Menu.menuNode, {
       id: "ago_menu_picker",
       class: "ago_menu_selected"
@@ -923,7 +923,7 @@ AGO.Menu = {
         (g.className = "tooltipHTML ago_menu_help"),
         DOM.setData(g, null, {
           id: a,
-          section: !0
+          section: true
         }))
       : 50 < b.length && ((g.title = b), (g.className = "tooltip"));
     g = DOM.append(e, "th");
@@ -944,7 +944,7 @@ AGO.Menu = {
           id: a,
           group: c || a
         }),
-        b.addEventListener("change", AGO.Menu.change, !1))
+        b.addEventListener("change", AGO.Menu.change, false))
       : AGO.Para.getType(a) &&
         ((g = DOM.appendSPAN(g, "ago_menu_section_input")),
         (b = DOM.append(
@@ -1118,55 +1118,50 @@ AGO.Menu.Show = function(a) {
       OBJ.is(g) &&
         ((g.id = a),
         DOM.setData(c, null, g),
-        c.addEventListener("change", AGO.Menu.change, !1)),
+        c.addEventListener("change", AGO.Menu.change, false)),
       AGO.Menu.appendRow(a, b || a, d, e, c, h));
   }
 
-  function d(a, b, c, d, h) {
-    var e, g, f, l;
-    e = OBJ.is(a) ? a : [a || ""];
-    if (OBJ.is(e) && AGO.Para.getType(e[0])) {
-      b = b || e[0];
-      a = document.createDocumentFragment();
-      for (l = 0; l < e.length; l++)
-        if (((f = e[l]), (g = AGO.Para.getType(f))))
+  function d(menuParam, b, c, d, h) {
+    var menuParams, menuItemType, menuItemKey, l;
+    menuParams = OBJ.is(menuParam) ? menuParam : [menuParam || ""];
+    if (OBJ.is(menuParams) && AGO.Para.getType(menuParams[0])) {
+      b = b || menuParams[0];
+      menuParam = document.createDocumentFragment();
+      for (l = 0; l < menuParams.length; l++)
+        if (((menuItemKey = menuParams[l]), (menuItemType = AGO.Para.getType(menuItemKey))))
           if (
             ((c =
-              1 === e.length
+              1 === menuParams.length
                 ? null
-                : DOM.append(a, "span", null, {
+                : DOM.append(menuParam, "span", null, {
                     display: "inline-block",
-                    width: Math.floor(100 / e.length) + "%"
+                    width: Math.floor(100 / menuParams.length) + "%"
                   })),
-            1 === g &&
-              DOM.append(
-                c || a,
-                "input",
-                {
-                  id: AGO.Menu.id(f),
+            1 === menuItemType &&
+              DOM.append(c || menuParam, "input", {
+                  id: AGO.Menu.id(menuItemKey),
                   type: "checkbox"
-                },
-                null,
-                null,
+                }, null, null,
                 {
-                  checked: Boolean(AGO.Para.get(f))
+                  checked: Boolean(AGO.Para.get(menuItemKey))
                 }
               ),
-            2 === g || 6 === g)
+            2 === menuItemType || 6 === menuItemType)
           )
-            (g = 2 === g ? "" : "ago_menu_input_string"),
+            (menuItemType = 2 === menuItemType ? "" : "ago_menu_input_string"),
               DOM.append(
-                c || a,
+                c || menuParam,
                 "input",
                 {
-                  id: AGO.Menu.id(f),
-                  class: g,
+                  id: AGO.Menu.id(menuItemKey),
+                  class: menuItemType,
                   type: "text",
-                  value: STR.check(AGO.Para.get(f))
+                  value: STR.check(AGO.Para.get(menuItemKey))
                 },
-                g
+                menuItemType
               );
-      DOM.hasChildren(a) && AGO.Menu.appendRow(e[0], b, d, "", a, h);
+      DOM.hasChildren(menuParam) && AGO.Menu.appendRow(menuParams[0], b, d, "", menuParam, h);
     }
   }
 
@@ -1199,7 +1194,7 @@ AGO.Menu.Show = function(a) {
           value: c[1]
         })),
         AGO.Menu.appendRowContent(a, h, b),
-        !0
+        true
       );
   }
 
@@ -1208,7 +1203,7 @@ AGO.Menu.Show = function(a) {
     h = 1;
     if (a) {
       for (e = 1; 10 > e; e++) p(a + e, b, c, d, a + h) && h++;
-      10 > h && p(a + 9, b, c, d, a + h, !0);
+      10 > h && p(a + 9, b, c, d, a + h, true);
     }
   }
 
@@ -1640,7 +1635,7 @@ AGO.Menu.Show = function(a) {
       d("U32", "", "", 2),
       d("U33", "", "", 2),
       d("U34"),
-      d("U41"),
+      d("disable_auto_complete"),
       g("U51", "", [" - ", "AI1", "AI2"]),
       g("U52", "", [" - ", "AI1", "AI2"]),
       AGO.Menu.appendSection("U60"),
@@ -2302,7 +2297,7 @@ AGO.Menu.showPicker = function(a) {
 
   function c() {
     a.darken = DOM.getProperty("ago_menu_picker_darken", "id", "checked", 1);
-    e(a.colorDefault, !0);
+    e(a.colorDefault, true);
   }
 
   function f() {
@@ -2407,13 +2402,13 @@ AGO.Menu.showPicker = function(a) {
     b &&
       (b.preventDefault(),
       document.ago_menu_dragging ||
-        ((document.ago_menu_dragging = !0),
-        document.addEventListener("mousemove", p, !1),
-        document.addEventListener("mouseup", q, !1)),
+        ((document.ago_menu_dragging = true),
+        document.addEventListener("mousemove", p, false),
+        document.addEventListener("mouseup", q, false)),
       (c = l(b)),
       (a.circleDrag = 2 * Math.max(Math.abs(c.x), Math.abs(c.y)) > a.square),
       p(b));
-    return !1;
+    return false;
   }
 
   function p(b) {
@@ -2428,13 +2423,13 @@ AGO.Menu.showPicker = function(a) {
         : ((b = Math.max(0, Math.min(1, -(c.x / a.square) + 0.5))),
           (c = Math.max(0, Math.min(1, -(c.y / a.square) + 0.5))),
           d([a.hsl[0], b, c])));
-    return !1;
+    return false;
   }
 
   function q() {
-    document.ago_menu_dragging = !1;
-    document.removeEventListener("mousemove", p, !1);
-    document.removeEventListener("mouseup", q, !1);
+    document.ago_menu_dragging = false;
+    document.removeEventListener("mousemove", p, false);
+    document.removeEventListener("mouseup", q, false);
   }
 
   function l(b) {
@@ -2813,7 +2808,7 @@ AGO.Menu.Sync = function(a) {
               AGO.Menu.appendButton(c, "D90", "D90", {
                 role: "Sync",
                 action: "list",
-                universal: !0
+                universal: true
               });
         c = DOM.appendLI(b);
         DOM.appendSPAN(c, HTML.classStatusData(a.com), AGO.Uni.lang);
@@ -2943,7 +2938,7 @@ AGO.Para = {
           a &&
             (AGO.Option.Init(a),
             AGO.Option.Save(),
-            AGO.Styles.Load(!0),
+            AGO.Styles.Load(true),
             AGO.Notify.set("Problem", -17),
             AGO.Notify.set("D03", 4),
             AGO.Init.Messages("Panel", "Display"),

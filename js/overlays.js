@@ -19,11 +19,11 @@ AGO.Jumpgate = {
       return (
         document.activeElement.blur(),
         DOM.click(".secondcol input.btn_blue", b),
-        !1
+        false
       );
-    if (65 === a.keyCode) return DOM.click(".secondcol #sendall", b), !1;
-    if (77 === a.keyCode) return DOM.click(".secondcol #sendmost", b), !1;
-    if (81 === a.keyCode) return DOM.click(".secondcol .send_none a", b), !1;
+    if (65 === a.keyCode) return DOM.click(".secondcol #sendall", b), false;
+    if (77 === a.keyCode) return DOM.click(".secondcol #sendmost", b), false;
+    if (81 === a.keyCode) return DOM.click(".secondcol .send_none a", b), false;
     if (38 === a.keyCode || 40 === a.keyCode) {
       if (
         11 === a.inputType &&
@@ -39,15 +39,15 @@ AGO.Jumpgate = {
     )
       return (
         AGO.Jumpgate.Action(AGO.Planets.GetByIndex(a.keyCode - 111, "moon", 6)),
-        !1
+        false
       );
-    return !0;
+    return true;
   },
   Content: function(a) {
     function b(a, b) {
       var c, g;
       c = DOM.appendTR(a, "tooltip");
-      c.addEventListener("click", d, !1);
+      c.addEventListener("click", d, false);
       g = DOM.appendTD(c, "ago_jumpgate_settings_name tooltip", b, 10);
       g.title = g.textContent;
       g = DOM.appendTD(c, "ago_jumpgate_settings_status");
@@ -182,8 +182,8 @@ AGO.Jumpgate = {
               },
               [20, 60, 90, 26, 24, 90, 65]
             )),
-            g.addEventListener("click", AGO.Jumpgate.clickTarget, !1),
-            g.addEventListener("dblclick", AGO.Jumpgate.clickTarget, !1),
+            g.addEventListener("click", AGO.Jumpgate.clickTarget, false),
+            g.addEventListener("dblclick", AGO.Jumpgate.clickTarget, false),
             AGO.Planets.iterate(3, function(a, b) {
               if (
                 b &&
@@ -231,8 +231,8 @@ AGO.Jumpgate = {
                   },
                   "-"
                 );
-                e.addEventListener("mouseover", c, !1);
-                e.addEventListener("mouseout", c, !1);
+                e.addEventListener("mouseover", c, false);
+                e.addEventListener("mouseout", c, false);
               }
             }),
             DOM.prependChild(a.querySelector("#selecttarget"), g),
@@ -248,7 +248,7 @@ AGO.Jumpgate = {
             b(g, "G35"),
             DOM.after(a.querySelector("#selecttarget > .fright"), g),
             f(),
-            AGO.Jumpgate.updateCooldown(!0),
+            AGO.Jumpgate.updateCooldown(true),
             (AGO.Jumpgate.Timer = AGO.Jumpgate.updateCooldown)),
           AGO.Global.message({
             role: "Jumpgate"
@@ -256,7 +256,7 @@ AGO.Jumpgate = {
           a.parentNode.parentNode.addEventListener(
             "DOMNodeRemoved",
             AGO.Jumpgate.Unload,
-            !1
+            false
           ),
           AGO.Jumpgate.Display(),
           AGO.Global.message({
@@ -378,7 +378,7 @@ AGO.Jumpgate = {
             tab: "Account",
             data: a
           }),
-            AGO.Init.Messages("Panel", "hover", !0);
+            AGO.Init.Messages("Panel", "hover", true);
       } else "Task" === b.role && AGO.Jumpgate.Action(b.data);
   },
   Action: function(a) {
@@ -412,7 +412,7 @@ AGO.Jumpgate = {
               '#ago_jumpgate_target tr[ago-data*="' + b.value + '"]',
               a,
               "ago_selected",
-              AGO.Token.getClassSelected(3, !0)
+              AGO.Token.getClassSelected(3, true)
             ));
       }
       DOM.setProperty(
@@ -444,7 +444,7 @@ AGO.Phalanx = {
         !AGO.App.OgameMobile &&
         ((b.style.paddingRight = "46px"),
         (b = DOM.appendSPAN(b.parentNode, "ago_display_arrow")),
-        b.addEventListener("click", AGO.Phalanx.toggleDisplay, !1),
+        b.addEventListener("click", AGO.Phalanx.toggleDisplay, false),
         a.parentNode.setAttribute(
           "ago_display_status",
           AGO.Option.get("E23", 2)
@@ -488,7 +488,7 @@ AGO.Phalanx = {
           AGO.Phalanx.parseRow(b[g], AGO.Phalanx.Data[e]),
           1 !== AGO.Phalanx.Data[e].unionType &&
             AGO.Phalanx.createDetails(b[g], AGO.Phalanx.Data[e]),
-          b[g].addEventListener("click", AGO.Phalanx.click, !1);
+          b[g].addEventListener("click", AGO.Phalanx.click, false);
       for (e in AGO.Phalanx.Data)
         1 === AGO.Phalanx.Data[e].unionType &&
           AGO.Phalanx.createDetails(

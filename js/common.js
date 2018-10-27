@@ -33,8 +33,8 @@ AGO.Notify = {
       b = 0;
     }
     5 < AGO.Init.status &&
-      ("Hide" === a && (AGO.Notify.loading = !1),
-      3 === b && (AGO.Notify.loading = !0),
+      ("Hide" === a && (AGO.Notify.loading = false),
+      3 === b && (AGO.Notify.loading = true),
       (e = HTML.colorStatusData(b)),
       3 !== b &&
         ((AGO.Notify.color =
@@ -269,7 +269,7 @@ AGO.Styles = {
   Load: function(a) {
     AGO.App.Ogame &&
       (1 !== AGO.Styles.status || AGO.App.reload || a) &&
-      (AGB.Log("Update   - Styles   :", !0),
+      (AGB.Log("Update   - Styles   :", true),
       AGB.message(
         "Styles",
         "Init",
@@ -915,11 +915,11 @@ AGO.Ogame = {
         AGO.Item[a].consumption * b / 35e3 * (c / 10 + 1) * (c / 10 + 1))
       : 0;
   },
-  getShipCapacity: function(a, b, c) {
-    c = AGO.Ogame.getFleetDuration(a, b, c);
+  getShipCapacity: function(shipId, distance, speed) {
+    duration = AGO.Ogame.getFleetDuration(shipId, distance, speed);
     return (
-      AGO.Item[a].capacity -
-      Math.round(AGO.Ogame.getShipConsumption(a, b, c)) -
+      AGO.Item[shipId].capacity +
+      Math.round(AGO.Ogame.getShipConsumption(shipId, distance, duration)) +
       1
     );
   },
@@ -990,16 +990,18 @@ AGO.Ogame = {
     c = "12" === a ? 10 * b * Math.pow(1.1, b) : 0;
     return Math.floor(c) * AGO.Uni.speed;
   },
-  getConsumptionEnergy: function(a, b) {
-    var c;
-    "1" === a
-      ? Math.pow(1.1, b)
-      : "2" === a
-        ? Math.pow(1.1, b)
-        : "3" === a && Math.pow(1.1, b);
-    return (c = "1" === a || "2" === a ? 10 : "3" === a ? 20 : 0) && 0 <= b
-      ? Math.floor(c * b * Math.pow(1.1, b))
-      : 0;
+  getConsumptionEnergy: function(idResource, level) {
+    var energy;
+    if(level == 0){
+      return 0;
+    }
+    if("1" === idResource || "2" === idResource){
+      energy = 10 * level * Math.pow(1.1, level)
+    }else if("3" === idResource){
+      energy = 20 * level * Math.pow(1.1, level)
+    }
+
+    return Math.ceil(energy)
   },
   getProductionEnergy: function(a, b) {
       var energy = 0, multiplicator = 1;
@@ -1008,7 +1010,7 @@ AGO.Ogame = {
       } else if("12" === a){
           energy = 30 * b * Math.pow(1.05 + 0.01 * AGO.Units.get("113"), b)
       }else if("212" === a){
-          energy = Math.floor((AGO.Planets.Get("active", "temp") + 40 + 140) / 6) * b
+          energy = Math.floor((AGO.Planets.Get("active", "tempMax") + 140) / 6) * b
       }
 
       if(AGO.Option.is("allofficers")){
@@ -1018,21 +1020,21 @@ AGO.Ogame = {
       }
     return Math.floor(energy * multiplicator);
   },
-  getProductionResources: function(a, b) {
+  getProductionResources: function(idResource, level) {
     var resources = 0, multiplicator = 1;
 
-    if("1" === a){
-        resources = 30 * b * Math.pow(1.1, b)
-    }else if("2" === a){
-        resources = 20 * b * Math.pow(1.1, b)
-    } else if("3" === a){
-        resources = 10 * b * Math.pow(1.1, b) * (1.28 - 0.004 * AGO.Planets.Get("active", "temp"))
+    if("1" === idResource){
+        resources = 30 * level * Math.pow(1.1, level)
+    }else if("2" === idResource){
+        resources = 20 * level * Math.pow(1.1, level)
+    } else if("3" === idResource){
+        resources = 10 * level * Math.pow(1.1, level) * (1.36-0.004 * ((AGO.Planets.Get("active", "tempMin")+AGO.Planets.Get("active", "tempMax"))/2))
     }
 
-    if(AGO.Option.is("geologist")){
-        multiplicator = 1.1
-    }else if(AGO.Option.is("allofficers")){
+    if(AGO.Option.is("allofficers")){
         multiplicator = 1.12
+    }else if(AGO.Option.is("geologist")){
+          multiplicator = 1.1
     }
     return Math.floor(multiplicator * resources) * AGO.Uni.speed;
   },
@@ -1162,7 +1164,7 @@ AGO.Units = {
   Update: function(a) {
     var b;
     b = new XMLHttpRequest();
-    b.open("GET", AGO.Uni.url + "/game/index.php?page=fetchTechs&ajax=1", !0);
+    b.open("GET", AGO.Uni.url + "/game/index.php?page=fetchTechs&ajax=1", true);
     b.setRequestHeader("Cache-Control", "no-cache");
     b.setRequestHeader("Pragma", "no-cache");
     b.overrideMimeType("text/html");
@@ -1267,7 +1269,7 @@ AGO.Time = {
             (d = AGO.Time.format(
               AGO.Time.ogameTime,
               "[d].[m].[Y] [H]:[i]:[s]",
-              !0
+              true
             ))),
           (b.title = AGO.Label.get("A38")),
           DOM.addClass(b, null, "tooltip"),
@@ -1310,7 +1312,7 @@ AGO.Time = {
       DOM.setText(
         "ago_clock_server",
         "id",
-        AGO.Time.format(a, "[d].[m].[Y] [H]:[i]:[s]", !0)
+        AGO.Time.format(a, "[d].[m].[Y] [H]:[i]:[s]", true)
       ));
   },
   timestamp: function() {
@@ -1366,7 +1368,7 @@ AGO.Time = {
   },
   formatTimestamp: function(a, b) {
     return 1e6 < a
-      ? AGO.Time.format(1e3 * a, b || "[d].[m].[Y] [H]:[i]:[s]", !0)
+      ? AGO.Time.format(1e3 * a, b || "[d].[m].[Y] [H]:[i]:[s]", true)
       : "";
   },
   formatTime: function(a, b) {
@@ -1835,7 +1837,7 @@ AGO.Task = {
           c[0] &&
           (d || (d = a.split(c[0])[1]),
           AGO.Task.updateCoordsType(b, c[0].replace(/[^\d:]/g, ""))),
-        d && (b.time = AGO.Time.parseDateTime(d, !0));
+        d && (b.time = AGO.Time.parseDateTime(d, true));
     return b;
   },
   trimCoords: function(a) {
@@ -2000,7 +2002,7 @@ AGO.Fleet = {
 };
 AGO.DataBase = {
   status: 0,
-  enabled: !1,
+  enabled: false,
   Data: {},
   Info: {
     Player: "D36",
@@ -2045,7 +2047,8 @@ AGO.Tools = {
       AGO.Planets.iterate(1, function(b, c) {
         a.Planets[c] = {
           name: b.name,
-          temp: b.temp
+          tempMin: b.tempMin,
+          tempMax: b.tempMax
         };
       }),
       AGB.message("Tools", "Action", a, function(b) {

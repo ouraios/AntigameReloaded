@@ -37,7 +37,7 @@ AGO.Messages = {
     },
 
     Ready: function () {
-        $ = "jQuery" in window ? window.jQuery : !0;
+        $ = "jQuery" in window ? window.jQuery : true;
         DOM.addObserver(DOM.query('#messages .js_tabs'), { childList: true, subtree: true }, function (mutations) {
             for (var i = 0; i < mutations.length; i++) {
                 var mutation = mutations[i];
@@ -494,7 +494,7 @@ AGO.Messages = {
             var aDelete = DOM.appendA(cellActions);
             aDelete.classList.add('spyTableIcon');
             DOM.query('#m' + p.msgId) ? aDelete.classList.add('icon', 'icon_delete') : aDelete.appendChild(document.createTextNode('-'));
-            aDelete.addEventListener('click', function () { DOM.query('.js_actionKill', message) ? DOM.click('.js_actionKill', message) : !0; }, false);
+            aDelete.addEventListener('click', function () { DOM.query('.js_actionKill', message) ? DOM.click('.js_actionKill', message) : true; }, false);
             DOM.query('.js_actionKill', message).onclick = function deleteMessage (e) {
                 DOM.query('#spyTable tbody').removeChild(DOM.query('#t_' + p.msgId));
                 if (f = DOM.query('#d_' + p.msgId)) DOM.query('#spyTable tbody').removeChild(f);

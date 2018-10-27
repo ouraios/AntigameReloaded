@@ -28,7 +28,7 @@ AGB.Manager = {
           "  DataBase: " +
           AGB.DataBase.status +
           (a || ""),
-        !0
+        true
       );
     });
   },
@@ -102,7 +102,7 @@ chrome.runtime.onMessage.addListener(function(a, c, b) {
             AGB[a.page].Messages(a.role, a.para, b, c),
     b)
   )
-    return !0;
+    return true;
 });
 AGB.Storage = {
   status: 0,
@@ -148,7 +148,7 @@ AGB.Storage = {
     OBJ.is(a) &&
       a.key &&
       ((c = a.sync ? "sync" : "local"),
-      AGB.Core.Log("Delete - storage  - " + a.key, !0),
+      AGB.Core.Log("Delete - storage  - " + a.key, true),
       chrome.storage[c].remove(a.key));
   },
   List: function(a) {
@@ -156,13 +156,13 @@ AGB.Storage = {
       (chrome.storage.local.get(null, function(c) {
         OBJ.iterate(c, function(b) {
           (a.filter && 0 !== STR.check(b).indexOf(a.filter)) ||
-            AGB.Core.Log("List - storage  - " + b, !0);
+            AGB.Core.Log("List - storage  - " + b, true);
         });
       }),
       chrome.storage.sync.get(null, function(c) {
         OBJ.iterate(c, function(b) {
           (a.filter && 0 !== STR.check(b).indexOf(a.filter)) ||
-            AGB.Core.Log("List - sync  - " + b, !0);
+            AGB.Core.Log("List - sync  - " + b, true);
         });
       }));
   },
@@ -171,14 +171,14 @@ AGB.Storage = {
       (chrome.storage.local.get(null, function(c) {
         OBJ.iterate(c, function(b) {
           (a.filter && 0 !== STR.check(b).indexOf(a.filter)) ||
-            (AGB.Core.Log("Delete - storage  - " + b, !0),
+            (AGB.Core.Log("Delete - storage  - " + b, true),
             chrome.storage.local.remove(b));
         });
       }),
       chrome.storage.sync.get(null, function(c) {
         OBJ.iterate(c, function(b) {
           (a.filter && 0 !== STR.check(b).indexOf(a.filter)) ||
-            (AGB.Core.Log("Delete - sync  - " + b, !0),
+            (AGB.Core.Log("Delete - sync  - " + b, true),
             chrome.storage.sync.remove(b));
         });
       }));

@@ -26,7 +26,7 @@ AGO.Fleet2 = {
   Read: function() {
     var a, b, c;
     if ((b = document.getElementById("inhalt")) && AGO.Option.is("F00")) {
-      PAGE.enabled = !0;
+      PAGE.enabled = true;
       a = PAGE.Para = OBJ.parse(AGO.Fleet.Get("Current", "Task2", 6));
       DOM.iterate(
         document.querySelectorAll("#contentWrapper > form input"),
@@ -56,7 +56,7 @@ AGO.Fleet2 = {
       if (2 <= a.routine || AGO.Option.is("F51"))
         (a.type = PAGE.Type.check(a.type) || AGO.Acc.type),
           6 === a.routine &&
-            ((b = AGO.Task.splitActive(AGO.Option.get("F91", -1), 2, 3, !0)),
+            ((b = AGO.Task.splitActive(AGO.Option.get("F91", -1), 2, 3, true)),
             (a.type = PAGE.Type.check(b.type) || a.type)),
           a.routine
             ? ((a.mission = PAGE.Mission.check(a.mission)),
@@ -345,7 +345,7 @@ AGO.Fleet2 = {
         ago_display_status: AGO.Option.is("F15") ? 1 : 2
       });
       f = DOM.appendDIV(d, "ago_shortcuts_header");
-      f.addEventListener("click", PAGE.onShortcuts, !1);
+      f.addEventListener("click", PAGE.onShortcuts, false);
       DOM.appendA(f, "ago_display_arrow");
       f = DOM.appendTABLE(
         d,
@@ -427,7 +427,7 @@ AGO.Fleet2 = {
             2 === c.type
               ? 8 === a
               : 8 === a
-                ? !1
+                ? false
                 : 15 === a
                   ? 16 === c.position
                   : 9 === a
@@ -460,7 +460,7 @@ AGO.Fleet2 = {
         18
       );
       if (!PAGE.updateDisplaySpeed) {
-        PAGE.lockedDisplay = !0;
+        PAGE.lockedDisplay = true;
         b.maxspeed = AGO.Option.is("F16")
           ? +AGO.Global.message(
               {
@@ -603,7 +603,7 @@ AGO.Fleet2 = {
       }
       PAGE.displayUnion();
       PAGE.displayMarked();
-      PAGE.lockedDisplay = !1;
+      PAGE.lockedDisplay = false;
       d = f = f = e = null;
     }
   },
@@ -709,7 +709,7 @@ AGO.Fleet2 = {
               : ""),
           DOM.setClassGroup(b, null, "ago_highlight", d),
           (d =
-            f === a.coords ? " " + AGO.Token.getClassSelected(a.type, !0) : ""),
+            f === a.coords ? " " + AGO.Token.getClassSelected(a.type, true) : ""),
           DOM.setClassGroup(b, null, "ago_selected", d));
       }),
         DOM.iterate(b.querySelectorAll(".ago_hover[ago-task-union]"), function(
@@ -718,7 +718,7 @@ AGO.Fleet2 = {
           var d;
           d =
             +b.getAttribute("ago-task-union") === a.union
-              ? " " + AGO.Token.getClassSelected(a.type, !0)
+              ? " " + AGO.Token.getClassSelected(a.type, true)
               : "";
           DOM.setClassGroup(b, null, "ago_selected", d);
         });
@@ -780,7 +780,7 @@ AGO.Fleet2 = {
     (c = document.querySelector("#contentWrapper > form")) &&
       AGO.Init.status &&
       a &&
-      ((PAGE.lockedDisplay = !0),
+      ((PAGE.lockedDisplay = true),
       a.arrival &&
         ((b.coordsMarked = a.coords || ""),
         (b.arrivalMarked = +a.arrival || 0)),
@@ -875,8 +875,8 @@ AGO.Fleet2 = {
   },
   onKeydown: function(a) {
     return 13 === a.keyCode
-      ? (DOM.hasClass("continue", "id", "on") && DOM.click("#continue.on"), !1)
-      : !0;
+      ? (DOM.hasClass("continue", "id", "on") && DOM.click("#continue.on"), false)
+      : true;
   },
   onSwipe: function(a) {
     "left" === a && DOM.click("#back");

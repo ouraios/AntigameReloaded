@@ -1,105 +1,112 @@
 var DOM = {
-    query: function(a, b) {
-      return "string" === typeof a
-        ? b
-          ? "object" === typeof b
-            ? b.querySelector(a)
-            : "id" === b
-              ? document.getElementById(a)
-              : document.getElementById(b)
-                ? document.getElementById(b).querySelector(a)
-                : null
-          : document.querySelector(a)
-        : a;
+    query: function(selector, type) {
+      if("string" === typeof selector){
+          if(type){
+              if("object" === typeof type){
+                  return type.querySelector(selector)
+              }else if(type === 'id'){
+                  return document.getElementById(selector)
+              }else if(document.getElementById(type)){
+                      return document.getElementById(type).querySelector(selector)
+              }else{
+                  return null
+              }
+          }else{
+              return document.querySelector(selector)
+          }
+      }else{
+          return selector
+      }
     },
-    queryAll: function(a, b) {
-      return "string" === typeof a
-        ? (b || document).querySelectorAll(a)
-        : a && "object" === typeof a && "length" in a
-          ? a
+    queryAll: function(selector, parentSelector) {
+      return "string" === typeof selector
+        ? (parentSelector || document).querySelectorAll(selector)
+        : selector && "object" === typeof selector && "length" in selector
+          ? selector
           : [];
     },
-    findParent: function(a, b, c, d) {
-      if ((a = DOM.query(a, b)) && c)
-        for (d = d || 0; a && 0 <= d; ) {
-          if (a.id === c) return a;
-          d--;
-          a = a.parentNode;
+    findParent: function(selector, selectorType, idName, nbParentNode) {
+      if ((selector = DOM.query(selector, selectorType)) && idName)
+        for (nbParentNode = nbParentNode || 0; selector && 0 <= nbParentNode; ) {
+          if (selector.id === idName) return selector;
+          nbParentNode--;
+          selector = selector.parentNode;
         }
       return null;
     },
-    iterate: function(a, b) {
+    iterate: function(objectToIterate, callback) {
       var c;
-      if (a && "object" === typeof a && "length" in a)
-        for (c = 0; c < a.length; c++) a[c] && b(a[c]);
+      if (objectToIterate && "object" === typeof objectToIterate && "length" in objectToIterate)
+        for (c = 0; c < objectToIterate.length; c++) objectToIterate[c] && callback(objectToIterate[c]);
     },
-    iterateChildren: function(a, b) {
-      if (a)
-        for (var c = a.firstChild; c; c = c.nextSibling)
-          1 === c.nodeType && b(c);
+    iterateChildren: function(parentElement, callback) {
+      if (parentElement)
+        for (var c = parentElement.firstChild; c; c = c.nextSibling)
+          1 === c.nodeType && callback(c);
     },
-    hasChildren: function(a) {
-      return a && a.children ? a.children.length : 0;
+    hasChildren: function(element) {
+      return element && element.children ? element.children.length : 0;
     },
-    getChildren: function(a, b) {
-      return a && a.children ? a.children[b] : null;
+    getChildren: function(element, callback) {
+      return element && element.children ? element.children[callback] : null;
     },
-    getSelectedNode: function(a) {
-      return a && a.options && "selectedIndex" in a
-        ? a.options[a.selectedIndex]
+    getSelectedNode: function(element) {
+      return element && element.options && "selectedIndex" in element
+        ? element.options[element.selectedIndex]
         : null;
     },
-    getChildnodeByName: function(a, b) {
-      if (a && a.children)
-        for (var c = 0; c < a.children.length; c++)
-          if (a.children[c].tagName === b) return a.children[c];
+    getChildnodeByName: function(element, callback) {
+      if (element && element.children)
+        for (var c = 0; c < element.children.length; c++)
+          if (element.children[c].tagName === callback) return element.children[c];
       return null;
     },
-    prependChild: function(a, b) {
-      a &&
-        b &&
-        (a.childNodes.length
-          ? a.insertBefore(b, a.childNodes[0])
-          : a.appendChild(b));
+    prependChild: function(element, child) {
+      element &&
+        child &&
+        (element.childNodes.length
+          ? element.insertBefore(child, element.childNodes[0])
+          : element.appendChild(child));
     },
-    appendChild: function(a, b) {
-      a && b && a.appendChild(b);
+    appendChild: function(element, child) {
+      element && child && element.appendChild(child);
     },
-    before: function(a, b) {
-      a && b && a.parentNode.insertBefore(b, a);
+    before: function(element, child) {
+      element && child && element.parentNode.insertBefore(child, element);
     },
-    after: function(a, b) {
-      a &&
-        b &&
-        (a.nextElementSibling
-          ? a.parentNode.insertBefore(b, a.nextElementSibling)
-          : a.parentNode.appendChild(b));
+    after: function(element, child) {
+      element &&
+        child &&
+        (element.nextElementSibling
+          ? element.parentNode.insertBefore(child, element.nextElementSibling)
+          : element.parentNode.appendChild(child));
     },
-    replaceChildren: function(a, b) {
-      if (a) {
-        for (; a.firstChild; ) a.removeChild(a.firstChild);
-        b && a.appendChild(b);
+    replaceChildren: function(element, children) {
+      if (element) {
+        for (; element.firstChild; ) element.removeChild(element.firstChild);
+        children && element.appendChild(children);
       }
     },
-    removeChildren: function(a, b) {
-      var c;
-      if (a)
-        for (c = 0; c < a.childNodes.length; c++)
-          (b && a.childNodes[c].nodeType !== b) ||
-            a.removeChild(a.childNodes[c]);
+    removeChildren: function(element, child) {
+      var tmp;
+      if (element)
+        for (tmp = 0; tmp < element.childNodes.length; tmp++)
+          (child && element.childNodes[tmp].nodeType !== child) ||
+            element.removeChild(element.childNodes[tmp]);
     },
-    create: function(a, b, c, d, e) {
-      var f;
-      a = document.createElement(a);
-      if (b)
-        if ("string" === typeof b) a.className = b;
-        else for (f in b) b.hasOwnProperty(f) && a.setAttribute(f, b[f]);
-      if (c) for (f in c) c.hasOwnProperty(f) && (a.style[f] = c[f]);
-      if (d)
-        for (f in d) d.hasOwnProperty(f) && a.addEventListener(f, d[f], !1);
-      if (e) for (f in e) e.hasOwnProperty(f) && (a[f] = e[f]);
-      return a;
-    }, parse: function (html) {
+    create: function(tagName, attributes, styles, eventListener, otherProperty) {
+      var tmpProperty, element;
+      element = document.createElement(tagName);
+      if (attributes)
+        if ("string" === typeof attributes) element.className = attributes;
+        else for (tmpProperty in attributes) attributes.hasOwnProperty(tmpProperty) && element.setAttribute(tmpProperty, attributes[tmpProperty]);
+      if (styles) for (tmpProperty in styles) styles.hasOwnProperty(tmpProperty) && (element.style[tmpProperty] = styles[tmpProperty]);
+      if (eventListener)
+        for (tmpProperty in eventListener) eventListener.hasOwnProperty(tmpProperty) && element.addEventListener(tmpProperty, eventListener[tmpProperty], false);
+      if (otherProperty) for (tmpProperty in otherProperty) otherProperty.hasOwnProperty(tmpProperty) && (element[tmpProperty] = otherProperty[tmpProperty]);
+      return element;
+    },
+        parse: function (html) {
             // based on jQuery.buildFragment()
             //
             // jQuery JavaScript Library v1.11.3
@@ -148,436 +155,399 @@ var DOM = {
                 return tmp;
             }
         },
-    append: function(a, b, c, d, e, f, g) {
-      var h;
-      a = a
-        ? a.appendChild(document.createElement(b))
-        : document.createElement(b);
-      if (c)
-        if ("string" === typeof c) a.className = c;
-        else for (h in c) c.hasOwnProperty(h) && a.setAttribute(h, c[h]);
-      if (d) for (h in d) d.hasOwnProperty(h) && (a.style[h] = d[h]);
-      if (e)
-        for (h in e) e.hasOwnProperty(h) && a.addEventListener(h, e[h], !1);
-      if (f) for (h in f) f.hasOwnProperty(h) && (a[h] = f[h]);
-      g && a.setAttribute("ago-data", JSON.stringify(g));
-      return a;
+    append: function(element, tagName, attributes, styles, eventListener, otherProperty, agrData) {
+      var tmp;
+      element = element
+        ? element.appendChild(document.createElement(tagName))
+        : document.createElement(tagName);
+      if (attributes)
+        if ("string" === typeof attributes) element.className = attributes;
+        else for (tmp in attributes) attributes.hasOwnProperty(tmp) && element.setAttribute(tmp, attributes[tmp]);
+      if (styles) for (tmp in styles) styles.hasOwnProperty(tmp) && (element.style[tmp] = styles[tmp]);
+      if (eventListener)
+        for (tmp in eventListener) eventListener.hasOwnProperty(tmp) && element.addEventListener(tmp, eventListener[tmp], false);
+      if (otherProperty) for (tmp in otherProperty) otherProperty.hasOwnProperty(tmp) && (element[tmp] = otherProperty[tmp]);
+      agrData && element.setAttribute("ago-data", JSON.stringify(agrData));
+      return element;
     },
-    appendDIV: function(a, b, c) {
-      var d;
-      a = a
-        ? a.appendChild(document.createElement("div"))
+    appendDIV: function(element, attributes, styles) {
+      var tmp;
+      element = element
+        ? element.appendChild(document.createElement("div"))
         : document.createElement("div");
-      if (b)
-        if ("string" === typeof b) a.className = b;
-        else for (d in b) b.hasOwnProperty(d) && a.setAttribute(d, b[d]);
-      if (c) for (d in c) c.hasOwnProperty(d) && (a.style[d] = c[d]);
-      return a;
+      if (attributes)
+        if ("string" === typeof attributes) element.className = attributes;
+        else for (tmp in attributes) attributes.hasOwnProperty(tmp) && element.setAttribute(tmp, attributes[tmp]);
+      if (styles) for (tmp in styles) styles.hasOwnProperty(tmp) && (element.style[tmp] = styles[tmp]);
+      return element;
     },
-    appendTABLE: function(a, b, c, d) {
-      var e;
-      a = a
-        ? a.appendChild(document.createElement("table"))
+    appendTABLE: function(element, attributes, styles, pixelsPerColumn) {
+      var tmp;
+      element = element
+        ? element.appendChild(document.createElement("table"))
         : document.createElement("table");
-      a.style.tableLayout = "fixed";
-      if (b)
-        if ("string" === typeof b) a.className = b;
-        else for (e in b) b.hasOwnProperty(e) && a.setAttribute(e, b[e]);
-      if (c) for (e in c) c.hasOwnProperty(e) && (a.style[e] = c[e]);
-      if (d)
+      element.style.tableLayout = "fixed";
+      if (attributes)
+        if ("string" === typeof attributes) element.className = attributes;
+        else for (tmp in attributes) attributes.hasOwnProperty(tmp) && element.setAttribute(tmp, attributes[tmp]);
+      if (styles) for (tmp in styles) styles.hasOwnProperty(tmp) && (element.style[tmp] = styles[tmp]);
+      if (pixelsPerColumn)
         for (
-          b = a.appendChild(document.createElement("colgroup")), e = 0;
-          e < d.length;
-          e++
+          attributes = element.appendChild(document.createElement("colgroup")), tmp = 0;
+          tmp < pixelsPerColumn.length;
+          tmp++
         )
-          b.appendChild(document.createElement("col")).style.width =
-            d[e] + "px";
-      return a;
+          attributes.appendChild(document.createElement("col")).style.width =
+            pixelsPerColumn[tmp] + "px";
+      return element;
     },
-    appendTR: function(a, b, c) {
-      var d;
-      a = a
-        ? a.appendChild(document.createElement("tr"))
+    appendTR: function(element, attributes, agrData) {
+      var tmp;
+      element = element
+        ? element.appendChild(document.createElement("tr"))
         : document.createElement("tr");
-      if (b)
-        if ("string" === typeof b) a.className = b;
-        else for (d in b) b.hasOwnProperty(d) && a.setAttribute(d, b[d]);
-      c &&
-        a.setAttribute(
+      if (attributes)
+        if ("string" === typeof attributes) element.className = attributes;
+        else for (tmp in attributes) attributes.hasOwnProperty(tmp) && element.setAttribute(tmp, attributes[tmp]);
+      agrData &&
+        element.setAttribute(
           "ago-data",
-          "string" === typeof c ? c : JSON.stringify(c)
+          "string" === typeof agrData ? agrData : JSON.stringify(agrData)
         );
-      return a;
+      return element;
     },
-    appendTD: function(a, b, c, d, e) {
-      var f;
-      a = a
-        ? a.appendChild(document.createElement("td"))
+    appendTD: function(element, attributes, textContent, textType, date) {
+      var tmp;
+      element = element
+        ? element.appendChild(document.createElement("td"))
         : document.createElement("td");
-      if (b)
-        if ("string" === typeof b) a.className = b;
-        else for (f in b) b.hasOwnProperty(f) && a.setAttribute(f, b[f]);
-      if ((c = HTML.setText(c, d, e))) a.textContent = c;
-      return a;
+      if (attributes)
+        if ("string" === typeof attributes) element.className = attributes;
+        else for (tmp in attributes) attributes.hasOwnProperty(tmp) && element.setAttribute(tmp, attributes[tmp]);
+      if ((textContent = HTML.setText(textContent, textType, date))) element.textContent = textContent;
+      return element;
     },
-    appendLI: function(a, b, c, d, e) {
-      var f;
-      a = a
-        ? a.appendChild(document.createElement("li"))
+    appendLI: function(element, attributes, textContent, textType, date) {
+      var tmp;
+      element = element
+        ? element.appendChild(document.createElement("li"))
         : document.createElement("li");
-      if (b)
-        if ("string" === typeof b) a.className = b;
-        else for (f in b) b.hasOwnProperty(f) && a.setAttribute(f, b[f]);
-      if ((c = HTML.setText(c, d, e))) a.textContent = c;
-      return a;
+      if (attributes)
+        if ("string" === typeof attributes) element.className = attributes;
+        else for (tmp in attributes) attributes.hasOwnProperty(tmp) && element.setAttribute(tmp, attributes[tmp]);
+      if ((textContent = HTML.setText(textContent, textType, date))) element.textContent = textContent;
+      return element;
     },
-    appendSPAN: function(a, b, c, d, e) {
-      var f;
-      a = a
-        ? a.appendChild(document.createElement("span"))
+    appendSPAN: function(element, attributes, textContent, textType, date) {
+      var tmp;
+      element = element
+        ? element.appendChild(document.createElement("span"))
         : document.createElement("span");
-      if (b)
-        if ("string" === typeof b) a.className = b;
-        else for (f in b) b.hasOwnProperty(f) && a.setAttribute(f, b[f]);
-      if ((c = HTML.setText(c, d, e))) a.textContent = c;
-      return a;
+      if (attributes)
+        if ("string" === typeof attributes) element.className = attributes;
+        else for (tmp in attributes) attributes.hasOwnProperty(tmp) && element.setAttribute(tmp, attributes[tmp]);
+      if ((textContent = HTML.setText(textContent, textType, date))) element.textContent = textContent;
+      return element;
     },
-    appendTEXT: function(a, b, c, d) {
-      (b = HTML.setText(b, c, d)) && a.appendChild(document.createTextNode(b));
+    appendTEXT: function(element, textContent, textType, date) {
+      (textContent = HTML.setText(textContent, textType, date)) && element.appendChild(document.createTextNode(textContent));
     },
-    appendIMG: function(a, b, c) {
-      var d;
-      a = a
-        ? a.appendChild(document.createElement("img"))
+    appendIMG: function(element, attribute, styles) {
+      var tmp;
+      element = element
+        ? element.appendChild(document.createElement("img"))
         : document.createElement("img");
-      if (b)
-        if ("string" === typeof b) a.src = b;
-        else for (d in b) b.hasOwnProperty(d) && a.setAttribute(d, b[d]);
-      if (c)
-        if ("string" === typeof b) a.style.width = a.style.height = c;
-        else for (d in c) c.hasOwnProperty(d) && (a.style[d] = c[d]);
-      return a;
+      if (attribute)
+        if ("string" === typeof attribute) element.src = attribute;
+        else for (tmp in attribute) attribute.hasOwnProperty(tmp) && element.setAttribute(tmp, attribute[tmp]);
+      if (styles)
+        if ("string" === typeof attribute) element.style.width = element.style.height = styles;
+        else for (tmp in styles) styles.hasOwnProperty(tmp) && (element.style[tmp] = styles[tmp]);
+      return element;
     },
-    appendA: function(a, b, c, d, e) {
-      var f;
-      a = a
-        ? a.appendChild(document.createElement("a"))
+    appendA: function(element, attributes, eventListeners, agrData, disabled) {
+      var tmp;
+      element = element
+        ? element.appendChild(document.createElement("a"))
         : document.createElement("a");
-      if (b)
-        if ("string" === typeof b)
-          (a.className = b), (a.href = "javascript:void(0)");
+      if (attributes)
+        if ("string" === typeof attributes)
+          (element.className = attributes), (element.href = "javascript:void(0)");
         else
-          for (f in (b.href || (b.href = "javascript:void(0)"), b))
-            b.hasOwnProperty(f) && a.setAttribute(f, b[f]);
-      else a.href = "javascript:void(0)";
-      d &&
-        a.setAttribute(
+          for (tmp in (attributes.href || (attributes.href = "javascript:void(0)"), attributes))
+            attributes.hasOwnProperty(tmp) && element.setAttribute(tmp, attributes[tmp]);
+      else element.href = "javascript:void(0)";
+      agrData &&
+        element.setAttribute(
           "ago-data",
-          "string" === typeof d ? d : JSON.stringify(d)
+          "string" === typeof agrData ? agrData : JSON.stringify(agrData)
         );
-      if (c)
-        for (f in c) c.hasOwnProperty(f) && a.addEventListener(f, c[f], !1);
-      e && a.setAttribute("disabled", "disabled");
-      return a;
+      if (eventListeners)
+        for (tmp in eventListeners) eventListeners.hasOwnProperty(tmp) && element.addEventListener(tmp, eventListeners[tmp], false);
+      disabled && element.setAttribute("disabled", "disabled");
+      return element;
     },
-    appendSELECT: function(a, b, c, d, e) {
-      var f;
-      a = a
-        ? a.appendChild(document.createElement("select"))
+    appendSELECT: function(element, attributes, options, selectedValue, eventListeners) {
+      var tmp;
+      element = element
+        ? element.appendChild(document.createElement("select"))
         : document.createElement("select");
-      if (b)
-        if ("string" === typeof b) a.className = b;
-        else for (f in b) b.hasOwnProperty(f) && a.setAttribute(f, b[f]);
-      if (e)
-        for (f in e) e.hasOwnProperty(f) && a.addEventListener(f, e[f], !1);
-      for (f in c)
-        c.hasOwnProperty(f) &&
-          ((b = a.appendChild(document.createElement("option"))),
-          (b.value = f),
-          (b.textContent = AGO.Label.get(c[f]).replace(/&lt;/g, "<")),
-          d === f && (a.selectedIndex = a.options.length - 1));
-      return a;
+      if (attributes)
+        if ("string" === typeof attributes) element.className = attributes;
+        else for (tmp in attributes) attributes.hasOwnProperty(tmp) && element.setAttribute(tmp, attributes[tmp]);
+      if (eventListeners)
+        for (tmp in eventListeners) eventListeners.hasOwnProperty(tmp) && element.addEventListener(tmp, eventListeners[tmp], false);
+      for (tmp in options)
+        options.hasOwnProperty(tmp) &&
+          ((attributes = element.appendChild(document.createElement("option"))),
+          (attributes.value = tmp),
+          (attributes.textContent = AGO.Label.get(options[tmp]).replace(/&lt;/g, "<")),
+          selectedValue === tmp && (element.selectedIndex = element.options.length - 1));
+      return element;
     },
-    appendSCRIPT: function(a, b) {
-      var c;
-      a &&
-        ((c = document.createElement("script")),
-        c.setAttribute("type", "text/javascript"),
-        (c.textContent =
-          "string" === typeof a ? a : "(" + a.toString() + ")();"),
-        document.head.appendChild(c),
-        b && document.head.removeChild(c));
-    },
-    set: function(a, b, c, d, e, f) {
+    set: function(selector, selectorType, attributes, styles, eventListeners, otherProperty) {
       var g;
-      if ((a = DOM.query(a, b))) {
-        if (c) for (g in c) c.hasOwnProperty(g) && a.setAttribute(g, c[g]);
-        if (d) for (g in d) d.hasOwnProperty(g) && (a.style[g] = d[g]);
-        if (e)
-          for (g in e) e.hasOwnProperty(g) && a.addEventListener(g, e[g], !1);
-        if (f) for (g in f) f.hasOwnProperty(g) && (a[g] = f[g]);
+      if ((selector = DOM.query(selector, selectorType))) {
+        if (attributes) for (g in attributes) attributes.hasOwnProperty(g) && selector.setAttribute(g, attributes[g]);
+        if (styles) for (g in styles) styles.hasOwnProperty(g) && (selector.style[g] = styles[g]);
+        if (eventListeners)
+          for (g in eventListeners) eventListeners.hasOwnProperty(g) && selector.addEventListener(g, eventListeners[g], false);
+        if (otherProperty) for (g in otherProperty) otherProperty.hasOwnProperty(g) && (selector[g] = otherProperty[g]);
       }
     },
-    setAll: function(a, b, c, d, e, f) {
-      b = DOM.queryAll(a, b);
-      for (a = 0; a < b.length; a++) DOM.set(b[a], null, c, d, e, f);
+    setAll: function(selector, selectorType, attributes, styles, eventListeners, otherProperty) {
+      selectorType = DOM.queryAll(selector, selectorType);
+      for (selector = 0; selector < selectorType.length; selector++) DOM.set(selectorType[selector], null, attributes, styles, eventListeners, otherProperty);
     },
-    getText: function(a, b, c) {
-      a = DOM.query(a, b);
-      return HTML.getText(a ? a.textContent : "", c);
+    getText: function(selector, selectorType, textType) {
+      selector = DOM.query(selector, selectorType);
+      return HTML.getText(selector ? selector.textContent : "", textType);
     },
-    getTextChild: function(a, b, c) {
+    getTextChild: function(selector, selectorType, textType) {
       var d;
-      if ((b = DOM.query(a, b)) && b.childNodes)
+      if ((selectorType = DOM.query(selector, selectorType)) && selectorType.childNodes)
         for (
-          a = 0;
-          a < b.childNodes.length &&
-          (3 !== +b.childNodes[a].nodeType ||
-            !(d = (b.childNodes[a].nodeValue || "").trim()));
-          a++
+          selector = 0;
+          selector < selectorType.childNodes.length &&
+          (3 !== +selectorType.childNodes[selector].nodeType ||
+            !(d = (selectorType.childNodes[selector].nodeValue || "").trim()));
+          selector++
         );
-      return HTML.getText(d, c);
+      return HTML.getText(d, textType);
     },
-    setText: function(a, b, c, d, e) {
-      if ((a = DOM.query(a, b)))
-        9 === d
-          ? (a.innerHTML = c || "")
-          : (a.textContent = HTML.setText(c, d, e));
+    setText: function(selector, selectorType, textContent, textType, date) {
+      if ((selector = DOM.query(selector, selectorType)))
+        9 === textType
+          ? (selector.innerHTML = textContent || "")
+          : (selector.textContent = HTML.setText(textContent, textType, date));
     },
-    updateText: function(a, b, c, d, e) {
-      if ((a = DOM.query(a, b)))
-        if (((c = HTML.setText(c, d, e)), c !== a.textContent))
-          return (a.textContent = c), a;
+    updateText: function(selector, selectorType, textContent, textType, date) {
+      if ((selector = DOM.query(selector, selectorType)))
+        if (((textContent = HTML.setText(textContent, textType, date)), textContent !== selector.textContent))
+          return (selector.textContent = textContent), selector;
       return null;
     },
-    updateTextChild: function(a, b, c, d, e) {
-      if ((a = DOM.query(a, b)))
-        if (((c = HTML.setText(c, d, e)), 3 === +a.firstChild.nodeType)) {
-          if (c !== a.firstChild.textContent)
-            return (a.firstChild.textContent = c), a;
-        } else return DOM.prependChild(a, document.createTextNode(c)), a;
+    updateTextChild: function(selector, selectorType, textContent, textType, date) {
+      if ((selector = DOM.query(selector, selectorType)))
+        if (((textContent = HTML.setText(textContent, textType, date)), 3 === +selector.firstChild.nodeType)) {
+          if (textContent !== selector.firstChild.textContent)
+            return (selector.firstChild.textContent = textContent), selector;
+        } else return DOM.prependChild(selector, document.createTextNode(textContent)), selector;
       return null;
     },
-    getAttribute: function(a, b, c, d) {
-      a = DOM.query(a, b);
-      return HTML.getText(a ? a.getAttribute(c) : "", d);
+    getAttribute: function(selector, selectorType, attribute, textType) {
+      selector = DOM.query(selector, selectorType);
+      return HTML.getText(selector ? selector.getAttribute(attribute) : "", textType);
     },
-    setAttribute: function(a, b, c, d, e) {
-      (a = DOM.query(a, b)) && a.setAttribute(c, HTML.setValue(d, e));
+    setAttribute: function(selector, selectorType, attribute, value, valueType) {
+      (selector = DOM.query(selector, selectorType)) && selector.setAttribute(attribute, HTML.setValue(value, valueType));
     },
-    removeAttribute: function(a, b, c) {
-      (a = DOM.query(a, b)) && a.removeAttribute(c);
+    removeAttribute: function(selector, selectorType, attribute) {
+      (selector = DOM.query(selector, selectorType)) && selector.removeAttribute(attribute);
     },
-    updateAttribute: function(a, b, c, d, e) {
-      if ((a = DOM.query(a, b)))
-        if (((d = HTML.setValue(d, e)), a.getAttribute(c) !== d))
-          return a.setAttribute(c, d), a;
+    updateAttribute: function(selector, selectorType, attribute, attributeValue, valueType) {
+      if ((selector = DOM.query(selector, selectorType)))
+        if (((attributeValue = HTML.setValue(attributeValue, valueType)), selector.getAttribute(attribute) !== attributeValue))
+          return selector.setAttribute(attribute, attributeValue), selector;
       return null;
     },
-    setData: function(a, b, c) {
-      (a = DOM.query(a, b)) &&
-        c &&
-        a.setAttribute(
+    setData: function(selector, selectorType, agrData) {
+      (selector = DOM.query(selector, selectorType)) &&
+        agrData &&
+        selector.setAttribute(
           "ago-data",
-          "string" === typeof c ? c : JSON.stringify(c)
+          "string" === typeof agrData ? agrData : JSON.stringify(agrData)
         );
     },
-    getData: function(a, b, c) {
-      return DOM.getAttributeParent(a, b, "ago-data", -2, c);
+    getData: function(selector, selectorType, parentIndex) {
+      return DOM.getAttributeParent(selector, selectorType, "ago-data", -2, parentIndex);
     },
-    getAttributeParent: function(a, b, c, d, e) {
-      if ((a = DOM.query(a, b)))
-        for (e = e || 0; a && 0 <= e; ) {
-          if (a.hasAttribute(c)) return DOM.getAttribute(a, null, c, d);
-          e--;
-          a = a.parentNode;
+    getAttributeParent: function(selector, selectorType, attributeName, textType, parentIndex) {
+      if ((selector = DOM.query(selector, selectorType)))
+        for (parentIndex = parentIndex || 0; selector && 0 <= parentIndex; ) {
+          if (selector.hasAttribute(attributeName)) return DOM.getAttribute(selector, null, attributeName, textType);
+          parentIndex--;
+          selector = selector.parentNode;
         }
-      return HTML.getText("", d);
+      return HTML.getText("", textType);
     },
-    getProperty: function(a, b, c, d) {
-      a = DOM.query(a, b);
-      return HTML.getText(a ? a[c] : "", d);
+    getProperty: function(selector, selectorType, property, propertyType) {
+      selector = DOM.query(selector, selectorType);
+      return HTML.getText(selector ? selector[property] : "", propertyType);
     },
-    setProperty: function(a, b, c, d, e) {
-      (a = DOM.query(a, b)) && (a[c] = HTML.setValue(d, e));
+    setProperty: function(selector, selectorType, property, value, valueType) {
+      (selector = DOM.query(selector, selectorType)) && (selector[property] = HTML.setValue(value, valueType));
     },
-    updateProperty: function(a, b, c, d, e) {
-      if ((a = DOM.query(a, b)))
-        if (((d = HTML.setValue(d, e)), a[c] !== d)) return (a[c] = d), a;
+    updateProperty: function(selector, selectorType, property, value, valueType) {
+      if ((selector = DOM.query(selector, selectorType)))
+        if (((value = HTML.setValue(value, valueType)), selector[property] !== value)) return (selector[property] = value), selector;
     },
-    updatePropertyAll: function(a, b, c, d, e) {
-      b = DOM.queryAll(a, b);
-      for (a = 0; a < b.length; a++) DOM.updateProperty(b[a], null, c, d, e);
+    updatePropertyAll: function(selector, selectorType, property, value, valuetype) {
+      selectorType = DOM.queryAll(selector, selectorType);
+      for (selector = 0; selector < selectorType.length; selector++) DOM.updateProperty(selectorType[selector], null, property, value, valuetype);
     },
-    getValue: function(a, b, c) {
-      a = DOM.query(a, b);
-      return HTML.getText(a ? a.value : "", c);
+    getValue: function(selector, selectorType, valueType) {
+      selector = DOM.query(selector, selectorType);
+      return HTML.getText(selector ? selector.value : "", valueType);
     },
-    setValue: function(a, b, c, d, e) {
-      if ((a = DOM.query(a, b)))
-        (a.value = HTML.setValue(c, d)), e && DOM.trigger(a, null, e);
+    setValue: function(selector, selectorType, value, valueType, eventName) {
+      if ((selector = DOM.query(selector, selectorType)))
+        (selector.value = HTML.setValue(value, valueType)), eventName && DOM.trigger(selector, null, eventName);
     },
-    updateValue: function(a, b, c, d, e) {
-      if ((a = DOM.query(a, b)))
-        if (((c = HTML.setValue(c, d)), c !== a.value))
-          return (a.value = c), e && DOM.trigger(a, null, e), a;
+    updateValue: function(selector, selectorType, value, valueType, eventName) {
+      if ((selector = DOM.query(selector, selectorType)))
+        if (((value = HTML.setValue(value, valueType)), value !== selector.value))
+          return (selector.value = value), eventName && DOM.trigger(selector, null, eventName), selector;
       return null;
     },
-    hasClass: function(a, b, c) {
-      return (a = DOM.query(a, b)) ? HTML.hasClass(a.className, c) : !1;
+    hasClass: function(selector, selectorType, className) {
+      return (selector = DOM.query(selector, selectorType)) ? HTML.hasClass(selector.className, className) : false;
     },
-    updateClass: function(a, b, c) {
-      return (a = DOM.query(a, b)) && a.className !== (c || "")
-        ? ((a.className = c || ""), a)
+    updateClass: function(selector, selectorType, className) {
+      return (selector = DOM.query(selector, selectorType)) && selector.className !== (className || "")
+        ? ((selector.className = className || ""), selector)
         : null;
     },
-    addClass: function(a, b, c) {
-      (b = DOM.query(a, b)) &&
-        c &&
-        ((a = (" " + (b.className || "").toLowerCase() + " ").indexOf(
-          " " + c.toLowerCase().trim() + " "
+    addClass: function(selector, selectorType, className) {
+      (selectorType = DOM.query(selector, selectorType)) &&
+        className &&
+        ((selector = (" " + (selectorType.className || "").toLowerCase() + " ").indexOf(
+          " " + className.toLowerCase().trim() + " "
         )),
-        -1 === a && (b.className = (b.className ? b.className + " " : "") + c));
+        -1 === selector && (selectorType.className = (selectorType.className ? selectorType.className + " " : "") + className));
     },
-    extendClass: function(a, b, c) {
-      (a = DOM.query(a, b)) &&
-        c &&
-        (a.className = ((a.className || "") + " " + c).trim());
+    extendClass: function(selector, selectorType, className) {
+      (selector = DOM.query(selector, selectorType)) &&
+        className &&
+        (selector.className = ((selector.className || "") + " " + className).trim());
     },
-    removeClass: function(a, b, c) {
+    removeClass: function(selector, selectorType, className) {
       var d;
-      (b = DOM.query(a, b)) &&
-        c &&
-        ((d = (" " + (b.className || "").toLowerCase() + " ").indexOf(
-          " " + c.toLowerCase().trim() + " "
+      (selectorType = DOM.query(selector, selectorType)) &&
+        className &&
+        ((d = (" " + (selectorType.className || "").toLowerCase() + " ").indexOf(
+          " " + className.toLowerCase().trim() + " "
         )),
         -1 < d &&
-          ((a = 0 < d ? b.className.slice(0, d).trim() : ""),
-          (c = b.className.slice(d + c.length).trim()),
-          (b.className = a + (a && c ? " " : "") + c)));
+          ((selector = 0 < d ? selectorType.className.slice(0, d).trim() : ""),
+          (className = selectorType.className.slice(d + className.length).trim()),
+          (selectorType.className = selector + (selector && className ? " " : "") + className)));
     },
-    removeClassGroup: function(a, b, c) {
-      (a = DOM.query(a, b)) &&
-        c &&
-        ((c = (a.className || "")
-          .replace(new RegExp("(^|\\s)" + c + "(\\w|_)*", "g"), " ")
+    removeClassGroup: function(selector, selectorType, className) {
+      (selector = DOM.query(selector, selectorType)) &&
+        className &&
+        ((className = (selector.className || "")
+          .replace(new RegExp("(^|\\s)" + className + "(\\w|_)*", "g"), " ")
           .trim()),
-        c !== a.className && (a.className = c));
+        className !== selector.className && (selector.className = className));
     },
-    setClassGroup: function(a, b, c, d) {
-      (a = DOM.query(a, b)) &&
-        c &&
-        ((c =
-          (a.className || "")
-            .replace(new RegExp("(^|\\s)" + c + "(\\w|_)*", "g"), " ")
-            .trim() + (d ? " " + d : "")),
-        c !== a.className && (a.className = c));
+    setClassGroup: function(selector, selectorType, searchClassName, replaceClassName) {
+      (selector = DOM.query(selector, selectorType)) &&
+        searchClassName &&
+        ((searchClassName =
+          (selector.className || "")
+            .replace(new RegExp("(^|\\s)" + searchClassName + "(\\w|_)*", "g"), " ")
+            .trim() + (replaceClassName ? " " + replaceClassName : "")),
+        searchClassName !== selector.className && (selector.className = searchClassName));
     },
-    setStyleColor: function(a, b, c) {
-      if ((a = DOM.query(a, b))) a.style.color = c || "";
+    setStyleColor: function(selector, selectorType, colorValue) {
+      if ((selector = DOM.query(selector, selectorType))) selector.style.color = colorValue || "";
     },
-    setStyleDisplay: function(a, b, c) {
-      if ((a = DOM.query(a, b))) a.style.display = c || "none";
+    setStyleDisplay: function(selector, selectorType, displayValue) {
+      if ((selector = DOM.query(selector, selectorType))) selector.style.display = displayValue || "none";
     },
-    updateStyle: function(a, b, c, d) {
-      return (a = DOM.query(a, b)) && a.style[c] !== (d || "")
-        ? ((a.style[c] = d || ""), a)
+    updateStyle: function(selector, selectorType, styleKey, styleValue) {
+      return (selector = DOM.query(selector, selectorType)) && selector.style[styleKey] !== (styleValue || "")
+        ? ((selector.style[styleKey] = styleValue || ""), selector)
         : null;
     },
-    addObserver: function(a, b, c) {
-      var d;
-      a &&
-        c &&
-        (d = new window.MutationObserver(c)) &&
-        d.observe(
-          a,
-          b || {
-            childList: !0
+    addObserver: function(nodeElement, config, mutationCallback) {
+      var observer;
+      nodeElement &&
+        mutationCallback &&
+        (observer = new window.MutationObserver(mutationCallback)) &&
+        observer.observe(
+          nodeElement,
+          config || {
+            childList: true
           }
         );
-      return d;
+      return observer;
     },
-    removeObserver: function(a) {
+    removeObserver: function(observer) {
       try {
-        a && a.disconnect && a.disconnect();
+        observer && observer.disconnect && observer.disconnect();
       } catch (b) {}
     },
-    click: function(a, b) {
-      DOM.trigger(a, b, "click");
+    click: function(selector, selectorType) {
+      DOM.trigger(selector, selectorType, "click");
     },
-    trigger: function(a, b, c) {
-      (b = DOM.query(a, b)) &&
-        c &&
-        ("click" === c ||
-        "mouseup" === c ||
-        "mousedown" === c ||
-        "mouseover" === c ||
-        "mouseout" === c
-          ? ((a = document.createEvent("MouseEvents")),
-            a.initMouseEvent(
-              c,
-              !0,
-              !0,
-              window,
-              0,
-              0,
-              0,
-              0,
-              0,
-              !1,
-              !1,
-              !1,
-              !1,
-              0,
-              null
-            ),
-            b.dispatchEvent(a))
-          : "change" === c || "focus" === c || "blur" === c
-            ? ((a = document.createEvent("HTMLEvents")),
-              a.initEvent(c, !0, !1),
-              b.dispatchEvent(a))
-            : "keyup" === c &&
-              ((a = document.createEvent("KeyboardEvent")),
-              "initKeyboardEvent" in a
-                ? a.initKeyboardEvent(
-                    "keyup",
-                    !0,
-                    !0,
-                    window,
-                    !1,
-                    !1,
-                    !1,
-                    !1,
-                    0,
-                    0
-                  )
-                : a.initKeyEvent("keyup", !0, !0, window, !1, !1, !1, !1, 0, 0),
-              b.dispatchEvent(a)));
+    trigger: function(selector, selectorType, eventName) {
+      (selectorType = DOM.query(selector, selectorType)) &&
+        eventName &&
+        ("click" === eventName ||
+        "mouseup" === eventName ||
+        "mousedown" === eventName ||
+        "mouseover" === eventName ||
+        "mouseout" === eventName
+          ? ((selector = document.createEvent("MouseEvents")),
+            selector.initMouseEvent(eventName, true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null),
+            selectorType.dispatchEvent(selector))
+          : "change" === eventName || "focus" === eventName || "blur" === eventName
+            ? ((selector = document.createEvent("HTMLEvents")),
+              selector.initEvent(eventName, true, false),
+              selectorType.dispatchEvent(selector))
+            : "keyup" === eventName &&
+              ((selector = document.createEvent("KeyboardEvent")),
+              "initKeyboardEvent" in selector
+                ? selector.initKeyboardEvent("keyup", true, true, window, false, false, false, false, 0, 0)
+                : selector.initKeyEvent("keyup", true, true, window, false, false, false, false, 0, 0),
+              selectorType.dispatchEvent(selector)));
     },
-    addEvents: function(a, b, c) {
-      var d;
-      if ((a = DOM.query(a, b)))
-        for (d in c) c.hasOwnProperty(d) && a.addEventListener(d, c[d], !1);
+    addEvents: function(selector, selectorType, eventListeners) {
+      var event;
+      if ((selector = DOM.query(selector, selectorType)))
+        for (event in eventListeners) eventListeners.hasOwnProperty(event) && selector.addEventListener(event, eventListeners[event], false);
     },
-    addEventsAll: function(a, b, c) {
-      var d;
-      b = DOM.queryAll(a, b);
-      for (a = 0; a < b.length; a++)
-        for (d in c) c.hasOwnProperty(d) && b[a].addEventListener(d, c[d], !1);
+    addEventsAll: function(selector, selectorType, eventListeners) {
+      var event;
+      selectorType = DOM.queryAll(selector, selectorType);
+      for (selector = 0; selector < selectorType.length; selector++)
+        for (event in eventListeners) eventListeners.hasOwnProperty(event) && selectorType[selector].addEventListener(event, eventListeners[event], false);
     },
-    setFocus: function(a, b) {
-      var c = DOM.query(a, b);
+    setFocus: function(selector, selectorType) {
+      var c = DOM.query(selector, selectorType);
       c && c.focus();
     },
     disableAutocomplete: function() {
-      AGO.Option.is("U41") &&
+      AGO.Option.is("disable_auto_complete") &&
         window.setTimeout(function() {
           DOM.setAll("form", null, {
             autocomplete: "off"
           });
         }, 0);
     },
-    disableActiveElement: function(a) {
+    disableActiveElement: function(enableTimeout) {
       if (AGO.Init.mobile && document.activeElement)
         if (
           "TEXTAREA" === document.activeElement.tagName ||
@@ -591,221 +561,224 @@ var DOM = {
             try {
               document.activeElement.blur();
             } catch (b) {}
-        else a || window.setTimeout(DOM.disableActiveElement, 30, !0);
+        else enableTimeout || window.setTimeout(DOM.disableActiveElement, 30, true);
     },
-    changeInput: function(a, b) {
-      var c, d;
-      return a && b && (!AGO.isFirefox || AGO.Option.is("U41"))
-        ? ((c =
-            a.shiftKey && a.ctrlKey
-              ? 1e3
-              : a.ctrlKey
+    changeInput: function(event, target) {
+      var tmpValue, value;
+      return event && target && (!AGO.isFirefox || AGO.Option.is("disable_auto_complete"))
+        ? ((tmpValue =
+            event.shiftKey && event.ctrlKey
+              ? 1000
+              : event.ctrlKey
                 ? 100
-                : a.shiftKey
+                : event.shiftKey
                   ? 10
                   : 1),
-          (d = DOM.getValue(b, null, 2)),
-          (d = 38 === a.keyCode ? d + c : d - c),
-          DOM.setValue(b, null, Math.max(d, 0)),
-          DOM.trigger(b, null, "keyup"),
-          !1)
-        : !0;
+          (value = DOM.getValue(target, null, 2)),
+          (value = 38 === event.keyCode ? value + tmpValue : value - tmpValue),
+          DOM.setValue(target, null, Math.max(value, 0)),
+          DOM.trigger(target, null, "keyup"),
+          false)
+        : true;
     }
   },
   HTML = {
-    getText: function(a, b) {
-      if (1 === b) return Boolean(a);
-      if (2 === b) return NMR.parseIntFormat(a);
-      if (3 === b) return NMR.parseIntAbs(a);
-      if (7 === b) return (a || "").trim();
-      if (-2 === b)
+    getText: function(text, textType) {
+      if (1 === textType) return Boolean(text);
+      if (2 === textType) return NMR.parseIntFormat(text);
+      if (3 === textType) return NMR.parseIntAbs(text);
+      if (7 === textType) return (text || "").trim();
+      if (-2 === textType)
         try {
-          return JSON.parse(a || "{}");
+          return JSON.parse(text || "{}");
         } catch (c) {
           return {};
         }
-      else return a || "";
+      else return text || "";
     },
-    setText: function(a, b, c) {
-      b &&
-        (a =
-          2 === b
-            ? STR.formatNumber(a)
-            : 4 === b
-              ? STR.formatNumber(a, !0)
-              : 5 === b
-                ? STR.shortNumber(a)
-                : 3 === b
-                  ? a
-                    ? STR.formatNumber(a)
-                    : "0"
-                  : 7 === b
-                    ? STR.trim(a)
-                    : 8 === b
-                      ? STR.zero(a)
-                      : 10 === b
-                        ? AGO.Label.get(a)
-                        : 11 === b
-                          ? AGO.Label.get(a, 1)
-                          : 12 === b
-                            ? AGO.Label.get(a, 2)
-                            : 15 === b
-                              ? AGO.Time.format(a, c)
-                              : 16 === b
-                                ? AGO.Time.format(a, c, !0)
-                                : 17 === b
-                                  ? AGO.Time.formatTimestamp(a, c)
-                                  : 18 === b
-                                    ? AGO.Time.formatTime(a)
-                                    : 19 === b
-                                      ? AGO.Time.formatTime(a, !0)
-                                      : a);
-      return a ? a + "" : "";
+    setText: function(text, type, date) {
+      if(type) {
+          if (2 === type) {
+              text = STR.formatNumber(text);
+          } else if (4 === type) {
+              text = STR.formatNumber(text, true)
+          } else if (5 === type) {
+              text = STR.shortNumber(text)
+          } else if (3 === type) {
+              if (text) {
+                  text = STR.formatNumber(text)
+              } else {
+                  text = "0";
+              }
+          } else if (7 === type) {
+              text = STR.trim(text)
+          } else if (8 === type) {
+              text = STR.zero(text)
+          } else if (10 === type) {
+              text = AGO.Label.get(text)
+          } else if (11 === type) {
+              text = AGO.Label.get(text, 1)
+          } else if (12 === type) {
+              text = AGO.Label.get(text, 2)
+          } else if (15 === type) {
+              text = AGO.Time.format(text, date)
+          } else if (16 === type) {
+              text = AGO.Time.format(text, date, true)
+          } else if (17 === type) {
+              text = AGO.Time.formatTimestamp(text, date)
+          } else if (18 === type) {
+              text = AGO.Time.formatTime(text)
+          } else if (19 === type) {
+              text = AGO.Time.formatTime(text, true)
+          }
+      }
+      return text ? text + "" : "";
     },
-    setValue: function(a, b) {
-      b &&
-        (a =
-          1 === b
-            ? Boolean(a)
-            : 7 === b
-              ? STR.trim(a)
-              : 8 === b
-                ? STR.zero(a)
-                : -2 === b
-                  ? JSON.stringify(a || {})
-                  : a);
-      return a ? a + "" : "";
+    setValue: function(value, valueType) {
+      valueType &&
+        (value =
+          1 === valueType
+            ? Boolean(value)
+            : 7 === valueType
+              ? STR.trim(value)
+              : 8 === valueType
+                ? STR.zero(value)
+                : -2 === valueType
+                  ? JSON.stringify(value || {})
+                  : value);
+      return value ? value + "" : "";
     },
-    urlImage: function(a) {
-      return AGO.App.pathSkin + "ago/images/" + a;
+    urlImage: function(image) {
+      return AGO.App.pathSkin + "ago/images/" + image;
     },
-    urlMissionIcon: function(a) {
-      return AGO.App.pathSkin + "ago/images/task/mission-" + (a || 0) + ".gif";
+    urlMissionIcon: function(mission) {
+      return AGO.App.pathSkin + "ago/images/task/mission-" + (mission || 0) + ".gif";
     },
-    urlTypeIcon: function(a, b) {
+    urlTypeIcon: function(type, activeState) {
       return (
         AGO.App.pathSkin +
         "ago/images/task/type-" +
-        (a || 0) +
-        (b || "a") +
+        (type || 0) +
+        (activeState || "a") +
         ".gif"
       );
     },
-    hasClass: function(className, b) {
-        return className.indexOf(b) > -1
+    hasClass: function(className, occurenceToFind) {
+        return className.indexOf(occurenceToFind) > -1
     },
-    classMission: function(a) {
-      return "ago_color_M" + STR.trimZero(a, 2);
+    classMission: function(missionId) {
+      return "ago_color_M" + STR.trimZero(missionId, 2);
     },
-    classType: function(a) {
-      return AGO.Styles.classType[a] || "";
+    classType: function(classType) {
+      return AGO.Styles.classType[classType] || "";
     },
-    classStatus: function(a) {
-      return 0 < a
+    classStatus: function(status) {
+      return 0 < status
         ? "ago_color_lightgreen"
-        : 0 > a
+        : 0 > status
           ? "ago_color_palered"
           : "ago_color_orange";
     },
-    classStatusData: function(a) {
-      return AGO.Styles.classStatusData[(a || 0) + 2] || "";
+    classStatusData: function(classStatus) {
+      return AGO.Styles.classStatusData[(classStatus || 0) + 2] || "";
     },
-    colorStatusData: function(a) {
-      return AGO.Styles.colorStatusData[(a || 0) + 2] || "";
+    colorStatusData: function(colorStatus) {
+      return AGO.Styles.colorStatusData[(colorStatus || 0) + 2] || "";
     },
-    color: function(a, b) {
-      return !a || (4 !== a.length && 7 !== a.length)
+    color: function(rgb, opacity) {
+      return !rgb || (4 !== rgb.length && 7 !== rgb.length)
         ? ""
-        : 0 < b && 100 > b
-          ? ((a =
-              7 === a.length
-                ? parseInt(a.substring(1, 3), 16) +
+        : 0 < opacity && 100 > opacity
+          ? ((rgb =
+              7 === rgb.length
+                ? parseInt(rgb.substring(1, 3), 16) +
                   "," +
-                  parseInt(a.substring(3, 5), 16) +
+                  parseInt(rgb.substring(3, 5), 16) +
                   "," +
-                  parseInt(a.substring(5, 7), 16)
-                : parseInt(a.substring(1, 2), 16) +
+                  parseInt(rgb.substring(5, 7), 16)
+                : parseInt(rgb.substring(1, 2), 16) +
                   "," +
-                  parseInt(a.substring(2, 3), 16) +
+                  parseInt(rgb.substring(2, 3), 16) +
                   "," +
-                  parseInt(a.substring(3, 4), 16)),
-            "rgba(" + a + (10 > b ? ",0.0" : ",0.") + b + ")")
-          : a;
+                  parseInt(rgb.substring(3, 4), 16)),
+            "rgba(" + rgb + (10 > opacity ? ",0.0" : ",0.") + opacity + ")")
+          : rgb;
     },
-    getPlayer: function(a, b, c) {
+    getPlayer: function(playerName, playerStatus, playerHonor) {
       return (
-        (c
+        (playerHonor
           ? '<span class="honorRank ' +
-            AGO.Ogame.getHonorClass(c) +
+            AGO.Ogame.getHonorClass(playerHonor) +
             '">&nbsp;</span>'
           : "") +
         '<span class="' +
-        AGO.Token.getClass(b) +
+        AGO.Token.getClass(playerStatus) +
         '">' +
-        (a || "") +
+        (playerName || "") +
         "</span>"
       );
     }
   },
   OBJ = {
-    parse: function(a) {
-      if (a && "object" === typeof a) return a;
+    parse: function(json) {
+      if (json && "object" === typeof json) return json;
       try {
-        return JSON.parse(a || "{}");
+        return JSON.parse(json || "{}");
       } catch (b) {
         return {};
       }
     },
-    split: function(a, b) {
+    split: function(str, delimiter) {
       var c = {},
         d,
         e,
         f;
-      d = STR.check(a).split(b || ";");
+      d = STR.check(str).split(delimiter || ";");
       for (f = 0; f < d.length; f++)
         (e = (d[f] || "").split("=")), e[0] && (c[e[0]] = e[1] || "");
       return c;
     },
-    create: function(a) {
+    create: function(obj) {
       var b = {},
         c;
-      if (a && "object" === typeof a)
-        for (c in a) "object" !== typeof a[c] && (b[c] = a[c]);
+      if (obj && "object" === typeof obj)
+        for (c in obj) "object" !== typeof obj[c] && (b[c] = obj[c]);
       return b;
     },
-    createKey: function(a, b) {
+    createKey: function(key, value) {
       var c = {};
-      a && (c[a] = b);
+      key && (c[key] = value);
       return c;
     },
-    copy: function(a, b) {
-      var c;
-      if (a && "object" === typeof a && b && "object" === typeof b)
-        for (c in a) "object" !== typeof a[c] && (b[c] = a[c]);
+    copy: function(toCopy, receiveCopy) {
+      var key;
+      if (toCopy && "object" === typeof toCopy && receiveCopy && "object" === typeof receiveCopy)
+        for (key in toCopy) "object" !== typeof toCopy[key] && (receiveCopy[key] = toCopy[key]);
     },
-    is: function(a) {
-      return a && "object" === typeof a;
+    is: function(maybeObject) {
+      return maybeObject && "object" === typeof maybeObject;
     },
-    hasProperties: function(a) {
-      return a && "object" === typeof a && Object.keys(a).length;
+    hasProperties: function(obj) {
+      return obj && "object" === typeof obj && Object.keys(obj).length;
     },
-    get: function(a, b) {
-      return a && "object" === typeof a && b in a ? a[b] : "";
+    get: function(obj, key) {
+      return obj && "object" === typeof obj && key in obj ? obj[key] : "";
     },
-    set: function(a, b, c) {
-      a && "object" === typeof a && (a[b] = c);
+    set: function(obj, key, value) {
+      obj && "object" === typeof obj && (obj[key] = value);
     },
-    iterate: function(a, b) {
-      if (a && "object" === typeof a)
-        for (var c in a) a.hasOwnProperty(c) && b(c);
+    iterate: function(obj, callback) {
+      if (obj && "object" === typeof obj)
+        for (var c in obj) obj.hasOwnProperty(c) && callback(c);
     },
-    iterateFilter: function(a, b, c) {
-      if (a && "object" === typeof a)
-        for (var d in a) a.hasOwnProperty(d) && -1 !== c.indexOf(d) && b(d);
+    iterateFilter: function(obj, callback, filterArray) {
+      if (obj && "object" === typeof obj)
+        for (var d in obj) obj.hasOwnProperty(d) && -1 !== filterArray.indexOf(d) && callback(d);
     },
-    iterateArray: function(a, b) {
-      Array.isArray(a) && a.forEach(b);
-    }, isEmpty: function (object) {
+    iterateArray: function(array, callback) {
+      Array.isArray(array) && array.forEach(callback);
+    },
+      isEmpty: function (object) {
           for(var key in object) {
               if(object.hasOwnProperty(key)){
                   return false;
@@ -815,168 +788,168 @@ var DOM = {
       }
   },
   VAL = {
-    choose: function(a) {
-      return 0 < a ? arguments[a] : "";
+    choose: function(val) {
+      return 0 < val ? arguments[val] : "";
     },
-    select: function(a) {
+    select: function(val) {
       for (var b = 1; b < arguments.length; b++)
-        if (a === arguments[b]) return arguments[b];
+        if (val === arguments[b]) return arguments[b];
     },
-    check: function(a) {
+    check: function(val) {
       for (var b = 1; b < arguments.length; b++)
-        if (a === arguments[b]) return !0;
-      return !1;
+        if (val === arguments[b]) return true;
+      return false;
     },
-    status: function(a, b, c, d) {
-      return 0 > a ? b : 0 < a ? d : c;
+    status: function(val, infVal, equVal, supVal) {
+      return 0 > val ? infVal : 0 < val ? supVal : equVal;
     }
   },
   NMR = {
-    minMax: function(a, b, c) {
-      return Math.max(Math.min(+a || 0, c), b);
+    minMax: function(val1, val2, val3) {
+      return Math.max(Math.min(+val1 || 0, val3), val2);
     },
-    isMinMax: function(a, b, c) {
-      return +a >= b && +a <= c;
+    isMinMax: function(val, minVal, maxVal) {
+      return +val >= minVal && +val <= maxVal;
     },
-    isGreater: function(a, b) {
-      return 0 < +b && +a >= +b;
+    isGreater: function(val, greaterThan) {
+      return 0 < +greaterThan && +val >= +greaterThan;
     },
-    isLesser: function(a, b) {
-      return 0 < +a && +b >= +a;
+    isLesser: function(val, lessThan) {
+      return 0 < +val && +lessThan >= +val;
     },
-    parseInt: function(a) {
-      return "string" === typeof a
-        ? parseInt(a, 10)
-        : "number" === typeof a
-          ? Math.floor(a)
+    parseInt: function(val) {
+      return "string" === typeof val
+        ? parseInt(val, 10)
+        : "number" === typeof val
+          ? Math.floor(val)
           : 0;
     },
-    parseIntFormat: function(a) {
-      return "string" === typeof a
-        ? +a.replace(/[^\d\-]/g, "") || 0
-        : "number" === typeof a
-          ? Math.floor(a)
+    parseIntFormat: function(val) {
+      return "string" === typeof val
+        ? +val.replace(/[^\d\-]/g, "") || 0
+        : "number" === typeof val
+          ? Math.floor(val)
           : 0;
     },
-    parseIntAbs: function(a) {
-      return "string" === typeof a
-        ? +a.replace(/[^\d]/g, "") || 0
-        : "number" === typeof a
-          ? Math.floor(Math.abs(a))
+    parseIntAbs: function(val) {
+      return "string" === typeof val
+        ? +val.replace(/[^\d]/g, "") || 0
+        : "number" === typeof val
+          ? Math.floor(Math.abs(val))
           : 0;
     },
-    parseVersion: function(a) {
-      return (a = /(\d+)\D*(\d*)\D*(\d*)\D*(\d*)/.exec(a ? a.toString() : ""))
+    parseVersion: function(possibleVersion) {
+      return (possibleVersion = /(\d+)\D*(\d*)\D*(\d*)\D*(\d*)/.exec(possibleVersion ? possibleVersion.toString() : ""))
         ? parseInt(
-            ("00" + a[1]).slice(-2) +
-              ("00" + a[2]).slice(-2) +
-              ("00" + a[3]).slice(-2) +
-              ("00" + a[4]).slice(-2),
+            ("00" + possibleVersion[1]).slice(-2) +
+              ("00" + possibleVersion[2]).slice(-2) +
+              ("00" + possibleVersion[3]).slice(-2) +
+              ("00" + possibleVersion[4]).slice(-2),
             10
           )
         : 0;
     },
-    parseIntShortcut: function(a) {
-      a = STR.check(a).toLowerCase();
+    parseIntShortcut: function(val) {
+      val = STR.check(val).toLowerCase();
       return (
-        (-1 < a.indexOf("k") ? 1e3 : 1) * parseInt(a.replace(/[^\d]/g, ""), 10)
+        (-1 < val.indexOf("k") ? 1e3 : 1) * parseInt(val.replace(/[^\d]/g, ""), 10)
       );
-    }, parseIntRess: function (a) {
+    }, parseIntRess: function (val) {
           var r;
-          a = STR.trim((a.match(/: ([^<]+)*/) ? a.match(/: ([^<]+)*/)[1] : a));
-          if (a.match(/^[0-9]{1,3}\.[0-9]{3}$/))
-              a = a.replace('.', '');
-          else if((r = new RegExp('^([0-9]{1,3}(\.|,))?[0-9]{1,3}(' + AGO.Label.is("KU0B") + ')')) && a.match(r))
-              a = a.replace(/,/g,'.').replace(AGO.Label.is("KU0B"),'')*1000000000;
-          else if((r = new RegExp('^([0-9]{1,3}(\.|,))?[0-9]{1,3}(' + AGO.Label.is("KU0M") + ')')) && a.match(r))
-              a = a.replace(/,/g,'.').replace(AGO.Label.is("KU0M"),'')*1000000;
-          return parseInt(a);
+          val = STR.trim((val.match(/: ([^<]+)*/) ? val.match(/: ([^<]+)*/)[1] : val));
+          if (val.match(/^[0-9]{1,3}\.[0-9]{3}$/))
+              val = val.replace('.', '');
+          else if((r = new RegExp('^([0-9]{1,3}(\.|,))?[0-9]{1,3}(' + AGO.Label.is("KU0B") + ')')) && val.match(r))
+              val = val.replace(/,/g,'.').replace(AGO.Label.is("KU0B"),'')*1000000000;
+          else if((r = new RegExp('^([0-9]{1,3}(\.|,))?[0-9]{1,3}(' + AGO.Label.is("KU0M") + ')')) && val.match(r))
+              val = val.replace(/,/g,'.').replace(AGO.Label.is("KU0M"),'')*1000000;
+          return parseInt(val);
       }
   },
   STR = {
-    check: function(a) {
-      return "string" === typeof a
-        ? a
-        : "number" === typeof a && a
-          ? a + ""
+    check: function(val) {
+      return "string" === typeof val
+        ? val
+        : "number" === typeof val && val
+          ? val + ""
           : "";
     },
-    trim: function(a) {
-      return "string" === typeof a
-        ? a.trim()
-        : "number" === typeof a && a
-          ? a + ""
+    trim: function(val) {
+      return "string" === typeof val
+        ? val.trim()
+        : "number" === typeof val && val
+          ? val + ""
           : "";
     },
-    zero: function(a) {
-      return a
-        ? "string" === typeof a
-          ? a
-          : "number" === typeof a
-            ? a + ""
+    zero: function(val) {
+      return val
+        ? "string" === typeof val
+          ? val
+          : "number" === typeof val
+            ? val + ""
             : "0"
         : "0";
     },
-    trimZero: function(a, b) {
-      a = "0000" + a;
-      return a.substr(a.length - b);
+    trimZero: function(val, nb) {
+      val = "0000" + val;
+      return val.substr(val.length - nb);
     },
-    formatNumber: function(a, b) {
+    formatNumber: function(val, doFormat) {
       var c = "";
-      if (a) {
-        b &&
-          (1e9 <= Math.abs(a)
-            ? ((a = Math.floor(a / 1e6)), (c = "\u2009" + AGO.Label.is("KU0M")))
-            : 1e6 <= Math.abs(a) &&
-              ((a = Math.floor(a / 1e3)),
+      if (val) {
+        doFormat &&
+          (1000000000 <= Math.abs(val)
+            ? ((val = Math.floor(val / 1e6)), (c = "\u2009" + AGO.Label.is("KU0M")))
+            : 1e6 <= Math.abs(val) &&
+              ((val = Math.floor(val / 1e3)),
               (c = "\u2009" + AGO.Label.is("KU0K"))));
-        for (var d = [], e = Math.abs(+a || 0) + ""; ; ) {
+        for (var d = [], e = Math.abs(+val || 0) + ""; ; ) {
           var f = e.slice(-3);
           if (f) d.unshift(f), (e = e.substr(0, e.length - f.length));
           else break;
         }
-        return (0 > a ? "-" : "") + d.join(AGO.Label.is("KU0S")) + c;
+        return (0 > val ? "-" : "") + d.join(AGO.Label.is("KU0S")) + c;
       }
       return "";
     },
-    shortNumber: function(a, b) {
+    shortNumber: function(val, nb) {
       var c, d;
-      c = 2 === b ? 1 : 1 === b ? 10 : 100;
-      if (1e9 <= a)
-        (c = Math.ceil(a / 1e7 / c) + ""), (d = AGO.Label.is("KU0B"));
-      else if (1e6 <= a)
-        (c = Math.ceil(a / 1e4 / c) + ""), (d = AGO.Label.is("KU0M"));
-      else if (1e3 <= a)
-        (c = Math.ceil(a / 10 / c) + ""), (d = AGO.Label.is("KU0K"));
-      else return a ? a + "\u2009 " : "0\u2009 ";
-      return b
-        ? c.substr(0, c.length - b) +
+      c = 2 === nb ? 1 : 1 === nb ? 10 : 100;
+      if (1e9 <= val)
+        (c = Math.ceil(val / 1e7 / c) + ""), (d = AGO.Label.is("KU0B"));
+      else if (1e6 <= val)
+        (c = Math.ceil(val / 1e4 / c) + ""), (d = AGO.Label.is("KU0M"));
+      else if (1e3 <= val)
+        (c = Math.ceil(val / 10 / c) + ""), (d = AGO.Label.is("KU0K"));
+      else return val ? val + "\u2009 " : "0\u2009 ";
+      return nb
+        ? c.substr(0, c.length - nb) +
             AGO.Label.is("KU0S") +
-            c.substr(c.length - b) +
+            c.substr(c.length - nb) +
             "\u2009" +
             d
         : c + "\u2009" + d;
     },
-    getParameter: function(a, b) {
-      var c = decodeURIComponent(b || "")
+    getParameter: function(val, href) {
+      var c = decodeURIComponent(href || "")
         .replace(/\?/g, "&")
-        .split("&" + a + "=")[1];
+        .split("&" + val + "=")[1];
       return c ? c.split("&")[0].split("#")[0] || "" : "";
     },
-    addParameter: function(a, b) {
-      b = STR.trim(b);
-      return a && b ? "&" + a + "=" + encodeURI(b) : "";
+    addParameter: function(key, value) {
+      value = STR.trim(value);
+      return key && value ? "&" + key + "=" + encodeURI(value) : "";
     },
-    splitParameter: function(a) {
-      var b, c, d;
+    splitParameter: function(href) {
+      var params, param, i;
       if (
-        (a = decodeURIComponent(a || "")
+        (href = decodeURIComponent(href || "")
           .replace(/\?/g, "&")
           .split("#")[0])
       )
-        for (b = {}, a = a.split("&"), d = 0; d < a.length; d++)
-          (c = (a[d] || "").split("=")), c[0] && (b[c[0]] = c[1] || "");
-      return b;
+        for (params = {}, href = href.split("&"), i = 0; i < href.length; i++)
+          (param = (href[i] || "").split("=")), param[0] && (params[param[0]] = param[1] || "");
+      return params;
     }, getMatches: function (string, regex, index) {
           index || (index = 1); // default to the first capturing group
           var matches = [];

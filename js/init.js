@@ -1,12 +1,14 @@
-if (!AGO) var AGO = {};
-AGO.versionOGameMax = "5.7.99";
-if (window.navigator.userAgent.indexOf("Firefox") > -1){
-    AGO.isPhone = -1 < window.navigator.userAgent.indexOf("Mobile");
-    AGO.isTablet = -1 < window.navigator.userAgent.indexOf("Tablet");
-    AGO.isMobile = AGO.isPhone || AGO.isTablet;
-    AGO.isFirefox = 0;
+if (!AGO){
+    var AGO = {};
 }
-AGO.isChrome = -1 < window.navigator.userAgent.indexOf("Chrome");
+AGO.versionOGameMax = "5.7.99";
+if (window.navigator.userAgent.includes("Firefox")){
+    AGO.isPhone = window.navigator.userAgent.includes("Mobile");
+    AGO.isTablet = window.navigator.userAgent.includes("Tablet");
+    AGO.isMobile = AGO.isPhone || AGO.isTablet;
+    AGO.isFirefox = false;
+}
+AGO.isChrome = window.navigator.userAgent.includes("Chrome");
 AGO.context = AGO.isFirefox ? this : 0;
 AGO.Page = {
     Messages: function(a, b) {
@@ -63,7 +65,7 @@ var PAGE = {},
                 try {
                     return (
                         (b = new XMLHttpRequest()),
-                            b.open("GET", chrome.extension.getURL(a), !1),
+                            b.open("GET", chrome.extension.getURL(a), false),
                             b.overrideMimeType("text/plain"),
                             b.send(null),
                         b.responseText || ""
@@ -77,8 +79,16 @@ var PAGE = {},
         }
     };
 AGO.Init = {
+    // 0: App not started yet
+    // 1: App started
+    // 2: App initiatied
+    // 4: App readed
+    // 5: App is running
+    // 6: App interactive
+    // 7: App ready
+    // 8: App start completed
     status: 0,
-    active: !1,
+    active: true,
     KeydownCache: [],
     timing: Date.now(),
     loop: 0,
@@ -101,30 +111,38 @@ AGO.Init = {
     },
     Start: function() {
         AGO.Init.status = 0;
-        document.location && document.location.href && document.documentElement
-            ? ((AGB.message = AGO.isFirefox ? AGB.messageFirefox : AGB.messageChrome),
-                AGO.App.Start(),
-                20 < AGO.Notify.problem
-                    ? document.addEventListener("DOMContentLoaded", AGO.Main.Run, !1)
-                    : AGO.App.mode &&
-                    ((AGO.Init.status = 1),
-                        (AGO.Init.active = document.hasFocus()),
-                        AGO.Observer.Start(),
-                        AGO.App.reload
-                            ? AGO.Observer.Head(function() {
-                                AGO.App.Init();
-                                AGO.Init.Init();
-                            })
-                            : (AGO.Option.Start(),
-                                AGO.Styles.Start(),
-                            AGO.Option.is("O04") && (document.title = AGO.App.title),
-                                AGO.Observer.Head(function() {
-                                    AGO.App.Init();
-                                    AGO.Styles.Init();
-                                }),
-                                AGO.Init.Init())))
-            : 300 > ++AGO.Init.loop &&
-            window.setTimeout(AGO.Init.Start, AGO.Init.loop);
+        if(document.location && document.location.href && document.documentElement) {
+            AGB.message = AGO.isFirefox ? AGB.messageFirefox : AGB.messageChrome;
+            AGO.App.Start();
+            if(20 < AGO.Notify.problem) {
+                document.addEventListener("DOMContentLoaded", AGO.Main.Run, false);
+            }else if(AGO.App.mode) {
+                AGO.Init.status = 1;
+                AGO.Init.active = document.hasFocus();
+                AGO.Observer.Start();
+                if(AGO.App.reload) {
+                    AGO.Observer.Head(function () {
+                        AGO.App.Init();
+                        AGO.Init.Init();
+                    })
+                }else {
+                    AGO.Option.Start();
+                    AGO.Styles.Start();
+                    if(AGO.Option.is("O04")) {
+                        document.title = AGO.App.title;
+                    }
+                    AGO.Observer.Head(function () {
+                        AGO.App.Init();
+                        AGO.Styles.Init();
+                    });
+                    AGO.Init.Init();
+                }
+            }
+        }else{
+            if(300 > ++AGO.Init.loop){
+                window.setTimeout(AGO.Init.Start, AGO.Init.loop);
+            }
+        }
     },
     Init: function() {
         AGB.message(
@@ -189,7 +207,7 @@ AGO.Init = {
                 AGO.Planets.Read(),
             AGO.Planets.status &&
             ((AGO.App.mode = 5),
-                (AGO.App.OgameMain = !0),
+                (AGO.App.OgameMain = true),
                 AGO.Time.Read(),
                 AGO.Units.Read(),
                 AGO.Main.Read(),
@@ -198,7 +216,7 @@ AGO.Init = {
             : 100 > ++AGO.Init.loop &&
             (AGB.Log(
                 "Init - Read - waiting for page script - loaded " + AGO.App.Page,
-                !0
+                true
             ),
                 window.setTimeout(AGO.Init.Read, AGO.Init.loop)));
     },
@@ -225,7 +243,7 @@ AGO.Init = {
                 ? ((AGO.Observer.mutationObject = DOM.addObserver(
                 document.body,
                 {
-                    childList: !0
+                    childList: true
                 },
                 AGO.Observer.Mutation
                 )),
@@ -275,8 +293,8 @@ AGO.Init = {
             ((AGO.Background.Data = a.Background || {}),
                 AGO.Option.Init(a.Option),
                 AGO.Fleet.Init(a.Fleet),
-                AGO.Box.Init(a.Box, !0),
-                AGO.Panel.Init(a.Panel, !0));
+                AGO.Box.Init(a.Box, true),
+                AGO.Panel.Init(a.Panel, true));
         });
     },
     Content: function(a) {
@@ -334,7 +352,7 @@ AGO.Init = {
     },
     onKeydown: function(a) {
         var b, c, d, e;
-        e = !0;
+        e = true;
         AGO.App.Ogame &&
         AGO.Init.activeOverlay &&
         ((b = document.querySelectorAll("body > .ui-dialog .ui-dialog-content")),
@@ -355,7 +373,7 @@ AGO.Init = {
             ? (e = AGO.Menu.onKeydown(a))
             : "function" === typeof PAGE.onKeydown && (e = PAGE.onKeydown(a)),
             e && AGO.App.OgameMain && (e = AGO.Main.onKeydown(a)));
-        if (!1 === e && !a.cached)
+        if (false === e && !a.cached)
             try {
                 a.preventDefault();
             } catch (g) {}
@@ -431,7 +449,7 @@ AGO.Init = {
         AGO.Init.status &&
         "function" === typeof a &&
         ((c = new XMLHttpRequest()),
-            c.open("GET", AGO.Uni.url + "/game/index.php?page=fetchTechs&ajax=1", !0),
+            c.open("GET", AGO.Uni.url + "/game/index.php?page=fetchTechs&ajax=1", true),
             c.overrideMimeType("text/html"),
             (c.onerror = c.onload = function() {
                 AGO.Init.status &&
@@ -487,63 +505,49 @@ AGO.Observer = {
     interactive: [null],
     mousedown: null,
     Start: function() {
-        var a;
-        a = document.onreadystatechange;
+        var nativeOnReadyStateChange;
+        nativeOnReadyStateChange = document.onreadystatechange;
         document.onreadystatechange = function() {
             "interactive" === document.readyState &&
             (AGO.Observer.Call(AGO.Observer.body),
                 AGO.Observer.Call(AGO.Observer.interactive));
             try {
-                a();
+                nativeOnReadyStateChange();
             } catch (b) {}
         };
-        document.addEventListener(
-            "DOMContentLoaded",
-            function c() {
-                document.removeEventListener("DOMContentLoaded", c, !1);
+        document.addEventListener("DOMContentLoaded", function overrideDOMContentLoad() {
+                document.removeEventListener("DOMContentLoaded", overrideDOMContentLoad, false);
                 AGO.Observer.Call(AGO.Observer.body);
                 AGO.Observer.Call(AGO.Observer.interactive);
-            },
-            !1
+            }, false
         );
-        window.addEventListener(
-            "blur",
-            function() {
-                AGO.Init.active = !1;
-            },
-            !1
+        window.addEventListener("blur", function() {
+                AGO.Init.active = false;
+            }, false
         );
-        window.addEventListener(
-            "focus",
-            function() {
+        window.addEventListener("focus", function() {
                 AGO.Init.active ||
-                ((AGO.Init.active = !0), 7 <= AGO.Init.status && AGO.Init.Refresh());
-            },
-            !1
+                ((AGO.Init.active = true), 7 <= AGO.Init.status && AGO.Init.Refresh());
+            }, false
         );
-        window.addEventListener(
-            "beforeunload",
-            function() {
+        window.addEventListener("beforeunload", function() {
                 DOM.removeObserver(AGO.Observer.mutationObject);
                 AGO.Init.status = 0;
-            },
-            !1
+            }, false
         );
-        window.addEventListener("keydown", AGO.Observer.onKeydown, !0);
-        window.addEventListener(
-            "ago_global_send",
-            function(a) {
+        window.addEventListener("keydown", AGO.Observer.onKeydown, true);
+        window.addEventListener("ago_global_send", function(a) {
                 a = OBJ.parse(a ? a.detail : "");
                 a.page && AGO.Init.Messages(a.page, a.role, a.data);
-            },
-            !1
+            }, false
         );
-        AGO.isChrome &&
-        chrome.runtime.onMessage.addListener(function(a) {
-            a &&
-            a.player === AGO.App.keyPlayer &&
-            AGO.Init.Messages(a.page, a.role, a.data);
-        });
+        if(AGO.isChrome) {
+            chrome.runtime.onMessage.addListener(function (a) {
+                if(a && a.player === AGO.App.keyPlayer) {
+                    AGO.Init.Messages(a.page, a.role, a.data);
+                }
+            });
+        }
         document.addEventListener(
             "mousedown",
             function(a) {
@@ -564,7 +568,7 @@ AGO.Observer = {
                     "function" === typeof a && a());
                 }
             },
-            !1
+            false
         );
         document.addEventListener(
             "mouseup",
@@ -576,33 +580,33 @@ AGO.Observer = {
                 a.metaKey ||
                 AGO.Init.Select();
             },
-            !1
+            false
         );
         document.addEventListener(
             "touchstart",
             function(a) {
-                var d, e;
+                var halfWidth, pageX;
                 AGO.Observer.area = 0;
                 a &&
                 a.target &&
                 1 === a.touches.length &&
-                ((AGO.Observer.startX = AGO.Observer.pageX = e = a.touches[0].pageX),
+                ((AGO.Observer.startX = AGO.Observer.pageX = pageX = a.touches[0].pageX),
                     (AGO.Observer.startY = AGO.Observer.pageY = a.touches[0].pageY),
-                    (d = Math.floor((+document.body.clientWidth || 1) / 2)),
+                    (halfWidth = Math.floor((+document.body.clientWidth || 1) / 2)),
                     40 > a.touches[0].screenX ||
                     DOM.findParent(a.target, null, "ago_panel", 8)
                         ? (AGO.Observer.area = 12)
                         : (AGO.Observer.area =
-                            e > d - 335 && e < d + 335
+                            pageX > halfWidth - 335 && pageX < halfWidth + 335
                                 ? 950 > window.innerWidth
                                 ? 0
                                 : DOM.findParent(a.target, null, "inhalt", 9)
                                     ? 1
                                     : 0
-                                : e > d + 330 &&
+                                : pageX > halfWidth + 330 &&
                                 DOM.findParent(a.target, null, "planetList", 9)
                                 ? 15
-                                : e < d - 280 && DOM.findParent(a.target, null, "links", 9)
+                                : pageX < halfWidth - 280 && DOM.findParent(a.target, null, "links", 9)
                                     ? 11
                                     : 0),
                 AGO.Observer.area &&
@@ -616,53 +620,50 @@ AGO.Observer = {
                         AGO.Observer.area = 0;
                     }, 1e3))));
             },
-            !1
+            false
         );
         document.addEventListener(
             "touchmove",
             function(a) {
-                var d, e;
+                var pageDiffX, pageDiffY;
                 AGO.Observer.area &&
                 ((AGO.Observer.pageX = a.touches[0].pageX),
                     (AGO.Observer.pageY = a.touches[0].pageY),
                 !window.scrollX || 0 < AGO.Observer.startX - AGO.Observer.pageX) &&
-                ((d = Math.abs(AGO.Observer.startX - AGO.Observer.pageX) + 1),
-                    (e = Math.abs(AGO.Observer.startY - AGO.Observer.pageY) + 1),
-                    (d = 1 === AGO.Observer.area && (3 < d || 3 < e) && 0.35 > d / e)
+                ((pageDiffX = Math.abs(AGO.Observer.startX - AGO.Observer.pageX) + 1),
+                    (pageDiffY = Math.abs(AGO.Observer.startY - AGO.Observer.pageY) + 1),
+                    (pageDiffX = 1 === AGO.Observer.area && (3 < pageDiffX || 3 < pageDiffY) && 0.35 > pageDiffX / pageDiffY)
                         ? (AGO.Observer.area = 0)
                         : a.preventDefault());
             },
-            !1
+            false
         );
-        document.addEventListener("touchend", AGO.Observer.onSwipe, !1);
-        document.addEventListener("touchcancel", AGO.Observer.onSwipe, !1);
+        document.addEventListener("touchend", AGO.Observer.onSwipe, false);
+        document.addEventListener("touchcancel", AGO.Observer.onSwipe, false);
     },
-    Head: function(a) {
-        function b(a) {
-            var b;
-            OBJ.iterate(a, function(e) {
-                "HTML" === a[e].target.nodeName &&
-                a[e].addedNodes.length &&
-                "BODY" === a[e].addedNodes[0].nodeName &&
-                a[e].addedNodes[0].childNodes.length &&
-                (b = !0)
+    Head: function(headCallback) {
+        function documentMutated(mutationsList) {
+            var pageHeadLoaded;
+            OBJ.iterate(mutationsList, function(e) {
+                if("HTML" === mutationsList[e].target.nodeName && mutationsList[e].addedNodes.length && "BODY" === mutationsList[e].addedNodes[0].nodeName && mutationsList[e].addedNodes[0].childNodes.length) {
+                    pageHeadLoaded = true
+                }
             });
-            b && AGO.Observer.Call(AGO.Observer.head);
+            if(pageHeadLoaded){
+                AGO.Observer.Call(AGO.Observer.head)
+            };
         }
 
-        AGO.Init.status &&
-        (document.body || !0 === AGO.Observer.head[0]
-            ? a()
-            : (AGO.Observer.head[0] ||
-            (AGO.Observer.head[0] = DOM.addObserver(
-                document,
-                {
-                    childList: !0,
-                    subtree: !0
-                },
-                b
-            )),
-                AGO.Observer.head.push(a)));
+        if(AGO.Init.status) {
+            if(document.body || AGO.Observer.head[0] === true) {
+                headCallback()
+            }else {
+                if(!AGO.Observer.head[0]) {
+                    AGO.Observer.head[0] = DOM.addObserver(document, {childList: true, subtree: true}, documentMutated);
+                }
+                AGO.Observer.head.push(headCallback);
+            }
+        }
     },
     Body: function(a, b) {
         function c(a) {
@@ -676,7 +677,7 @@ AGO.Observer = {
                     for (var f = 0; f < a[b].addedNodes.length; f++)
                         "SCRIPT" === a[b].addedNodes[f].nodeName &&
                         document.getElementById("rechts") &&
-                        (c = !0);
+                        (c = true);
                 if (c) {
                     AGO.Observer.Call(AGO.Observer.body);
                     break;
@@ -687,15 +688,15 @@ AGO.Observer = {
         AGO.Init.status &&
         ("complete" === document.readyState ||
         "interactive" === document.readyState ||
-        !0 === AGO.Observer.body[0]
+        true === AGO.Observer.body[0]
             ? a()
             : (b &&
             !AGO.Observer.body[0] &&
             (AGO.Observer.body[0] = DOM.addObserver(
                 document,
                 {
-                    childList: !0,
-                    subtree: !0
+                    childList: true,
+                    subtree: true
                 },
                 c
             )),
@@ -705,18 +706,24 @@ AGO.Observer = {
         AGO.Init.status &&
         ("complete" === document.readyState ||
         "interactive" === document.readyState ||
-        !0 === AGO.Observer.interactive[0]
+        true === AGO.Observer.interactive[0]
             ? a()
             : AGO.Observer.interactive.push(a));
     },
-    Call: function(a) {
-        var b;
-        if (AGO.Init.status && a && "object" === typeof a && !0 !== a[0]) {
-            b = a[0];
-            a[0] = !0;
-            b && DOM.removeObserver(b);
-            for (b = 1; b < a.length; b++) if ("function" === typeof a[b]) a[b]();
-            a.length = 1;
+    Call: function(callbacks) {
+        var firstCallback, i;
+        if (AGO.Init.status && callbacks && "object" === typeof callbacks && true !== callbacks[0]) {
+            firstCallback = callbacks[0];
+            callbacks[0] = true;
+            if(firstCallback){
+                DOM.removeObserver(firstCallback);
+            }
+            for (i = 1; i < callbacks.length; i++){
+                if ("function" === typeof callbacks[i]){
+                    callbacks[i]();
+                }
+            }
+            callbacks.length = 1;
         }
     },
     set: function(a, b, c) {
@@ -745,12 +752,12 @@ AGO.Observer = {
             if (7 > AGO.Init.status)
                 return (
                     AGO.Init.KeydownCache.push({
-                        cached: !0,
+                        cached: true,
                         keyCode: a.keyCode,
                         shiftKey: a.shiftKey,
                         ctrlKey: a.ctrlKey
                     }),
-                        !1
+                        false
                 );
             a.target &&
             (a.inputType =
@@ -761,7 +768,7 @@ AGO.Observer = {
                     : 0);
             return AGO.Init.onKeydown(a);
         }
-        return !0;
+        return true;
     },
     Mutation: function(a) {
         var b, c, d;
@@ -886,163 +893,154 @@ AGO.App = {
         highscorecontent: "Highscore"
     },
     Start: function() {
-        var a, b;
-        AGO.isFirefox
-            ? ((AGO.App.pathSkin = "chrome://skin/content/"),
-                OBJ.copy(OBJ.parse(API.App()), AGO.App))
-            : ((AGO.App.pathSkin = chrome.extension.getURL("/skin/")),
+        var domain, subdomain;
+        if(AGO.isFirefox) {
+            AGO.App.pathSkin = "chrome://skin/content/";
+            OBJ.copy(OBJ.parse(API.App()), AGO.App);
+        }else {
+            ((AGO.App.pathSkin = chrome.extension.getURL("/skin/")),
                 (AGO.App.versionAGO = chrome.runtime.getManifest().version),
-                (AGO.App.name = STR.check(chrome.runtime.getManifest().name)));
-        AGO.App.beta =
-            -1 < AGO.App.name.indexOf("Alpha")
-                ? 3
-                : -1 < AGO.App.name.indexOf("Beta")
-                ? 1
-                : 0;
+                (AGO.App.name = STR.check(chrome.runtime.getManifest().name)))
+        }
+        if(AGO.App.name.includes("Alpha")){
+            AGO.App.beta = 3;
+        }else if(AGO.App.name.includes("Beta")){
+            AGO.App.beta = 1;
+        }else{
+            AGO.App.beta = 0;
+        }
         AGO.Uni.domain = document.location.hostname.toLowerCase();
         AGO.Uni.url = "https://" + AGO.Uni.domain;
-        a = AGO.Uni.domain.split(".");
-        document.location.href.match(
-            /https:\/\/.+\.ogame.gameforge.com\/game\/index\.php\?+.*page=*/i
-        )
-            ? ((AGO.App.page = STR.getParameter(
-            "page",
-            document.location.href
-            ).toLowerCase()),
-                AGO.App.page = (AGO.App.page == 'standalone' ? 'empire' : AGO.App.page),
-                (AGO.App.page =
-                    0 === AGO.App.page.indexOf("fleet") &&
-                    STR.getParameter("cp", document.location.href)
-                        ? "fleet1"
-                        : AGO.App.page),
-                (AGO.Uni.path = document.location.href.split("?")[0] + "?page="),
-                (b = (a[0] || "").split("-")),
-                (AGO.Uni.lang = (b[1] || "EN").toUpperCase()),
-                (AGO.Uni.number = NMR.parseIntAbs(b[0])),
-            AGO.Uni.number &&
-            ((AGO.App.mode = 3),
-                (AGO.Uni.abbr = "UNI" + AGO.Uni.number),
-                (AGO.App.keyCom = "AGO_" + AGO.Uni.lang),
-                (AGO.App.keyUni = AGO.App.keyCom + "_" + AGO.Uni.abbr),
-                OBJ.copy(
-                    OBJ.parse(AGO.Data.getStorage(AGO.App.keyUni + "_App")),
-                    AGO.App
-                ),
-                (AGO.App.title =
-                    AGO.App.title || AGO.Uni.lang + " " + AGO.Uni.number),
-                !AGO.App.playerId ||
-                STR.getParameter("phpsessid", document.location.href.toLowerCase())
-                    ? (AGO.App.login = AGO.App.reload = !0)
-                    : (AGO.App.keyPlayer = AGO.App.keyUni + "_" + AGO.App.playerId)),
-            AGO.App.disabled && AGO.Notify.set("Problem", 21),
-            4 !== a.length && AGO.Notify.set("Problem", 31))
-            : ((AGO.App.page =
-                -1 < AGO.Uni.domain.indexOf("speedsim.net")
-                    ? "websim"
-                    : -1 < AGO.Uni.domain.indexOf("osimulate.com")
-                    ? "osimulate"
-                    : ""),
-            AGO.App.page &&
-            ((AGO.Uni.lang = (
-                STR.getParameter("uni", document.location.href).split("_")[0] ||
-                "EN"
-            ).toUpperCase()),
-                (AGO.App.keyCom = "AGO_" + AGO.Uni.lang),
-                (AGO.App.mode = 2)));
+        domain = AGO.Uni.domain.split(".");
+        if(document.location.href.match(/https:\/\/.+\.ogame.gameforge.com\/game\/index\.php\?+.*page=*/i)){
+            AGO.App.page = STR.getParameter("page", document.location.href).toLowerCase();
+            if(AGO.App.page == 'standalone'){
+                AGO.App.page = 'empire';
+            }
+            if(0 === AGO.App.page.indexOf("fleet") && STR.getParameter("cp", document.location.href)){
+                AGO.App.page = "fleet1";
+            }
+            AGO.Uni.path = document.location.href.split("?")[0] + "?page=";
+            subdomain = (domain[0] || "").split("-");
+            AGO.Uni.lang = (subdomain[1] || "EN").toUpperCase();
+            AGO.Uni.number = NMR.parseIntAbs(subdomain[0]);
+            if(AGO.Uni.number ) {
+                AGO.App.mode = 3
+                AGO.Uni.abbr = "UNI" + AGO.Uni.number
+                AGO.App.keyCom = "AGO_" + AGO.Uni.lang
+                AGO.App.keyUni = AGO.App.keyCom + "_" + AGO.Uni.abbr
+                OBJ.copy(OBJ.parse(AGO.Data.getStorage(AGO.App.keyUni + "_App")), AGO.App)
+                AGO.App.title = AGO.App.title || AGO.Uni.lang + " " + AGO.Uni.number
+                if(!AGO.App.playerId || STR.getParameter("phpsessid", document.location.href.toLowerCase())){
+                    AGO.App.login = AGO.App.reload = true
+                }else{
+                    AGO.App.keyPlayer = AGO.App.keyUni + "_" + AGO.App.playerId
+                }
+            }
+            if(AGO.App.disabled){
+                AGO.Notify.set("Problem", 21)
+            }
+            if(4 !== domain.length){
+                AGO.Notify.set("Problem", 31)
+            }
+        }else {
+            if(AGO.Uni.domain.includes("speedsim.net")) {
+                AGO.App.page = "websim"
+            }else if(AGO.Uni.domain.includes("osimulate.com")) {
+                AGO.App.page = "osimulate"
+            }else{
+                AGO.App.page = ""
+            }
+
+            if(AGO.App.page) {
+                AGO.Uni.lang = (STR.getParameter("uni", document.location.href).split("_")[0] || "EN").toUpperCase()
+                AGO.App.keyCom = "AGO_" + AGO.Uni.lang
+                AGO.App.mode = 2
+            }
+        }
     },
     Init: function() {
-        var a, b, c;
-        a = document.head.getElementsByTagName("meta");
-        for (c = 0; c < a.length; c++)
-            if (a[c].name)
-                switch (((b = a[c].getAttribute("content")), a[c].name)) {
+        var metaList, metaContent, i;
+        metaList = document.head.getElementsByTagName("meta");
+        for (i = 0; i < metaList.length; i++) {
+            if (metaList[i].name) {
+                metaContent = metaList[i].getAttribute("content")
+                switch (metaList[i].name) {
                     case "ogame-player-name":
-                        AGO.Acc.name = b;
+                        AGO.Acc.name = metaContent;
                         break;
                     case "ogame-planet-coordinates":
-                        AGO.Acc.coords = b;
+                        AGO.Acc.coords = metaContent;
                         break;
                     case "ogame-planet-type":
-                        AGO.Acc.type = "moon" === b ? 3 : 1;
+                        AGO.Acc.type = "moon" === metaContent ? 3 : 1;
                         break;
                     case "ogame-planet-id":
-                        AGO.Acc.planetId = b;
+                        AGO.Acc.planetId = metaContent;
                         break;
                     case "ogame-planet-name":
-                        AGO.Acc.planetName = b;
+                        AGO.Acc.planetName = metaContent;
                         break;
                     case "ogame-player-id":
-                        AGO.Acc.playerId = b;
+                        AGO.Acc.playerId = metaContent;
                         break;
                     case "ogame-version":
-                        AGO.App.versionOGame = b;
+                        AGO.App.versionOGame = metaContent;
                         break;
                     case "ogame-session":
-                        AGO.Acc.session = b;
+                        AGO.Acc.session = metaContent;
                         break;
                     case "ogame-timestamp":
-                        AGO.Acc.timestamp = +b || 0;
+                        AGO.Acc.timestamp = +metaContent || 0;
                         break;
                     case "AntiGameOrigin":
-                        AGO.App.twice = !0;
+                        AGO.App.twice = true;
                 }
-        AGO.App.init = !0;
-        AGO.App.mode = AGO.App.twice
-            ? 0
-            : 2 === AGO.App.mode
-                ? 2
-                : AGO.Acc.playerId && AGO.Acc.session
-                    ? 4
-                    : 3;
-        if (4 <= AGO.App.mode)
-            if (
-                !AGO.App.login &&
-                AGO.App.playerId &&
-                AGO.App.playerId !== AGO.Acc.playerId
-            )
-                (AGO.Init.status = AGO.App.mode = 0),
-                    AGO.Data.setStorage(AGO.App.keyUni + "_App", "");
-            else {
-                AGO.App.Ogame = !0;
+            }
+        }
+        AGO.App.init = true;
+        AGO.App.mode = 3;
+
+        if(AGO.App.twice){
+            AGO.App.mode = 0;
+        }else if(AGO.App.mode === 2){
+            AGO.App.mode = 2;
+        }else if(AGO.Acc.playerId && AGO.Acc.session){
+            AGO.App.mode = 4;
+        }
+
+        if (AGO.App.mode >= 4)
+            if (!AGO.App.login && AGO.App.playerId && AGO.App.playerId !== AGO.Acc.playerId) {
+                AGO.Init.status = AGO.App.mode = 0;
+                AGO.Data.setStorage(AGO.App.keyUni + "_App", "");
+            }else {
+                AGO.App.Ogame = true;
                 OBJ.copy(AGO.Task.splitCoords(AGO.Acc.coords), AGO.Acc);
                 AGO.Acc.coordstype = AGO.Acc.coords + ":" + AGO.Acc.type;
                 AGO.App.keyPlayer = AGO.App.keyUni + "_" + AGO.Acc.playerId;
                 AGO.App.OgameMobile = !DOM.hasClass(document.body, null, "no-touch");
                 console.log(document.body);
-                if (
-                    AGO.App.login ||
-                    AGO.App.playerId !== AGO.Acc.playerId ||
-                    AGO.App.session !== AGO.Acc.session
-                )
-                    (AGO.App.reload = !0),
-                        (AGO.App.playerId = AGO.Acc.playerId),
-                        AGO.App.Save(),
-                        AGB.Log(
-                            "App - Login:   Com: " +
-                            AGO.Uni.lang +
-                            "   Uni: " +
-                            AGO.Uni.number +
-                            "   Player: " +
-                            AGO.Acc.playerId +
-                            "   Session: " +
-                            AGO.Acc.session,
-                            !0
-                        );
-                a = document.createDocumentFragment();
-                DOM.append(a, "meta", {
+                if (AGO.App.login || AGO.App.playerId !== AGO.Acc.playerId || AGO.App.session !== AGO.Acc.session) {
+                    AGO.App.reload = true;
+                    AGO.App.playerId = AGO.Acc.playerId;
+                    AGO.App.Save();
+                    AGB.Log("App - Login:   Com: " + AGO.Uni.lang + "   Uni: " + AGO.Uni.number + "   Player: " + AGO.Acc.playerId + "   Session: " + AGO.Acc.session, true);
+                }
+                metaList = document.createDocumentFragment();
+                DOM.append(metaList, "meta", {
                     content: AGO.App.versionAGO,
                     name: "AntiGameOrigin",
                     id: "ago_global_data",
                     "ago-data-key": AGO.App.keyPlayer
                 });
-                DOM.append(a, "script", {
+                DOM.append(metaList, "script", {
                     type: "text/javascript"
                 }).textContent = AGB.Resource("js/global.js");
-                document.head.appendChild(a);
+                document.head.appendChild(metaList);
             }
     },
-    Save: function(a) {
-        OBJ.copy(a, AGO.App);
+    Save: function(data) {
+        OBJ.copy(data, AGO.App);
         AGO.Data.setStorage(AGO.App.keyUni + "_App", {
             disabled: AGO.App.disabled,
             playerId: AGO.Acc.playerId,
@@ -1085,29 +1083,24 @@ AGO.Acc = {
 };
 AGO.Data = {
     Init: function() {
-        AGO.App.reload &&
-        AGO.Data.removeStorage(AGO.App.keyPlayer + "_Fleet_Current");
+        if(AGO.App.reload){
+            AGO.Data.removeStorage(AGO.App.keyPlayer + "_Fleet_Current");
+        }
     },
-    Remove: function(a) {
+    Remove: function(data) {
         function b(a) {
             OBJ.iterate(window.localStorage, function(b) {
                 b &&
                 0 === b.indexOf(a || "AGO_") &&
                 (window.localStorage.removeItem(b),
-                    AGB.Log("Delete - localstorage  - " + b, !0));
+                    AGB.Log("Delete - localstorage  - " + b, true));
             });
         }
 
-        AGB.Log("Delete - ############ - " + a, !0);
-        AGB.message(
-            "Data",
-            "Remove",
-            {
-                mode: a
-            },
-            function(c) {
+        AGB.Log("Delete - ############ - " + data, true);
+        AGB.message("Data", "Remove", {mode: data}, function(c) {
                 c &&
-                (b("ago" === a ? "AGO_" : AGO.App.keyPlayer),
+                (b("ago" === data ? "AGO_" : AGO.App.keyPlayer),
                     b(AGO.App.keyUni),
                     AGO.Init.Location("", 600));
             }
@@ -1118,7 +1111,7 @@ AGO.Data = {
             try {
                 window.localStorage[a] = OBJ.is(b) ? JSON.stringify(b) : b || "";
             } catch (c) {
-                AGB.Log("Data - Error set localstorage", !0);
+                AGB.Log("Data - Error set localstorage", true);
             }
     },
     getStorage: function(a, b) {

@@ -79,5 +79,5 @@ document.addEventListener(
   function() {
     AGO.Select();
   },
-  !1
+  false
 );

@@ -48,7 +48,7 @@ AGO.Fleet1 = {
             }));
     h &&
       AGO.Option.is("F00") &&
-      ((PAGE.enabled = !0),
+      ((PAGE.enabled = true),
       DOM.iterate(
         document.querySelectorAll(
           '#buttonz .content > form input[type="hidden"]'
@@ -147,8 +147,8 @@ AGO.Fleet1 = {
           ["202", "203"][AGO.Option.get("F62", 2)] || b.thirdShip || "203";
         b.preferCargo = "202" === b.preferShip ? "202" : "203";
         b.secondCargo = "203" === b.preferCargo ? "202" : "203";
-        b.need_smallCargo = Math.ceil(b.freight / 5e3);
-        b.need_largeCargo = Math.ceil(b.freight / 25e3);
+        b.need_smallCargo = Math.ceil(b.freight / AGO.Ogame.getShipCapacity(202, AGO.Ogame.getFleetDistance(AGO.Acc, b), b.speed));
+        b.need_largeCargo = Math.ceil(b.freight / AGO.Ogame.getShipCapacity(203, AGO.Ogame.getFleetDistance(AGO.Acc, b), b.speed));
         b.need_thirdShip = Math.ceil(
           b.freight / AGO.Item[b.thirdShip || "209"].capacity
         );
@@ -206,8 +206,9 @@ AGO.Fleet1 = {
         OBJ.iterate(AGO.Item.Resource, function(a) {
           g.freight += Math.max(c[a] - g[a], 1);
         });
-        g.need_smallCargo = Math.ceil(g.freight / 5e3);
-        g.need_largeCargo = Math.ceil(g.freight / 25e3);
+        g.need_smallCargo = Math.ceil(g.freight / AGO.Ogame.getShipCapacity(202, AGO.Ogame.getFleetDistance(AGO.Acc, g), g.speed));
+        g.need_largeCargo = Math.ceil(g.freight / AGO.Ogame.getShipCapacity(203, AGO.Ogame.getFleetDistance(AGO.Acc, g), g.speed));
+
         a = "203" === g.preferCargo ? g.need_largeCargo : g.need_smallCargo;
         g.status = c.ships
           ? 2 > g.owncoords || 4 <= g.owncoords
@@ -229,7 +230,7 @@ AGO.Fleet1 = {
             : 0;
         break;
       case 6:
-        k = PAGE[6] = AGO.Task.splitActive(AGO.Option.get("F91", -1), 2, 3, !0);
+        k = PAGE[6] = AGO.Task.splitActive(AGO.Option.get("F91", -1), 2, 3, true);
         k.group = 2;
         k.mode = AGO.Option.get("F90");
         k.label = AGO.Label.get("F90");
@@ -899,7 +900,7 @@ AGO.Fleet1 = {
           c(v, "crystal"),
           w ? DOM.appendTD(v) : c(v, "deuterium");
       w
-        ? (b(s, "shipC", "209", !1),
+        ? (b(s, "shipC", "209", false),
           DOM.appendTD(s, "ago_calc_ships"),
           DOM.appendTD(s, "ago_calc_ships"),
           g(n, "ago_calc_consumption_shipC"),
@@ -921,9 +922,9 @@ AGO.Fleet1 = {
                           coords: " "
                         },
                         null,
-                        !0
+                        true
                       )
-                    : h(l, PAGE[5], null, !0),
+                    : h(l, PAGE[5], null, true),
                   (DOM.appendA(l, "ago_target_reset btn_blue", null, {
                     routine: 5,
                     last: -1
@@ -986,7 +987,7 @@ AGO.Fleet1 = {
             : (b(s, "shipA", "202"),
               b(s, "shipB", "203"),
               r && PAGE[2].thirdShip
-                ? b(s, "shipC", PAGE[2].thirdShip, !1)
+                ? b(s, "shipC", PAGE[2].thirdShip, false)
                 : DOM.appendTD(s, "ago_calc_ships"),
               g(n, "ago_calc_consumption_shipA"),
               g(n, "ago_calc_consumption_shipB"),
@@ -1042,7 +1043,7 @@ AGO.Fleet1 = {
         ago_display_status: AGO.Option.is("F14") ? 1 : 2
       });
       f = DOM.appendDIV(h, "ago_shortcuts_header");
-      f.addEventListener("click", PAGE.onShortcuts, !1);
+      f.addEventListener("click", PAGE.onShortcuts, false);
       DOM.appendA(f, "ago_display_arrow");
       f = DOM.appendTABLE(
         h,
@@ -1111,7 +1112,7 @@ AGO.Fleet1 = {
             2 === b.type
               ? 8 === a && b["209"]
               : 8 === a
-                ? !1
+                ? false
                 : 15 === a
                   ? 16 === b.position
                   : b.owncoords && (3 > b.owncoords || c.stopActiveSelection)
@@ -1124,7 +1125,7 @@ AGO.Fleet1 = {
                           ? b["214"] && (3 <= b.owncoords || 3 === b.type)
                           : 4 === a
                             ? b.owncoords
-                            : !0)
+                            : true)
           ? a
           : 0
         : 0;
@@ -1281,16 +1282,16 @@ AGO.Fleet1 = {
           break;
         case 5:
           l = PAGE[5].freight;
-          c.ships ? a(c.capacity - c.consumption, l) : a(f.capacity, l);
+          c.ships ? a(c.capacity + c.consumption, l) : a(f.capacity, l);
           DOM.updateText("ago_info_freight", "id", l, 3);
           break;
         case 6:
           l = PAGE[6].freight;
-          c.ships ? a(c.capacity - c.consumption, l) : a(f.capacity, l);
+          c.ships ? a(c.capacity + c.consumption, l) : a(f.capacity, l);
           DOM.updateText("ago_info_freight", "id", l, 3);
           break;
         case 7:
-          c.ships ? a(c.capacity - c.consumption, -1) : a(c.capacity, -1);
+          c.ships ? a(c.capacity + c.consumption, -1) : a(c.capacity, -1);
           DOM.updateText("ago_info_expo", "id", c.expoints, 3);
           g =
             c.expoints >= PAGE[7].points
@@ -1301,7 +1302,7 @@ AGO.Fleet1 = {
         case 3:
         case 10:
           c.ships
-            ? a(c.capacity - c.consumption, f.resources)
+            ? a(c.capacity + c.consumption, f.resources)
             : a(f.capacity, f.resources),
             DOM.updateText("ago_info_freight", "id", 0, 3);
       }
@@ -1340,7 +1341,7 @@ AGO.Fleet1 = {
         type: b.typeActive
       });
     }
-    PAGE.lockedDisplay = !1;
+    PAGE.lockedDisplay = false;
     f = c = b = g = k = d = l = g = null;
   },
   displayCalculator: function() {
@@ -1441,13 +1442,13 @@ AGO.Fleet1 = {
           DOM.setClassGroup(e, null, "ago_highlight", f),
           (f =
             c === a.coords
-              ? " " + AGO.Token.getClassSelected(a.typeActive, !0)
+              ? " " + AGO.Token.getClassSelected(a.typeActive, true)
               : ""),
           DOM.setClassGroup(e, null, "ago_selected", f));
       });
     e = null;
   },
-  Action: function(a) {
+  Action: function(fleetParams) {
     function e(a) {
       var b;
       28 === a.action
@@ -1498,20 +1499,20 @@ AGO.Fleet1 = {
 
     function f() {
       function b(c) {
-        var f = AGO.Ogame.getShipCapacity(c, a.distance, d.speed);
+        var f = AGO.Ogame.getShipCapacity(c, fleetParams.distance, d.speed);
         g[c] &&
           0 < f &&
-          ((a[c] = Math.min(Math.ceil(e / f), g[c])), (e -= a[c] * f));
+          ((fleetParams[c] = Math.min(Math.ceil(e / f), g[c])), (e -= fleetParams[c] * f));
       }
 
       var c, e;
       c = PAGE[2].preferShip;
-      19 === a.action && a.id in AGO.Item.Ship && (c = a.id);
-      d.mission = a.mission || d.mission;
+      19 === fleetParams.action && fleetParams.id in AGO.Item.Ship && (c = fleetParams.id);
+      d.mission = fleetParams.mission || d.mission;
       e = d.resources;
-      if (a.recalculate || 19 === a.action)
-        (a.speed = d.speed),
-          (a.distance = AGO.Ogame.getFleetDistance(AGO.Acc, d)),
+      if (fleetParams.recalculate || 19 === fleetParams.action)
+        (fleetParams.speed = d.speed),
+          (fleetParams.distance = AGO.Ogame.getFleetDistance(AGO.Acc, d)),
           b(c),
           0 < e && "203" !== c && b("203"),
           0 < e && "202" !== c && b("202"),
@@ -1520,50 +1521,50 @@ AGO.Fleet1 = {
             PAGE[2].thirdShip &&
             b(PAGE[2].thirdShip),
           0 < e &&
-            (a[c] += Math.ceil(
-              e / AGO.Ogame.getShipCapacity(c, a.distance, a.speed)
+            (fleetParams[c] += Math.ceil(
+              e / AGO.Ogame.getShipCapacity(c, fleetParams.distance, fleetParams.speed)
             )),
-          (VAL.check(a.action, 21, 22) ||
-            (28 === a.action && "deuterium" === a.id)) &&
+          (VAL.check(fleetParams.action, 21, 22) ||
+            (28 === fleetParams.action && "deuterium" === fleetParams.id)) &&
             d.deuterium &&
-            (AGO.Task.updateShips(a, a.distance),
-            (d.deuterium -= a.consumption),
+            (AGO.Task.updateShips(fleetParams, fleetParams.distance),
+            (d.deuterium -= fleetParams.consumption),
             DOM.setValue("ago_calc_resource_deuterium", "id", d.deuterium, 8)),
-          (a.action = 10),
-          h(a);
+          (fleetParams.action = 10),
+          h(fleetParams);
       c = e = null;
     }
 
     function c() {
       var b;
-      AGO.Task.updateShips(a);
-      a.ships &&
-        ((a.action = 10),
-        a["202"]
-          ? ((b = a["202"] - g["202"]),
+      AGO.Task.updateShips(fleetParams);
+      fleetParams.ships &&
+        ((fleetParams.action = 10),
+        fleetParams["202"]
+          ? ((b = fleetParams["202"] - g["202"]),
             0 < b &&
               ((PAGE[3].status = 2),
-              (a["202"] = g["202"]),
-              (a["203"] = Math.ceil(b / 5)),
-              a["203"] > g["203"] && (PAGE[3].status = 1)))
-          : ((b = a["203"] - g["203"]),
+              (fleetParams["202"] = g["202"]),
+              (fleetParams["203"] = Math.ceil(b / 5)),
+              fleetParams["203"] > g["203"] && (PAGE[3].status = 1)))
+          : ((b = fleetParams["203"] - g["203"]),
             0 < b &&
               ((PAGE[3].status = 2),
-              (a["203"] = g["203"]),
-              (a["202"] = 5 * b),
-              a["202"] > g["202"] && (PAGE[3].status = 1))),
-        h(a));
+              (fleetParams["203"] = g["203"]),
+              (fleetParams["202"] = 5 * b),
+              fleetParams["202"] > g["202"] && (PAGE[3].status = 1))),
+        h(fleetParams));
     }
 
     function b() {
       var b, c;
       c = d.metal + d.crystal;
-      a.recalculate &&
+      fleetParams.recalculate &&
         ((b = AGO.Ogame.getFleetDistance(AGO.Acc, d)),
         (b = AGO.Ogame.getShipCapacity("209", b, d.speed)),
-        (a["209"] = Math.ceil(c / b)),
-        (a.action = 10),
-        h(a));
+        (fleetParams["209"] = Math.ceil(c / b)),
+        (fleetParams.action = 10),
+        h(fleetParams));
     }
 
     var g, k, d, l, m, q;
@@ -1573,10 +1574,10 @@ AGO.Fleet1 = {
     if (
       (l = document.getElementById("inhalt")) &&
       AGO.Init.status &&
-      OBJ.hasProperties(a)
+      OBJ.hasProperties(fleetParams)
     ) {
-      PAGE.lockedDisplay = !0;
-      if ((m = PAGE.getRoutine(a.routine) ? a.routine : 0))
+      PAGE.lockedDisplay = true;
+      if ((m = PAGE.getRoutine(fleetParams.routine) ? fleetParams.routine : 0))
         (d.routine = d.mission = d.stopActiveSelection = 0),
           1 === PAGE.getRoutine(m)
             ? (m !== k.calculator &&
@@ -1587,58 +1588,58 @@ AGO.Fleet1 = {
                   }),
                 2 === d.type && (d.type = 0)),
               2 <= PAGE.getRoutine(k.calculator) &&
-                ((a.speed = 10),
+                ((fleetParams.speed = 10),
                 h({
                   action: 10
                 }),
-                AGO.Task.updateCoordsType(a, k.coordstype),
-                4 <= a.owncoords && (d.type = a.type = 0)))
+                AGO.Task.updateCoordsType(fleetParams, k.coordstype),
+                4 <= fleetParams.owncoords && (d.type = fleetParams.type = 0)))
             : 2 <= PAGE.getRoutine(m) &&
               (d.resources &&
                 e({
                   action: 23
                 }),
               10 === m
-                ? PAGE.getRoutine(m + (+a.last || 0), "status") &&
-                  ((PAGE[10].last = +a.last || 0),
-                  (q = a.target ? 0 : 2),
-                  (a = AGO.Task.create(PAGE[m + PAGE[10].last], q)),
-                  AGO.Task.updateResources(a),
-                  a.resources && ((a.action = 20), e(a)),
-                  (a.action = 2 === q ? 10 : 0))
-                : (PAGE.Init(m, a.last),
-                  (a = AGO.Task.create(PAGE[m], 2)),
-                  (a.action = 10)),
-              (a.speed = a.speed || 10),
-              10 === a.action && h(a)),
+                ? PAGE.getRoutine(m + (+fleetParams.last || 0), "status") &&
+                  ((PAGE[10].last = +fleetParams.last || 0),
+                  (q = fleetParams.target ? 0 : 2),
+                  (fleetParams = AGO.Task.create(PAGE[m + PAGE[10].last], q)),
+                  AGO.Task.updateResources(fleetParams),
+                  fleetParams.resources && ((fleetParams.action = 20), e(fleetParams)),
+                  (fleetParams.action = 2 === q ? 10 : 0))
+                : (PAGE.Init(m, fleetParams.last),
+                  (fleetParams = AGO.Task.create(PAGE[m], 2)),
+                  (fleetParams.action = 10)),
+              (fleetParams.speed = fleetParams.speed || 10),
+              10 === fleetParams.action && h(fleetParams)),
           (k.calculator = m),
           PAGE.showCalculator();
       else {
-        VAL.check(a.action, 12, 10) && h(a);
-        a.mission = PAGE.Mission.check(a.mission);
-        if (VAL.check(a.action, 41, 42)) {
-          if (a.type || a.mission) d.stopAutoHarvest = 1;
-          a.type && (d.stopActiveSelection = 1);
+        VAL.check(fleetParams.action, 12, 10) && h(fleetParams);
+        fleetParams.mission = PAGE.Mission.check(fleetParams.mission);
+        if (VAL.check(fleetParams.action, 41, 42)) {
+          if (fleetParams.type || fleetParams.mission) d.stopAutoHarvest = 1;
+          fleetParams.type && (d.stopActiveSelection = 1);
         }
-        3 <= a.owncoords && ((d.type = 0), 3 > d.owncoords && (a.type = 0));
-        4 === k.calculator && (a.type = 0);
+        3 <= fleetParams.owncoords && ((d.type = 0), 3 > d.owncoords && (fleetParams.type = 0));
+        4 === k.calculator && (fleetParams.type = 0);
       }
-      a.type = PAGE.Type.check(a.type);
-      AGO.Task.updateCoords(a, 4);
+      fleetParams.type = PAGE.Type.check(fleetParams.type);
+      AGO.Task.updateCoords(fleetParams, 4);
       OBJ.iterate(AGO.Item.CoordinatesType, function(b) {
-        a[b] &&
-          ((d[b] = a[b]),
+        fleetParams[b] &&
+          ((d[b] = fleetParams[b]),
           "type" !== b &&
-            (DOM.setValue('input[name="' + b + '"]', l, a[b], 8),
-            DOM.setValue("ago_" + b, "id", a[b])));
+            (DOM.setValue('input[name="' + b + '"]', l, fleetParams[b], 8),
+            DOM.setValue("ago_" + b, "id", fleetParams[b])));
       });
       AGO.Task.updateCoords(d, 3);
       d.owncoords &&
         (d.owncoords = AGO.Planets.owncoords(d.coords, d.type || AGO.Acc.type));
       3 > d.owncoords && (d.stopActiveSelection = 0);
-      a.arrival &&
-        ((d.coordsMarked = a.coords || ""),
-        (d.arrivalMarked = +a.arrival || 0));
+      fleetParams.arrival &&
+        ((d.coordsMarked = fleetParams.coords || ""),
+        (d.arrivalMarked = +fleetParams.arrival || 0));
       OBJ.iterateArray(
         [
           "holdingtime",
@@ -1648,16 +1649,16 @@ AGO.Fleet1 = {
           "preferResource"
         ],
         function(b) {
-          d[b] = +a[b] || 0;
+          d[b] = +fleetParams[b] || 0;
         }
       );
-      VAL.check(a.plunder, 50, 75, 100) && (d.plunder = a.plunder);
-      NMR.isMinMax(a.speed, 1, 10) &&
-        ((d.speed = a.speed),
+      VAL.check(fleetParams.plunder, 50, 75, 100) && (d.plunder = fleetParams.plunder);
+      NMR.isMinMax(fleetParams.speed, 1, 10) &&
+        ((d.speed = fleetParams.speed),
         DOM.setValue('input[name="speed"]', l, d.speed, 8));
-      VAL.check(a.action, 20, 21, 22, 23, 28) && e(a);
+      VAL.check(fleetParams.action, 20, 21, 22, 23, 28) && e(fleetParams);
       AGO.Task.updateResources(d);
-      a.recalculate =
+      fleetParams.recalculate =
         (d.coords + ":" + d.speed !== d.previousTarget && d.resources) ||
         (d.metal + ":" + d.crystal + ":" + d.deuterium !==
           d.previousResources &&
@@ -1667,30 +1668,30 @@ AGO.Fleet1 = {
           f();
           break;
         case 3:
-          a.stop = a.owncoords && 41 === a.action;
+          fleetParams.stop = fleetParams.owncoords && 41 === fleetParams.action;
           c();
           break;
         case 4:
-          a.stop = 2 !== a.type && 42 === a.action;
+          fleetParams.stop = 2 !== fleetParams.type && 42 === fleetParams.action;
           b();
           break;
         case 5:
-          a.stop = !d.owncoords || 2 === d.type;
-          d.mission = VAL.select(a.mission, 3, 4) || d.mission;
-          2 <= a.owncoords &&
-            41 === a.action &&
-            (PAGE.Init(5, 2, a.coordstype), PAGE.showCalculator());
+          fleetParams.stop = !d.owncoords || 2 === d.type;
+          d.mission = VAL.select(fleetParams.mission, 3, 4) || d.mission;
+          2 <= fleetParams.owncoords &&
+            41 === fleetParams.action &&
+            (PAGE.Init(5, 2, fleetParams.coordstype), PAGE.showCalculator());
           break;
         case 7:
-          a.stop = VAL.check(a.action, 11, 12);
+          fleetParams.stop = VAL.check(fleetParams.action, 11, 12);
           break;
         case 6:
-          d.mission = a.mission || d.mission;
+          d.mission = fleetParams.mission || d.mission;
           break;
         case 10:
-          d.mission = a.mission || d.mission;
+          d.mission = fleetParams.mission || d.mission;
       }
-      if (a.stop) {
+      if (fleetParams.stop) {
         PAGE.Action({
           routine: 2,
           action: 13
@@ -1756,24 +1757,24 @@ AGO.Fleet1 = {
             2 <= PAGE.getRoutine(PAGE.Para.calculator) &&
               2 <= PAGE.getRoutine(PAGE.Para.calculator, "status") &&
               DOM.click("#continue.on")),
-        !1
+        false
       );
     if (12 !== a.inputType) {
-      if (65 === a.keyCode) return DOM.click("#sendall"), !1;
-      if (77 === a.keyCode) return DOM.click("span.send_most a"), !1;
-      if (81 === a.keyCode) return DOM.click("span.send_none a"), !1;
-      if (84 === a.keyCode) return DOM.click("#ago_routine_2"), !1;
-      if (82 === a.keyCode) return DOM.click("#ago_routine_4"), !1;
-      if (83 === a.keyCode) return DOM.click("#ago_routine_5"), !1;
-      if (70 === a.keyCode) return DOM.click("#ago_routine_6"), !1;
-      if (69 === a.keyCode) return DOM.click("#ago_routine_7"), !1;
-      if (76 === a.keyCode) return DOM.click("#ago_routine_10"), !1;
+      if (65 === a.keyCode) return DOM.click("#sendall"), false;
+      if (77 === a.keyCode) return DOM.click("span.send_most a"), false;
+      if (81 === a.keyCode) return DOM.click("span.send_none a"), false;
+      if (84 === a.keyCode) return DOM.click("#ago_routine_2"), false;
+      if (82 === a.keyCode) return DOM.click("#ago_routine_4"), false;
+      if (83 === a.keyCode) return DOM.click("#ago_routine_5"), false;
+      if (70 === a.keyCode) return DOM.click("#ago_routine_6"), false;
+      if (69 === a.keyCode) return DOM.click("#ago_routine_7"), false;
+      if (76 === a.keyCode) return DOM.click("#ago_routine_10"), false;
     }
     return 11 !== a.inputType ||
       (38 !== a.keyCode && 40 !== a.keyCode) ||
       (!AGO.Item.Ship[STR.check(NMR.parseIntAbs(a.target.id))] &&
         !HTML.hasClass(a.target.className, "ago_keys_arrows"))
-      ? !0
+      ? true
       : DOM.changeInput(a, a.target);
   },
   onSwipe: function(a) {
@@ -1813,7 +1814,7 @@ AGO.Fleet1 = {
       c = h.id;
       f = h.type || 19 === h.action;
       if (PAGE.timeoutCalculator) window.clearTimeout(PAGE.timeoutCalculator);
-      else if ("click" === e && f) return !0;
+      else if ("click" === e && f) return true;
       if ("mousedown" === e) {
         if (f) {
           var b = JSON.stringify(h);
@@ -1959,31 +1960,32 @@ AGO.Fleet1 = {
     }, 150);
   }
 };
-AGO.Task.updateShips = function(a, e) {
+AGO.Task.updateShips = function(fleetParams, distance) {
+  
   var h;
-  OBJ.is(a) &&
-    ((a.consumption = 1),
-    (a["212"] = 0),
-    (a.ships = a.shipsCivil = a.shipsCombat = a.capacity = a.expoints = a.minspeed = 0),
-    OBJ.iterate(AGO.Item.Ship, function(e) {
-      var c;
-      if ((c = a[e]))
+  OBJ.is(fleetParams) &&
+    ((fleetParams.consumption = 1),
+    (fleetParams["212"] = 0),
+    (fleetParams.ships = fleetParams.shipsCivil = fleetParams.shipsCombat = fleetParams.capacity = fleetParams.expoints = fleetParams.minspeed = 0),
+    OBJ.iterate(AGO.Item.Ship, function(shipId) {
+      var shipNumber;
+      if ((shipNumber = fleetParams[shipId]))
         if (
-          (e in AGO.Item.ShipCivil ? (a.shipsCivil += c) : (a.shipsCombat += c),
-          (a.ships += c),
-          (a.capacity += c * AGO.Item[e].capacity),
-          (a.expoints += (AGO.Item[e].metal + AGO.Item[e].crystal) / 200 * c),
-          (c = AGO.Ogame.getShipSpeed(e)),
-          !a.minspeed || c < a.minspeed)
+          (shipId in AGO.Item.ShipCivil ? (fleetParams.shipsCivil += shipNumber) : (fleetParams.shipsCombat += shipNumber),
+          (fleetParams.ships += shipNumber),
+          (fleetParams.capacity += shipNumber * AGO.Ogame.getShipCapacity(shipId, distance, fleetParams.speed)),
+          (fleetParams.expoints += (AGO.Item[shipId].metal + AGO.Item[shipId].crystal) / 200 * shipNumber),
+          (shipNumber = AGO.Ogame.getShipSpeed(shipId)),
+          !fleetParams.minspeed || shipNumber < fleetParams.minspeed)
         )
-          (a.minspeed = c), (h = e);
+          (fleetParams.minspeed = shipNumber), (h = shipId);
     }),
-    e &&
-      ((a.duration = AGO.Ogame.getFleetDuration(h, e, a.speed)),
+    distance &&
+      ((fleetParams.duration = AGO.Ogame.getFleetDuration(h, distance, fleetParams.speed)),
       OBJ.iterate(AGO.Item.Ship, function(f) {
-        a[f] &&
-          (a.consumption +=
-            a[f] * AGO.Ogame.getShipConsumption(f, e, a.duration));
+        fleetParams[f] &&
+          (fleetParams.consumption +=
+            fleetParams[f] * AGO.Ogame.getShipConsumption(f, distance, fleetParams.duration));
       }),
-      (a.consumption = Math.round(a.consumption))));
+      (fleetParams.consumption = Math.round(fleetParams.consumption))));
 };

@@ -16,7 +16,7 @@ AGB.Manager = {
         : AGB[a].Messages(b, JSON.parse(c || "{}"), null, e));
   },
   Start: function() {
-    AGB.Core.Log("Manager - Start", !0);
+    AGB.Core.Log("Manager - Start", true);
     var a;
     AGB.status = 1;
     AGB.Config.pathSkin = "chrome://skin/content/";
@@ -45,27 +45,27 @@ AGB.Manager = {
           "  DataBase: " +
           AGB.DataBase.status +
           (1 < AGB.Config.beta ? "  - Development mode" : ""),
-        !0
+        true
       );
     });
     AGB.Core.Services.obs.addObserver(
       AGB.Manager.Check,
       "content-document-global-created",
-      !1
+      false
     );
-    AGB.Core.Services.obs.addObserver(AGB.Manager.Stop, "quit-application", !1);
+    AGB.Core.Services.obs.addObserver(AGB.Manager.Stop, "quit-application", false);
   },
   Stop: function(a) {
     var b;
     AGB.Core.Services.obs.removeObserver(
       AGB.Manager.Check,
       "content-document-global-created",
-      !1
+      false
     );
     AGB.Core.Services.obs.removeObserver(
       AGB.Manager.Stop,
       "quit-application",
-      !1
+      false
     );
     AGB.App.Stop();
     AGB.status = 0;
@@ -83,11 +83,11 @@ AGB.Manager = {
   },
   WindowListener: {
     setupBrowserUI: function(a) {
-      AGB.Core.Log("AntiGameOrigin:  New Window", !0);
+      AGB.Core.Log("AntiGameOrigin:  New Window", true);
     },
     tearDownBrowserUI: function(a) {},
     onOpenWindow: function(a) {
-      AGB.Core.Log("AntiGameOrigin:  New Window", !0);
+      AGB.Core.Log("AntiGameOrigin:  New Window", true);
     },
     onCloseWindow: function(a) {},
     onWindowTitleChange: function(a, b) {}
@@ -103,13 +103,13 @@ AGB.Manager = {
         ? a.addEventListener(
             "DOMContentLoaded",
             function f() {
-              a.removeEventListener("DOMContentLoaded", f, !1);
+              a.removeEventListener("DOMContentLoaded", f, false);
               "about:blank" === a.location.href ||
                 a.AGO_started ||
                 ((d = AGB.App.Check(a.location.href)),
                 OBJ.is(d) && d.mode && AGB.Manager.Load(d, a));
             },
-            !1
+            false
           )
         : ((d = AGB.App.Check(a.location.href)),
           OBJ.is(d) && d.mode && AGB.Manager.Load(d, a)));
@@ -266,7 +266,7 @@ AGB.Storage = {
   },
   Remove: function(a) {
     if (OBJ.is(a) && a.key) {
-      AGB.Core.Log("Delete - storage  - " + a.key, !0);
+      AGB.Core.Log("Delete - storage  - " + a.key, true);
       try {
         AGB.Storage.local.prefHasUserValue(a.key) &&
           AGB.Storage.local.clearUserPref(a.key);
@@ -280,13 +280,13 @@ AGB.Storage = {
       OBJ.iterateArray(b, function(b) {
         b &&
           ((a.filter && 0 !== STR.check(b).indexOf(a.filter)) ||
-            AGB.Core.Log("List - storage  - " + b, !0));
+            AGB.Core.Log("List - storage  - " + b, true));
       }),
       (b = AGB.Storage.sync.getChildList("", {})),
       OBJ.iterateArray(b, function(b) {
         b &&
           ((a.filter && 0 !== STR.check(b).indexOf(a.filter)) ||
-            AGB.Core.Log("List - syncflag  - " + b, !0));
+            AGB.Core.Log("List - syncflag  - " + b, true));
       }));
   },
   RemoveFilter: function(a) {
@@ -295,7 +295,7 @@ AGB.Storage = {
       ((b = AGB.Storage.local.getChildList("", {})),
       OBJ.iterateArray(b, function(b) {
         if (b && (!a.filter || 0 === STR.check(b).indexOf(a.filter))) {
-          AGB.Core.Log("Delete - storage  - " + b, !0);
+          AGB.Core.Log("Delete - storage  - " + b, true);
           try {
             AGB.Storage.local.clearUserPref(b);
           } catch (d) {}
@@ -304,7 +304,7 @@ AGB.Storage = {
       (b = AGB.Storage.sync.getChildList("", {})),
       OBJ.iterateArray(b, function(b) {
         if (b && (!a.filter || 0 === STR.check(b).indexOf(a.filter))) {
-          AGB.Core.Log("Delete - syncflag  - " + b, !0);
+          AGB.Core.Log("Delete - syncflag  - " + b, true);
           try {
             AGB.Storage.sync.clearUserPref(b);
           } catch (d) {}
@@ -317,7 +317,7 @@ AGB.Storage = {
         a.key[b]
           ? 0 === AGB.Storage.sync.getPrefType(b) &&
             (AGB.Core.Log("AntiGame:  Sync - Set Sync flag " + b),
-            AGB.Storage.sync.setBoolPref(b, !0))
+            AGB.Storage.sync.setBoolPref(b, true))
           : AGB.Storage.sync.getPrefType(b) &&
             (AGB.Core.Log("AntiGame:  Sync - Remove flag " + b),
             AGB.Storage.sync.clearUserPref(b));

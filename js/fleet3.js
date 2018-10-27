@@ -22,7 +22,7 @@ AGO.Fleet3 = {
     var a, b, c;
     (b = document.getElementById("inhalt")) &&
       AGO.Option.is("F00") &&
-      ((PAGE.enabled = !0),
+      ((PAGE.enabled = true),
       (a = PAGE.Para = OBJ.parse(AGO.Fleet.Get("Current", "Task3", 6))),
       DOM.iterate(
         document.querySelectorAll(
@@ -62,7 +62,7 @@ AGO.Fleet3 = {
     var a, b, c;
     (c = document.getElementById("inhalt")) &&
       PAGE.enabled &&
-      ((PAGE.lockedDisplay = !0),
+      ((PAGE.lockedDisplay = true),
       (a = PAGE.Para),
       AGO.Option.is("F51") &&
         OBJ.iterateArray([15, 7, 8, 6, 1, 4, 3], function(a) {
@@ -407,7 +407,7 @@ AGO.Fleet3 = {
     a = PAGE.Next;
     (b = document.getElementById("inhalt")) &&
       7 <= AGO.Init.status &&
-      ((d = PAGE.lockedDisplay = !0),
+      ((d = PAGE.lockedDisplay = true),
       PAGE.updateTask(a, 1),
       (a.arrivalUnion = 2 === a.mission ? PAGE.Para.arrivalUnion : 0),
       (a.resources = 0),
@@ -416,7 +416,7 @@ AGO.Fleet3 = {
         c = AGO.Units.get(b);
         "deuterium" === b && (c -= document.querySelector('#consumption').textContent.split(' ')[0].replace('.', ''));
         a.resources += a[b];
-        1.01 * a[b] < c - PAGE.Mini[b] && (d = !1);
+        1.01 * a[b] < c - PAGE.Mini[b] && (d = false);
         DOM.setText("ago_fleet_remaining_" + b, "id", Math.max(c - a[b], 0), 5);
       }),
       (e = a.resources
@@ -485,7 +485,7 @@ AGO.Fleet3 = {
       ),
       PAGE.displayUnion(),
       PAGE.displayMarked());
-    PAGE.lockedDisplay = !1;
+    PAGE.lockedDisplay = false;
     a = b = c = null;
   },
   displayUnion: function() {
@@ -612,7 +612,7 @@ AGO.Fleet3 = {
     (d = document.getElementById("inhalt")) &&
       AGO.Init.status &&
       a &&
-      ((PAGE.lockedDisplay = !0),
+      ((PAGE.lockedDisplay = true),
       (g = a.action),
       a.arrival &&
         ((f.coordsMarked = a.coords || ""),
@@ -628,7 +628,7 @@ AGO.Fleet3 = {
           role: "updateHoldingOrExpTime"
         })),
       a.retreatAfterDefenderRetreat &&
-        DOM.setProperty("#fightAfterRetreat input", d, "checked", !0),
+        DOM.setProperty("#fightAfterRetreat input", d, "checked", true),
       a.preferResource &&
         (f = {
           metal: 1,
@@ -746,13 +746,13 @@ AGO.Fleet3 = {
         "A" !== document.activeElement.nodeName &&
         "INPUT" !== document.activeElement.nodeName
       )
-        return DOM.hasClass("start", "id", "on") && DOM.click("#start.on"), !1;
+        return DOM.hasClass("start", "id", "on") && DOM.click("#start.on"), false;
     } else {
-      if (65 === a.keyCode) return DOM.click("#allresources"), !1;
-      if (77 === a.keyCode) return DOM.click("#mostresources"), !1;
-      if (81 === a.keyCode) return DOM.click("#noneresources"), !1;
+      if (65 === a.keyCode) return DOM.click("#allresources"), false;
+      if (77 === a.keyCode) return DOM.click("#mostresources"), false;
+      if (81 === a.keyCode) return DOM.click("#noneresources"), false;
     }
-    return !0;
+    return true;
   },
   onSwipe: function(a) {
     "diagUp" === a && DOM.click("#noneresources");

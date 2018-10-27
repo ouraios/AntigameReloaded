@@ -1,0 +1,12 @@
+{
+  "addons": {
+    "{2f155f65-db33-433f-8c6c-6f8e922e8b3c}": {
+      "updates": [
+        {
+          "version": "0.9.7",
+          "update_link": "https://github.com/ouraios/AntigameReloaded/releases/download/v0.9.7/antigamereloaded-0.9.7-an.fx.xpi"
+        }
+      ]
+    }
+  }
+}
