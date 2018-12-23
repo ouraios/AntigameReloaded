@@ -1,193 +1,191 @@
 if (!AGB){
-  var AGB = {};
+    var AGB = {};
 }
 AGB.Time = {
-  timestamp: function() {
-    return Math.floor(Date.now() / 1e3);
-  },
-  timestampMinute: function() {
-    return Math.floor((Date.now() - 1381000000000) / 60000);
-  },
-  timestampMinuteConvert: function(a) {
-    return 1000 < a ? 60 * (+a || 0) + 1381000000 : 0;
-  }
+    timestamp: function() {
+        return Math.floor(Date.now() / 1000);
+    },
+    timestampMinute: function() {
+        return Math.floor((Date.now() - 1381000000000) / 60000);
+    },
+    timestampMinuteConvert: function(minuteToConvert) {
+        return 1000 < minuteToConvert ? 60 * (+minuteToConvert || 0) + 1381000000 : 0;
+    }
 };
 var VAL = {
-    choose: function(value) {
-      return 0 < value ? arguments[value] : "";
-    },
-    check: function(a) {
-      for (var b = 1; b < arguments.length; b++)
-        if (a === arguments[b]) return true;
-      return false;
-    },
-    status: function(a, b, c, d) {
-      return 0 > a ? b : 0 < a ? d : c;
-    }
-  },
-  OBJ = {
-    is: function(a) {
-      return a && "object" === typeof a;
-    },
-    get: function(a, b) {
-      return a && "object" === typeof a && b in a ? a[b] : "";
-    },
-    set: function(a, b, c) {
-      a && "object" === typeof a && (a[b] = c);
-    },
-    iterate: function(a, b) {
-      if (a && "object" === typeof a)
-        for (var c in a) a.hasOwnProperty(c) && b(c);
-    },
-    iterateArray: function(a, b) {
-      Array.isArray(a) && a.forEach(b);
-    },
-    create: function(a) {
-      var b = {},
-        c;
-      if (a && "object" === typeof a)
-        for (c in a)
-          "object" !== typeof a[c] &&
-            "function" !== typeof a[c] &&
-            (b[c] = a[c]);
-      return b;
-    },
-    createKey: function(a, b) {
-      var c = {};
-      a && (c[a] = b);
-      return c;
-    },
-    createFilter: function(a, b) {
-      var c = {},
-        d;
-      if (a && "object" === typeof a)
-        for (d in a)
-          a.hasOwnProperty(d) &&
-            "object" !== typeof a[d] &&
-            (!b || d in b) &&
-            (c[d] = a[d]);
-      return c;
-    },
-    copy: function(a, b) {
-      var c;
-      if (a && "object" === typeof a && b && "object" === typeof b)
-        for (c in a) "object" !== typeof a[c] && (b[c] = a[c]);
-    },
-    parse: function(a) {
-      if (a && "object" === typeof a) return a;
-      try {
-        return JSON.parse(a || "{}");
-      } catch (b) {
-        return {};
-      }
-    },
-    parseCopy: function(a, b) {
-      var c, d;
-      if (a && b) {
-        try {
-          c = a && "object" === typeof a ? a : JSON.parse(a || "{}");
-        } catch (e) {
-          c = null;
+        choose: function(value) {
+            return 0 < value ? arguments[value] : "";
+        },
+        check: function(val) {
+            for (var b = 1; b < arguments.length; b++)
+                if (val === arguments[b]) return true;
+            return false;
+        },
+        status: function(val, infVal, equVal, supVal) {
+            return 0 > val ? infVal : 0 < val ? supVal : equVal;
         }
-        if (c) for (d in c) "object" !== typeof c[d] && (b[d] = c[d]);
-      }
     },
-    split: function(a) {
-      var b = {},
-        c,
-        d;
-      a = STR.check(a).split(";");
-      for (d = 0; d < a.length; d++)
-        (c = (a[d] || "").split("=")), c[0] && (b[c[0]] = c[1] || "");
-      return b;
-    }
-  },
-  STR = {
-    is: function(a) {
-      return Boolean(a && "string" === typeof a);
+    OBJ = {
+        is: function(maybeObject) {
+            return maybeObject && "object" === typeof maybeObject;
+        },
+        get: function(obj, key) {
+            return obj && "object" === typeof obj && key in obj ? obj[key] : "";
+        },
+        set: function(obj, key, val) {
+            obj && "object" === typeof obj && (obj[key] = val);
+        },
+        iterate: function(obj, callback) {
+            if (obj && "object" === typeof obj)
+                for (var c in obj) obj.hasOwnProperty(c) && callback(c);
+        },
+        iterateArray: function(array, callback) {
+            Array.isArray(array) && array.forEach(callback);
+        },
+        create: function(sourceObject) {
+            var copiedObject = {},
+                key;
+            if (sourceObject && "object" === typeof sourceObject)
+                for (key in sourceObject)
+                    "object" !== typeof sourceObject[key] &&
+                    "function" !== typeof sourceObject[key] &&
+                    (copiedObject[key] = sourceObject[key]);
+            return copiedObject;
+        },
+        createKey: function(key, val) {
+            var c = {};
+            key && (c[key] = val);
+            return c;
+        },
+        createFilter: function(sourceObj, filterObject) {
+            var copiedObj = {},
+                key;
+            if (sourceObj && "object" === typeof sourceObj)
+                for (key in sourceObj)
+                    sourceObj.hasOwnProperty(key) &&
+                    "object" !== typeof sourceObj[key] &&
+                    (!filterObject || key in filterObject) &&
+                    (copiedObj[key] = sourceObj[key]);
+            return copiedObj;
+        },
+        copy: function(objectToCopy, objectTarget) {
+            var key;
+            if (objectToCopy && "object" === typeof objectToCopy && objectTarget && "object" === typeof objectTarget)
+                for (key in objectToCopy) "object" !== typeof objectToCopy[key] && (objectTarget[key] = objectToCopy[key]);
+        },
+        parse: function(obj) {
+            if (obj && "object" === typeof obj) return obj;
+            try {
+                return JSON.parse(obj || "{}");
+            } catch (b) {
+                return {};
+            }
+        },
+        parseCopy: function(objToParseCopy, objectTarget) {
+            var parsedObject, key;
+            if (objToParseCopy && objectTarget) {
+                try {
+                    parsedObject = objToParseCopy && "object" === typeof objToParseCopy ? objToParseCopy : JSON.parse(objToParseCopy || "{}");
+                } catch (e) {
+                    parsedObject = null;
+                }
+                if (parsedObject) for (key in parsedObject) "object" !== typeof parsedObject[key] && (objectTarget[key] = parsedObject[key]);
+            }
+        },
+        split: function(str) {
+            var objTarget = {}, keyValPair, i;
+            splitedStr = STR.check(str).split(";");
+            for (i = 0; i < splitedStr.length; i++){
+                keyValPair = (splitedStr[i] || "").split("=")
+                keyValPair[0] && (objTarget[keyValPair[0]] = keyValPair[1] || "");
+            }
+            return objTarget;
+        }
     },
-    check: function(a) {
-      return "string" === typeof a
-        ? a
-        : "number" === typeof a && a
-          ? a + ""
-          : "";
+    STR = {
+        is: function(maybeString) {
+            return maybeString && "string" === typeof maybeString;
+        },
+        check: function(maybeStr) {
+            return "string" === typeof maybeStr
+                ? maybeStr
+                : "number" === typeof maybeStr && maybeStr
+                    ? maybeStr + ""
+                    : "";
+        },
+        trim: function(maybeStr) {
+            return "string" === typeof maybeStr ? maybeStr.trim() : this.check(maybeStr);
+        },
+        zero: function(maybeStr) {
+            return maybeStr
+                ? "string" === typeof maybeStr
+                    ? maybeStr
+                    : "number" === typeof maybeStr
+                        ? maybeStr + ""
+                        : "0"
+                : "0";
+        },
+        trimZero: function(str, indexToSub) {
+            str = "0000" + str;
+            return str.substr(str.length - indexToSub);
+        },
+        compare: function(str, strToCompare) {
+            return "string" === typeof str
+                ? str.length === strToCompare.length && str === strToCompare
+                : false;
+        },
+        getAttribute: function(str, attributeName) {
+            return "string" === typeof str
+                ? ((str.split(" " + attributeName + '="')[1] || "").split('"')[0] || "").trim()
+                : "";
+        },
+        getParameter: function(parameterKey, strLink) {
+            var explodeParameters = decodeURIComponent(strLink || "")
+                .replace(/\?/g, "&")
+                .split("&" + parameterKey + "=")[1];
+            return explodeParameters ? explodeParameters.split("&")[0].split("#")[0] || "" : "";
+        },
+        addUrlPara: function(a, b) {
+            var c = encodeURI(STR.check(b).trim());
+            return a && c ? "&" + a + "=" + c : "";
+        },
+        hash: function(str) {
+            var b,
+                c = 0;
+            if ("string" === typeof str && 0 < str.length)
+                for (b = 0; b < str.length; b++){
+                    (c = (c << 5) - c + str.charCodeAt(b));
+                    c &= c;
+                }
+            return c;
+        }
     },
-    trim: function(a) {
-      return "string" === typeof a
-        ? a.trim()
-        : "number" === typeof a && a
-          ? a + ""
-          : "";
-    },
-    zero: function(a) {
-      return a
-        ? "string" === typeof a
-          ? a
-          : "number" === typeof a
-            ? a + ""
-            : "0"
-        : "0";
-    },
-    trimZero: function(a, b) {
-      a = "0000" + a;
-      return a.substr(a.length - b);
-    },
-    compare: function(a, b) {
-      return "string" === typeof a && "string" === typeof a
-        ? a.length === b.length && a === b
-        : false;
-    },
-    getAttribute: function(a, b) {
-      return "string" === typeof a
-        ? ((a.split(" " + b + '="')[1] || "").split('"')[0] || "").trim()
-        : "";
-    },
-    getParameter: function(a, b) {
-      var c = decodeURIComponent(b || "")
-        .replace(/\?/g, "&")
-        .split("&" + a + "=")[1];
-      return c ? c.split("&")[0].split("#")[0] || "" : "";
-    },
-    addUrlPara: function(a, b) {
-      var c = encodeURI(STR.check(b).trim());
-      return a && c ? "&" + a + "=" + c : "";
-    },
-    hash: function(a) {
-      var b,
-        c = 0;
-      if ("string" === typeof a && 0 < a.length)
-        for (b = 0; b < a.length; b++)
-          (c = (c << 5) - c + a.charCodeAt(b)), (c &= c);
-      return c;
-    }
-  },
-  NMR = {
-    minMax: function(a, b, c) {
-      return Math.max(Math.min(+a || 0, c), b);
-    },
-    isMinMax: function(a, b, c) {
-      return +a >= b && +a <= c;
-    },
-    parseInt: function(a) {
-      return "string" === typeof a
-        ? parseInt(a, 10)
-        : "number" === typeof a
-          ? Math.floor(a)
-          : 0;
-    },
-    parseIntFormat: function(a) {
-      return "string" === typeof a
-        ? +a.replace(/[^\d\-]/g, "") || 0
-        : "number" === typeof a
-          ? Math.floor(a)
-          : 0;
-    },
-    parseIntAbs: function(a) {
-      return "string" === typeof a
-        ? +a.replace(/[^\d]/g, "") || 0
-        : "number" === typeof a
-          ? Math.floor(Math.abs(a))
-          : 0;
-    }
-  };
+    NMR = {
+        minMax: function(val, maxVal, minVal) {
+            return Math.max(Math.min(+val || 0, minVal), maxVal);
+        },
+        isMinMax: function(val, minVal, maxVal) {
+            return +val >= minVal && +val <= maxVal;
+        },
+        parseInt: function(maybeNumber) {
+            return "string" === typeof maybeNumber
+                ? parseInt(maybeNumber, 10)
+                : "number" === typeof maybeNumber
+                    ? Math.floor(maybeNumber)
+                    : 0;
+        },
+        parseIntFormat: function(maybeNumber) {
+            return "string" === typeof maybeNumber
+                ? +maybeNumber.replace(/[^\d\-]/g, "") || 0
+                : "number" === typeof maybeNumber
+                    ? Math.floor(maybeNumber)
+                    : 0;
+        },
+        parseIntAbs: function(maybeNumber) {
+            return "string" === typeof maybeNumber
+                ? +maybeNumber.replace(/[^\d]/g, "") || 0
+                : "number" === typeof maybeNumber
+                    ? Math.floor(Math.abs(maybeNumber))
+                    : 0;
+        }
+    };

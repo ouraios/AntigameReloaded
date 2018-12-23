@@ -252,20 +252,20 @@ AGB.App = {
         a.keyUni)
       : "";
   },
-  getPlayer: function(a, b) {
+  getPlayer: function(player, copyPlayerInfos) {
     return AGB.status &&
-      a &&
-      a.keyPlayer &&
-      AGB.App.Player[a.keyPlayer] &&
-      1 === AGB.App.Player[a.keyPlayer].status
-      ? (b &&
-          ((a.accountId = AGB.App.Player[a.keyPlayer].accountId),
-          (a.abbrCom = AGB.App.Player[a.keyPlayer].abbrCom),
-          (a.abbrUni = AGB.App.Player[a.keyPlayer].abbrUni),
-          (a.keyCom = AGB.App.Player[a.keyPlayer].keyCom),
-          (a.keyUni = AGB.App.Player[a.keyPlayer].keyUni),
-          (a.urlUni = AGB.App.Player[a.keyPlayer].urlUni)),
-        a.keyPlayer)
+      player &&
+      player.keyPlayer &&
+      AGB.App.Player[player.keyPlayer] &&
+      1 === AGB.App.Player[player.keyPlayer].status
+      ? (copyPlayerInfos &&
+          ((player.accountId = AGB.App.Player[player.keyPlayer].accountId),
+          (player.abbrCom = AGB.App.Player[player.keyPlayer].abbrCom),
+          (player.abbrUni = AGB.App.Player[player.keyPlayer].abbrUni),
+          (player.keyCom = AGB.App.Player[player.keyPlayer].keyCom),
+          (player.keyUni = AGB.App.Player[player.keyPlayer].keyUni),
+          (player.urlUni = AGB.App.Player[player.keyPlayer].urlUni)),
+        player.keyPlayer)
       : "";
   }
 };
